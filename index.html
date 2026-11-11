@@ -265,6 +265,7 @@ textarea.pname{resize:vertical}
     <nav class="rail rail-r" aria-label="Добавить">
       <button data-fly="prj" aria-pressed="false" title="Проект: новый, открыть, сохранить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>Проект</span></button>
       <button data-fly="ord" aria-pressed="false" title="Заказ: клиент, цена, КП, прибыль"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><span>Заказ</span></button>
+      <button data-fly="cli" aria-pressed="false" title="Проект клиента: просмотр PDF"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Проект</span></button>
       <button data-fly="mods" aria-pressed="false" title="Модули: добавить шкафы и технику"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="11" rx="1"/><path d="M2 9h20M12 9v11M9 13h-2M17 13h-2"/><path d="M12 2v4M10 4h4"/></svg><span>Модули</span></button>
       <button data-fly="corner" aria-pressed="false" title="Угол, левая стена, пенал"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v16h16"/><rect x="4" y="12" width="6" height="8"/><rect x="12" y="14" width="8" height="6"/><rect x="4" y="4" width="5" height="7"/></svg><span>Угол</span></button>
       <button data-fly="up" aria-pressed="false" title="Верхние, антресоли, карниз"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="9" rx="1"/><rect x="3" y="4" width="18" height="4"/><path d="M2 3h20M12 8v9"/></svg><span>Верх</span></button>
@@ -368,6 +369,10 @@ textarea.pname{resize:vertical}
       <div class="fly" id="fly-ord" hidden>
         <div class="fly-h"><b>Заказ<small>клиент, цена за метр, КП</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
         <div id="ordBody"></div></div>
+      <div class="fly" id="fly-cli" hidden style="width:min(560px,calc(100% - 74px))">
+        <div class="fly-h"><b>Проект клиента<small>как выглядит PDF для клиента</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="go"><button id="cliRe">Обновить</button><button id="cliSave">Сохранить PDF</button></div><p class="note" id="cliSt"></p>
+        <div id="cliBody" style="display:flex;flex-direction:column;gap:8px"></div></div>
       <div class="fly" id="fly-tech" hidden>
         <div class="fly-h"><b>Технолог<small>проверка перед производством</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
         <div id="techBody"></div></div>
@@ -879,7 +884,7 @@ function openFly(k){
   if(k==='cut'){CUTSEL=null;CUTSW=false;CUTZ=1;renderCut()}
   if(k==='set'){SETG=null;SETPICK=null;renderMat();renderSet()}
   if(k==='prj'){PRJASK=null;$('fly-prj').querySelector('[data-pa="new"]').textContent='Новый';renderPrj();prjList()}
-  if(k==='ord')renderOrd();if(k==='ct')renderCt();if(k==='korp')renderKorp();if(k==='slide')renderSlCat();if(k==='hg')renderHg();if(k==='hdl')renderHandleUI();if(k==='tech')renderTech();if(k==='isl')renderIsl();
+  if(k==='ord')renderOrd();if(k==='cli')ordPDF(1);if(k==='ct')renderCt();if(k==='korp')renderKorp();if(k==='slide')renderSlCat();if(k==='hg')renderHg();if(k==='hdl')renderHandleUI();if(k==='tech')renderTech();if(k==='isl')renderIsl();
 }
 flyBtns.forEach(b=>b.addEventListener('click',()=>openFly(b.getAttribute('aria-pressed')==='true'?null:b.dataset.fly)));
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>openFly(null)));
@@ -3395,7 +3400,7 @@ function ordSum(){const o=ordCalc(true),s=$('ordSum'),k=$('ordCost');if(!s)retur
   k.innerHTML=ln('Материалы (по ценам каталога)',rub(o.mat),1)+ln('Работа и расходы',rub(o.work))+ln('Себестоимость',rub(o.cost))+`<div class="mtot" style="border-top:0;padding-top:0"><span>Моя прибыль</span><b style="color:${o.profit<0?'#C0392B':'inherit'}">${rub(o.profit)}${o.total?' · '+o.pct+'%':''}</b></div>`}
 function ordSize(){const r=[],L=totW();let H=P.H;if(V&&V.mod){try{V.scene.updateMatrixWorld(true);const b=new THREE.Box3();V.mod.traverse(o=>{if(!o.isMesh||o.userData.sel)return;for(let q=o;q;q=q.parent)if(!q.visible)return;b.expandByObject(o)});if(!b.isEmpty())H=Math.max(H,Math.round((b.max.y-Math.max(0,b.min.y))/MM))}catch(e){}}
   if(L>0)r.push('длина '+L+' мм');if(P.left&&sideW()>0)r.push('вторая сторона '+(sideW()+P.D)+' мм');if(islOn())r.push('остров '+islW()+' мм');r.push('высота '+H+' мм','глубина '+P.D+' мм');return 'Размер кухни: '+r.join(' · ')}
-function ordNames(){const out=[],seen=new Set();try{renderMat();expBuyRows().rows.forEach(r=>{const n=String(r[0]).replace(/\s*\/\d+\s*$/,'').replace(/\s*\d+\*\d+ мм/g,'').replace(/\s*(длина |h )?\d+( × \d+){0,2} мм$/,'').replace(/\s+\d+$/,'').trim(),k=n.toLowerCase();if(n&&!/^(саморез|гвоздь|евровинт|конфирмат|заглушка|клипса|полкодержатель|шкант|стяжка|дюбель)|заглушка под евровинт/i.test(n)&&!seen.has(k)){seen.add(k);out.push(n)}})}catch(e){}return out}
+function ordNames(){const out=[],seen=new Set();try{renderMat();expBuyRows().rows.forEach(r=>{const n=String(r[0]).replace(/\s*\([^)]*\d+\s*(шт|м)[^)]*\)/gi,'').replace(/\s*\d+\s*шт(?=[\s)]|$)/gi,'').replace(/\s*\/\d+\s*$/,'').replace(/\s*\d+\*\d+ мм/g,'').replace(/\s*(длина |h )?\d+( × \d+){0,2} мм$/,'').replace(/\s+\d+$/,'').trim(),k=n.toLowerCase();if(n&&!/^(саморез|гвоздь|евровинт|конфирмат|заглушка|клипса|полкодержатель|шкант|стяжка|дюбель)|заглушка под евровинт/i.test(n)&&!seen.has(k)){seen.add(k);out.push(n)}})}catch(e){}return out}
 async function ord3D(){if(!V||!V.r||!window.THREE)return[];const r=V.r,v0=P.view,pr=r.getPixelRatio(),W=1200,H=820,out=[];
   try{r.setPixelRatio(1);r.setSize(W,H,false);V.cam.aspect=W/H;V.cam.fov=35;V.cam.setViewOffset(W,H,0,0,W,H);V.cam.updateProjectionMatrix();
     for(const [k,n] of [['r34','Вид справа'],['l34','Вид слева'],['front','Вид спереди'],['top','Вид сверху']]){P.view=k;fit();r.render(V.scene,V.cam);const cv=document.createElement('canvas');cv.width=W;cv.height=H;cv.getContext('2d').drawImage(r.domElement,0,0);out.push([cv,n])}}catch(e){}
@@ -3405,7 +3410,7 @@ function ordText(){const c=ordCl(),o=ordCalc(false),fm=v=>String(v).replace('.',
     ...(o.disc?[`Скидка ${fm(o.dis)}%: − ${rub(o.disc)}`,`Итоговая цена со скидкой: ${rub(o.total)}`]:[`Итого: ${rub(o.total)}`]),'',ordSize(),...((n=>n.length?['','Материалы и фурнитура:',...n.map(x=>'• '+x)]:[])(ordNames())),...(o.pre?[`Предоплата: ${rub(o.pre)}`,`Остаток: ${rub(o.rest)}`]:[]),'',(KPM.firm||'mebelshaf — мебель на заказ')+(KPM.fph?' · '+KPM.fph:'')].join('\n')}
 async function ordSvg(){const m0=MODE,db=$('dimBtn'),d0=db.getAttribute('aria-pressed');MODE='2d';db.setAttribute('aria-pressed','true');const el=$('v2d'),h0=el.hidden,st0=el.getAttribute('style')||'';el.hidden=false;el.style.cssText+=';position:fixed;left:-5000px;top:0;width:1100px;height:1500px';render2D();const sv=el.querySelector('svg');let svg=sv?sv.outerHTML:'';
   el.setAttribute('style',st0);MODE=m0;db.setAttribute('aria-pressed',d0);render2D();el.hidden=h0;if(!svg)return null;if(!/xmlns=/.test(svg))svg=svg.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"');return svgImg(svg)}
-async function ordPDF(){const st=$('ordSt'),c=ordCl(),o=ordCalc(false);if(!o.rows.length){st.textContent=ordMode(c)==='k'?'Пока сумма 0: добавьте модули и проверьте цены материалов в «Цены»':'Впишите цену за метр или доплаты — пока сумма 0';return}st.textContent='Готовлю PDF…';
+async function ordPDF(view){const st=$(view?'cliSt':'ordSt'),c=ordCl(),o=ordCalc(false);if(!o.rows.length){st.textContent=ordMode(c)==='k'?'Пока сумма 0: добавьте модули и проверьте цены материалов в «Цены»':'Впишите цену за метр или доплаты — пока сумма 0';return}st.textContent='Готовлю PDF…';
   try{const lib=await loadPDF(),D=expDoc();D.page();const cx=D.c,lg=document.querySelector('header .logo');
     if(lg&&lg.complete&&lg.naturalWidth){const h=110,w=h*lg.naturalWidth/lg.naturalHeight;cx.drawImage(lg,EXW-EXM-w,EXM,w,h)}
     D.text(KPM.firm||'mebelshaf — мебель на заказ',20,true);if(KPM.fph)D.text(KPM.fph,16,false,'#444');D.y+=24;
@@ -3421,9 +3426,11 @@ async function ordPDF(){const st=$('ordSt'),c=ordCl(),o=ordCalc(false);if(!o.row
     if(o.disc){tl('Сумма',rub(o.sum));tl('Скидка '+fm(o.dis)+'%','− '+rub(o.disc))}tl('Итого',rub(o.total),1);if(o.pre){tl('Предоплата',rub(o.pre));tl('Остаток к оплате',rub(o.rest))}}
     const nm0=ordNames();if(nm0.length){D.y+=16;D.text('Материалы и фурнитура',20,true);D.y+=4;nm0.forEach(n=>D.wrap('• '+n,EXW-2*EXM,16).forEach(t=>D.text(t,16)))}
     D.y+=20;D.text('Расчёт предварительный: точная цена — после замера.',14,false,'#777');
+    if(view){$('cliBody').innerHTML=D.pages.map(cv=>`<img src="${cv.toDataURL('image/jpeg',.85)}" style="width:100%;border:1px solid var(--line);border-radius:6px;background:#fff">`).join('');st.textContent=D.pages.length+' стр.';return}
     const pdf=new lib.jsPDF({unit:'mm',format:'a4'});D.pages.forEach((cv,i)=>{if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',.9),'JPEG',0,0,210,297)});
     const nm='КП '+(c.name||'кухня').replace(/[\\/:*?"<>|]/g,'')+'.pdf',r=await saveFile(nm,pdf.output('blob'));st.textContent=r==='ok'?'Готово: '+nm:'Отменено'}catch(e){st.textContent='Ошибка: '+(e&&e.message||e)}}
 async function ordCopy(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}}
+$('cliRe').onclick=()=>ordPDF(1);$('cliSave').onclick=()=>ordPDF();
 $('ordBody').addEventListener('input',e=>{const i=e.target,d=i.dataset,c=ordCl();
   if(d.oc)c[d.oc]=i.value;else if(d.om)c.m[d.om]=i.value.trim()===''?null:i.value;else if(d.opm){KPM.p[d.opm]=ordN(i.value);kpmSave()}
   else if(d.oen)c.ex[+d.oen][0]=i.value;else if(d.oev)c.ex[+d.oev][1]=ordN(i.value);else if(d.okk){KPM.k={...KDEF,...(KPM.k||{}),[d.okk]:ordN(i.value)};kpmSave()}else if(d.ok){KPM[d.ok]=i.value;kpmSave();return}else return;ordSum()});
