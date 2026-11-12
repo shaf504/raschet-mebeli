@@ -210,7 +210,7 @@ header .brand{flex:1}
   .fly,.fly.fl{left:54px;right:54px;width:auto}
   .chip{padding:6px 10px;font-size:13px}
   .frez{grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:6px}
-  .frez svg{width:34px;height:56px}
+  .frez svg{width:40px;height:66px}
   .frez button{font-size:12px;padding:6px 2px}
   .sw{width:48px;font-size:11px}
   .sw i{width:30px;height:30px}
@@ -1313,14 +1313,32 @@ $('upSizes').innerHTML=MF.filter(f=>f[0]==='UH').map(stepHTML).join('');
   $(id).addEventListener('change',e=>{const i=e.target.closest('input');if(!i)return;const k=kk(i.dataset.k),v=+i.value.replace(/\D/g,'');if(PER.includes(k))setK(k,v);else setDim(k,v);update()});
 });
 function frezSVG(k,col){
-  const[,segs,c]=FREZ[k],W=60,H=100,sh=dz=>{const v=Math.max(0,Math.min(1,(dz+6)/9));return `rgba(255,255,255,${(v*.35).toFixed(2)})`};
-  let s=`<svg viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" rx="1" fill="${col}"/>`;
-  segs.forEach(([a,,dz])=>{const i=a/10;s+=`<rect x="${i}" y="${i}" width="${W-2*i}" height="${H-2*i}" fill="${col}" stroke="rgba(0,0,0,.28)" stroke-width=".35"/><rect x="${i}" y="${i}" width="${W-2*i}" height="${H-2*i}" fill="${sh(dz)}"/>`});
-  const b=segs[segs.length-1][1]/10,tp=FREZ[k][3],o=FREZ[k][4]||{};
-  if(tp==='lines'){const h=o.dir==='h',bb=Math.max(1,b),G=frezLines(o.pitch?{...o,pitch:o.pitch}:{...o,step:o.step},bb*10,((h?H:W)-bb)*10);G.forEach(([g0,g1])=>{const p=g0/10,q=(g1-g0)/10;s+=h?`<rect x="${bb}" y="${p}" width="${W-2*bb}" height="${q}" fill="rgba(0,0,0,.22)"/>`:`<rect x="${p}" y="${bb}" width="${q}" height="${H-2*bb}" fill="rgba(0,0,0,.22)"/>`});return s+'</svg>'}
-  if(tp==='arch'){const m=7,rx=(W-2*m)/2,ry=rx*.55;s+=`<path d="M${m} ${H-m}V${m+ry}A${rx} ${ry} 0 0 1 ${W-m} ${m+ry}V${H-m}Z" fill="rgba(0,0,0,.12)" stroke="rgba(0,0,0,.35)" stroke-width=".5"/>`;return s+'</svg>'}
-  if(tp==='glass'){s+=`<rect x="${b}" y="${b}" width="${W-2*b}" height="${H-2*b}" fill="#BFD9DB" stroke="rgba(0,0,0,.3)" stroke-width=".35"/>`;if(o.grid)s+=`<path d="M${W/2} ${b}V${H-b}M${b} ${H/2}H${W-b}" stroke="${col}" stroke-width="1.6"/>`;return s+'</svg>'}
-  s+=`<rect x="${b}" y="${b}" width="${W-2*b}" height="${H-2*b}" fill="${col}" stroke="rgba(0,0,0,.3)" stroke-width=".35"/><rect x="${b}" y="${b}" width="${W-2*b}" height="${H-2*b}" fill="${sh(c)}"/>`;
+  const[,segs,c]=FREZ[k],W=60,H=100,tp=FREZ[k][3],o=FREZ[k][4]||{},D=a=>`rgba(0,0,0,${a.toFixed(2)})`,L=a=>`rgba(255,255,255,${a.toFixed(2)})`,
+    // рамка-фаска: верх+лево одним цветом, низ+право другим (свет сверху-слева)
+    bev=(x0,y0,x1,y1,w,tl,br)=>`<path d="M${x0} ${y0}H${x1}L${x1-w} ${y0+w}H${x0+w}V${y1-w}L${x0} ${y1}Z" fill="${tl}"/><path d="M${x1} ${y1}H${x0}L${x0+w} ${y1-w}H${x1-w}V${y0+w}L${x1} ${y0}Z" fill="${br}"/>`,
+    box=(i,f)=>`<rect x="${i}" y="${i}" width="${W-2*i}" height="${H-2*i}" fill="${f}"/>`;
+  let s=`<svg viewBox="0 0 ${W} ${H}" shape-rendering="geometricPrecision"><rect width="${W}" height="${H}" fill="${col}"/>`;
+  // уровни: [отступ от края, глубина]
+  const lv=segs.map(([a,,dz])=>[a/10,dz]),bL=segs[segs.length-1][1]/10;lv.push([bL,c]);
+  let prev=0;
+  lv.forEach(([i,dz])=>{if(i>=W/2-.5)return;s+=`<g>${box(i,col)}${dz<0?`<rect x="${i}" y="${i}" width="${W-2*i}" height="${H-2*i}" fill="${D(Math.min(.2,-dz*.03))}"/>`:''}</g>`;
+    const d=dz-prev;if(d){const w=Math.max(.5,Math.min(1.8,Math.abs(d)*.32)),dk=D(Math.min(.7,.4+Math.abs(d)*.07)),lt=L(.75);
+      s+=d<0?bev(i,i,W-i,H-i,w,dk,lt):bev(i,i,W-i,H-i,w,lt,dk);
+      s+=`<rect x="${i}" y="${i}" width="${W-2*i}" height="${H-2*i}" fill="none" stroke="${D(.62)}" stroke-width=".35"/>`}
+    prev=dz});
+  // скругление наружной кромки
+  s+=bev(0,0,W,H,.6,L(.6),D(.35))+`<rect x=".15" y=".15" width="${W-.3}" height="${H-.3}" fill="none" stroke="${D(.55)}" stroke-width=".3"/>`;
+  const b=bL;
+  if(tp==='lines'){const h=o.dir==='h',bb=Math.max(1,b),G=frezLines(o.pitch?{...o,pitch:o.pitch}:{...o,step:o.step},bb*10,((h?H:W)-bb)*10);
+    G.forEach(([g0,g1])=>{const p=g0/10,q=(g1-g0)/10,ws=Math.max(.35,Math.min(.9,q*.4)),wl=Math.max(.25,Math.min(.6,q*.25));
+      s+=h?`<rect x="${bb}" y="${p}" width="${W-2*bb}" height="${q}" fill="${D(.2)}"/><rect x="${bb}" y="${p}" width="${W-2*bb}" height="${ws}" fill="${D(.6)}"/><rect x="${bb}" y="${p+q-wl}" width="${W-2*bb}" height="${wl}" fill="${L(.8)}"/>`
+          :`<rect x="${p}" y="${bb}" width="${q}" height="${H-2*bb}" fill="${D(.2)}"/><rect x="${p}" y="${bb}" width="${ws}" height="${H-2*bb}" fill="${D(.6)}"/><rect x="${p+q-wl}" y="${bb}" width="${wl}" height="${H-2*bb}" fill="${L(.8)}"/>`});
+    return s+'</svg>'}
+  if(tp==='arch'){const m=7,rx=(W-2*m)/2,ry=rx*.55,P_=`M${m} ${H-m}V${m+ry}A${rx} ${ry} 0 0 1 ${W-m} ${m+ry}V${H-m}Z`,id='fzc_'+k;
+    s+=`<defs><clipPath id="${id}"><path d="${P_}"/></clipPath></defs><path d="${P_}" fill="${D(.1)}"/><g clip-path="url(#${id})" fill="none" stroke-width="2.4"><path d="${P_}" stroke="${D(.45)}" transform="translate(.9 .9)"/><path d="${P_}" stroke="${L(.75)}" transform="translate(-.9 -.9)"/></g><path d="${P_}" fill="none" stroke="${D(.55)}" stroke-width=".3"/>`;
+    return s+'</svg>'}
+  if(tp==='glass'){s+=`<rect x="${b}" y="${b}" width="${W-2*b}" height="${H-2*b}" fill="#BFD9DB"/><path d="M${b} ${b+18}L${b+18} ${b}H${b+26}L${b} ${b+26}Z" fill="${L(.45)}"/>`+bev(b,b,W-b,H-b,.7,D(.4),L(.6))+`<rect x="${b}" y="${b}" width="${W-2*b}" height="${H-2*b}" fill="none" stroke="${D(.5)}" stroke-width=".3"/>`;
+    if(o.grid)s+=`<path d="M${W/2+.5} ${b}V${H-b}M${b} ${H/2+.5}H${W-b}" stroke="${D(.35)}" stroke-width="1.6"/><path d="M${W/2} ${b}V${H-b}M${b} ${H/2}H${W-b}" stroke="${col}" stroke-width="1.6"/>`;return s+'</svg>'}
   return s+'</svg>';
 }
 function renderFacadeUI(){asMod(selMod,_renderFacadeUI);renderKorp()}
