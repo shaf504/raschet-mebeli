@@ -362,7 +362,7 @@ textarea.pname{resize:vertical}
         <div class="fly-h"><b>Фасад<small id="sumFac"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
         <div class="chips" id="fMats"></div>
         <div id="fCatBox"></div>
-        <div id="mdfBox"><div class="frez" id="frez"></div><div class="swatches" id="fCols"></div></div>
+        <div id="mdfBox"><div class="frez" id="frez"></div><div class="swatches" id="fCols"></div><h4 class="mh">Фасады крашеные</h4><div class="sb" id="sb-fkr"></div></div>
         <div id="aluBox" hidden><div class="sz"><label>Профиль</label><div class="chips" id="aluProf"></div></div>
           <div class="sz"><label>Цвет профиля</label><div class="swatches" id="aluCols"></div></div>
           <div class="sz"><label>Стекло 4 мм</label><div class="swatches" id="aluGls"></div></div><p class="note" id="aluNote"></p></div>
@@ -608,6 +608,12 @@ const SBT={
     pick(x){P.hgCat=x.u;update();renderHg()},
     empty:()=>'Нет позиций в каталоге.',
     note:()=>'Выбранная петля идёт в расчёт и заказ вместо «Петля накладная 110°».'},
+  fkr:{lv:['Фасады крашеные'],
+    items:()=>(DS.mdf||[]).map(x=>({x,g:[]})),
+    lab:(i,v)=>v,
+    cur:()=>[matSet().mCat],
+    pick(x){matSet().mCat=x.u;update();renderSB('fkr')},
+    empty:()=>'Нет позиций в каталоге.'},
   lift:{lv:['Бренд','Модель'],
     items:()=>(DS.lift||[]).map(x=>({x,g:[String(x.sc||'').replace(/^Подъемные механизмы\s*/i,'')||'Другие']})),
     lab:(i,v)=>v,
@@ -1231,8 +1237,8 @@ function renderKorp(){const el=$('kCols');if(!el)return;$('sumKorp').textContent
   el.innerHTML=Object.entries(KCOL).map(([k,v])=>`<button class="sw" data-kc="${k}" aria-pressed="${!P.kCat&&(P.kColor||'white')===k}"><i style="background:${kSw(v)}"></i>${v[0]}</button>`).join('')+`<label class="sw" aria-pressed="${!P.kCat&&String(P.kColor||'')[0]==='#'}"><input type="color" data-kcc value="${kHex()}" style="width:26px;height:26px;padding:0;border:0;background:none">Свой цвет</label>`;
   $('kNote').textContent=`Корпуса, цоколи, торцы, короба ящиков${kc()[2]==='wood'?' · древесный декор: в раскрое детали идут вдоль текстуры':''}.`}
 function _renderFacadeUI(){
-  $('fMats').innerHTML=[['ldsp','ЛДСП 16'],['mdf','МДФ крашеный 18'],['panel','Панель 18'],['alu','Алюм. рамка + стекло']].map(([k,n])=>`<button class="chip" data-fm="${k}" aria-pressed="${P.fMat===k}">${n}</button>`).join('');
-  $('mdfBox').hidden=P.fMat!=='mdf';$('aluBox').hidden=P.fMat!=='alu';
+  $('fMats').innerHTML=[['ldsp','ЛДСП 16'],['mdf','Фасады крашеные'],['panel','Панель 18'],['alu','Алюм. рамка + стекло']].map(([k,n])=>`<button class="chip" data-fm="${k}" aria-pressed="${P.fMat===k}">${n}</button>`).join('');
+  $('mdfBox').hidden=P.fMat!=='mdf';if(P.fMat==='mdf')renderSB('fkr');$('aluBox').hidden=P.fMat!=='alu';
   if(P.fMat==='alu'){const sw=(attr,obj,cur,bg)=>Object.entries(obj).map(([k,v])=>`<button class="sw" ${attr}="${k}" aria-pressed="${cur===k}"><i style="background:${bg(k,v)}"></i>${v[0]}</button>`).join('');
     $('aluProf').innerHTML=Object.entries(ALUP).map(([k,v])=>`<button class="chip" data-ap="${k}" aria-pressed="${P.aluP===k}">${v[0]}</button>`).join('');
     $('aluCols').innerHTML=sw('data-ac',ALUC,P.aluC,(k,v)=>`linear-gradient(135deg,${v[1]},#ffffff66 45%,${v[1]} 60%)`);
