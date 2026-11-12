@@ -95,6 +95,7 @@ td small{display:block;color:var(--muted);font-size:12px}
 .pmb[aria-pressed="true"],.pmb[aria-pressed="true"] span{background:var(--copper);color:var(--accent-ink);-webkit-text-fill-color:var(--accent-ink)}
 .pmb span{background:none;-webkit-text-fill-color:currentColor}
 header .brand{flex:1}
+@media (max-width:759px){header{align-items:center}header .brand{order:3;flex:1 1 100%}}
 .pmenu{position:fixed;left:0;top:0;z-index:60;min-width:200px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.3);padding:6px;display:flex;flex-direction:column;gap:2px}
 .pmenu[hidden]{display:none}
 .pmenu button{all:unset;cursor:pointer;padding:11px 12px;border-radius:8px;font-size:15px;color:var(--ink)}
