@@ -1,0 +1,14 @@
+{
+  "name": "MEBELSHAF — Расчёт мебели",
+  "short_name": "Расчёт мебели",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#121311",
+  "theme_color": "#121311",
+  "icons": [
+    { "src": "assets/welcome/apple-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "assets/welcome/mark.png", "type": "image/png" }
+  ]
+}
