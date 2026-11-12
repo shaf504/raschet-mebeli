@@ -491,9 +491,10 @@ const frezT=(k,fw,fh)=>{const f=FREZ[k]||FREZ.ramka,t=f[3];return (t==='arch'||t
 const frezLines=(o,a0,a1)=>{const L=a1-a0,G=[];if(o.pitch){const n=Math.floor((L-o.pitch)/o.pitch);const st=a0+(L-n*o.pitch)/2;for(let i=0;i<=n;i++){const c=st+i*o.pitch;if(c-o.g/2>a0+8&&c+o.g/2<a1-8)G.push([c-o.g/2,c+o.g/2])}}
   else{const n=Math.floor(L/o.step)-1;for(let i=1;i<=n;i++){const c=a0+L*i/(n+1);G.push([c-o.g/2,c+o.g/2])}}return G};   // пазы [от, до]
 // декор корпуса (ЛДСП 16): однотонные и древесные/каменные; [название, цвет на схеме, тип, тона]
-const KCOL={white:['Белый','#F2F1EC'],cash:['Кашемир','#D9D1C3'],grey:['Серый','#A8AAA7'],anth:['Антрацит','#45494C'],
+const KCOL0={white:['Белый','#F2F1EC'],cash:['Кашемир','#D9D1C3'],grey:['Серый','#A8AAA7'],anth:['Антрацит','#45494C'],
   sonoma:['Дуб сонома','#CDB48F','wood',['#D6BF9A','#CFB68F','#DCC5A2','#C9AF88'],'#8C6B45'],craft:['Дуб крафт','#B8874F','wood',['#BE8D55','#B4834C','#C2925B','#AF7F48'],'#6E4622'],
   walnut:['Орех','#6E4C35','wood',['#71503A','#684733','#77553E','#62432F'],'#3A2618'],beton:['Бетон','#9D9B95','stone']};
+const KCOL=new Proxy(KCOL0,{get:(o,k)=>k in o?o[k]:typeof k==='string'&&/^#[0-9a-f]{6}$/i.test(k)?['Свой цвет '+k.toUpperCase(),k]:undefined});
 const DSFAC=['ldsp','agt','kastamonu','rehau'];
 const dsFind=u=>{if(!u||typeof DS==='undefined')return null;for(const k of ['ldsp','agt','kastamonu','rehau','lhdf','mdf','ct','wp','ruchki','tolk']){const x=(DS[k]||[]).find(y=>y.u===u);if(x)return x}return null};
 const isPanelU=u=>u&&['agt','kastamonu','rehau'].some(k=>(DS[k]||[]).some(y=>y.u===u));
@@ -561,7 +562,7 @@ const SBNM={ldsp:'ЛДСП',mdf:'МДФ',fan:'Фанера',hid:'Скрытог�
 const sbSz=v=>v?v+' мм':'без размера';
 // уровни: [заголовок шага, порядок первого уровня (пустые разделы тоже показываются)]
 const SBT={
-  korp:{lv:['Материал','Бренд','Толщина','Цвет и текстура'],root:['ldsp','mdf','fan'],img:true,
+  korp:{lv:['Материал','Бренд','Толщина','Цвет и текстура'],root:['ldsp','fan'],img:true,
     items:()=>[...(DS.ldsp||[]).filter(x=>x.t===16).map(x=>({x,g:['ldsp',ldBrand(x),'16']})),...(DS.mdf||[]).map(x=>({x,g:['mdf',ldBrand(x),String(x.t||'')]}))],
     lab:(i,v)=>i===0?SBNM[v]:i===2?(v?String(v).replace('.',',')+' мм':'—'):v,
     cur:()=>[P.kCat,matSet().mCat],
@@ -623,7 +624,10 @@ function renderSlCat(){const el=$('sb-napr');if(!el)return;const x=P.slCat?dsGet
 
 
 const kPl=()=>{const c=kHex(),n=parseInt(c.slice(1),16),f=v=>Math.round(v*.9);return '#'+[n>>16&255,n>>8&255,n&255].map(v=>f(v).toString(16).padStart(2,'0')).join('')};
-const FCOL={white:['Белый','#ECEBE3'],beige:['Капучино','#BBB49C'],grey:['Графит','#676D71'],taupe:['Серый тёплый','#8B8880'],ash:['Ясень тёмный','#3A2C22']};
+const MDFM2=5700;   // крашеный МДФ, ₽ за м²
+const FCOL0={white:['Белый','#ECEBE3'],beige:['Капучино','#BBB49C'],grey:['Графит','#676D71'],taupe:['Серый тёплый','#8B8880'],ash:['Ясень тёмный','#3A2C22']};
+const CUSTC=(o,k)=>k in o?o[k]:typeof k==='string'&&/^#[0-9a-f]{6}$/i.test(k)?['Свой цвет '+k.toUpperCase(),k]:undefined;   // свой цвет (#rrggbb)
+const FCOL=new Proxy(FCOL0,{get:CUSTC});
 const HCOL0={black:['Чёрный','#1E1F21',.45,.5],chrome:['Хром','#D7DADD',.12,1],gold:['Золото','#C8A45A',.25,1],bronze:['Бронза','#7B5A3B',.35,.9],white:['Белый','#F1F0EB',.4,0]};
 const HCOL=new Proxy(HCOL0,{get:(o,k)=>k in o?o[k]:typeof k==='string'&&k[0]==='#'?[k.split('|')[1]||'цвет каталога',k.split('|')[0],.35,.75]:o.black});   // цвет ручки из каталога
 // алюминиевые рамочные фасады: рамка из 4 профилей (рез 45°, угловые стяжки), стекло 4 мм в пазу на силиконовом уплотнителе, петли для алюминиевой рамки
@@ -1193,12 +1197,12 @@ function frezSVG(k,col){
 function renderFacadeUI(){asMod(selMod,_renderFacadeUI);renderKorp()}
 const kSw=([n,c,tp,tones])=>tp==='wood'?`linear-gradient(100deg,${tones[0]},${tones[1]} 30%,${tones[2]} 55%,${tones[3]} 80%,${tones[0]})`:tp==='stone'?`radial-gradient(circle at 30% 35%,#B3B1AB,${c} 45%,#8A8882)`:c;
 const catCard=(x,tgt,lab)=>x?`<div class="ccard"><i style="${catImg(x)}"></i><span><b>${x.d}</b><small>${[x.t?String(x.t).replace('.',',')+' мм':'',x.f?dsSheet(x).join('×'):'',x.m,x.a?'арт. '+x.a:'',rub(x.p)+(x.f?'/лист':'')].filter(Boolean).join(' · ')}</small></span><button data-cpick="${tgt}">Сменить</button></div>`:`<div class="go"><button data-cpick="${tgt}">${lab}</button></div>`;
-function renderKorp(){const el=$('kCols');if(!el)return;$('sumKorp').textContent=kName()+(P.kCat?' · из каталога':'');{const cc=(x,l)=>x?`<div class="ccard"><i style="${catImg(x)}"></i><span><b>${l}: ${x.d}</b><small>${[x.t?String(x.t).replace('.',',')+' мм':'',x.f?dsSheet(x).join('×'):'',x.m,x.a?'арт. '+x.a:'',rub(x.p)+(x.f?'/лист':'')].filter(Boolean).join(' · ')}</small></span></div>`:'';$('kCat').innerHTML=cc(P.kCat&&dsGet('ldsp',P.kCat),'ЛДСП')+cc(dsGet('mdf',matSet().mCat),'МДФ');renderSB('korp')}
+function renderKorp(){const el=$('kCols');if(!el)return;$('sumKorp').textContent=kName()+(P.kCat?' · из каталога':'');{const cc=(x,l)=>x?`<div class="ccard"><i style="${catImg(x)}"></i><span><b>${l}: ${x.d}</b><small>${[x.t?String(x.t).replace('.',',')+' мм':'',x.f?dsSheet(x).join('×'):'',x.m,x.a?'арт. '+x.a:'',rub(x.p)+(x.f?'/лист':'')].filter(Boolean).join(' · ')}</small></span></div>`:'';$('kCat').innerHTML=cc(P.kCat&&dsGet('ldsp',P.kCat),'ЛДСП');renderSB('korp')}
   {const b=$('fCatBox');if(b){const Q=mergedFor(selMod),ld=Q.fMat==='ldsp'||Q.fMat==='panel';b.hidden=!ld;if(ld)b.innerHTML=catCard(fCatX(Q),'fac',Q.fMat==='panel'?'Выбрать панель AGT / Kastamonu / Рехау':'Декор фасадов ЛДСП из каталога')}}
-  el.innerHTML=Object.entries(KCOL).map(([k,v])=>`<button class="sw" data-kc="${k}" aria-pressed="${!P.kCat&&(P.kColor||'white')===k}"><i style="background:${kSw(v)}"></i>${v[0]}</button>`).join('');
+  el.innerHTML=Object.entries(KCOL).map(([k,v])=>`<button class="sw" data-kc="${k}" aria-pressed="${!P.kCat&&(P.kColor||'white')===k}"><i style="background:${kSw(v)}"></i>${v[0]}</button>`).join('')+`<label class="sw" aria-pressed="${!P.kCat&&String(P.kColor||'')[0]==='#'}"><input type="color" data-kcc value="${kHex()}" style="width:26px;height:26px;padding:0;border:0;background:none">Свой цвет</label>`;
   $('kNote').textContent=`Корпуса, цоколи, торцы, короба ящиков${kc()[2]==='wood'?' · древесный декор: в раскрое детали идут вдоль текстуры':''}.`}
 function _renderFacadeUI(){
-  $('fMats').innerHTML=[['ldsp','ЛДСП 16'],['mdf','МДФ 18'],['panel','Панель 18'],['alu','Алюм. рамка + стекло']].map(([k,n])=>`<button class="chip" data-fm="${k}" aria-pressed="${P.fMat===k}">${n}</button>`).join('');
+  $('fMats').innerHTML=[['ldsp','ЛДСП 16'],['mdf','МДФ крашеный 18'],['panel','Панель 18'],['alu','Алюм. рамка + стекло']].map(([k,n])=>`<button class="chip" data-fm="${k}" aria-pressed="${P.fMat===k}">${n}</button>`).join('');
   $('mdfBox').hidden=P.fMat!=='mdf';$('aluBox').hidden=P.fMat!=='alu';
   if(P.fMat==='alu'){const sw=(attr,obj,cur,bg)=>Object.entries(obj).map(([k,v])=>`<button class="sw" ${attr}="${k}" aria-pressed="${cur===k}"><i style="background:${bg(k,v)}"></i>${v[0]}</button>`).join('');
     $('aluProf').innerHTML=Object.entries(ALUP).map(([k,v])=>`<button class="chip" data-ap="${k}" aria-pressed="${P.aluP===k}">${v[0]}</button>`).join('');
@@ -1207,7 +1211,7 @@ function _renderFacadeUI(){
     $('aluNote').textContent=`Рамка ${ALUT} мм из 4 профилей (рез 45°, 4 угловые стяжки), стекло 4 мм в пазу на силиконовом уплотнителе. Петли — для алюминиевой рамки (Clip-on, 95°), ручка крепится в профиль. Планки и карниз — в цвет корпуса.`}
   const col=FCOL[P.fColor][1];
   $('frez').innerHTML=Object.entries(FREZ).map(([k,v])=>`<button data-fz="${k}" aria-pressed="${P.frez===k}">${frezSVG(k,col)}${v[0]}</button>`).join('');
-  $('fCols').innerHTML=Object.entries(FCOL).map(([k,v])=>`<button class="sw" data-fc="${k}" aria-pressed="${P.fColor===k}"><i style="background:${k==='ash'?'linear-gradient(100deg,#2E231B,#4A382A 40%,#2B2018 60%,#4F3C2C)':v[1]}"></i>${v[0]}</button>`).join('');
+  $('fCols').innerHTML=Object.entries(FCOL).map(([k,v])=>`<button class="sw" data-fc="${k}" aria-pressed="${P.fColor===k}"><i style="background:${k==='ash'?'linear-gradient(100deg,#2E231B,#4A382A 40%,#2B2018 60%,#4F3C2C)':v[1]}"></i>${v[0]}</button>`).join('')+`<label class="sw" aria-pressed="${P.fColor[0]==='#'}"><input type="color" data-fcc value="${FCOL[P.fColor][1]}" style="width:26px;height:26px;padding:0;border:0;background:none">Свой цвет</label>`;
 }
 $('fMats').addEventListener('click',e=>{const b=e.target.closest('[data-fm]');if(b){const v=b.dataset.fm,cu=mergedFor(selMod).fCat;setK('fMat',v);
     if(v==='panel'&&!isPanelU(cu)){const x=(DS.agt||[]).find(y=>y.s)||(DS.agt||[])[0];setK('fCat',x?x.u:null)}else if(v==='ldsp'&&isPanelU(cu))setK('fCat',null);renderFacadeUI();update()}});
@@ -1216,6 +1220,8 @@ $('frez').addEventListener('click',e=>{const b=e.target.closest('[data-fz]');if(
 $('fly-korp').addEventListener('click',e=>{const b=e.target.closest('[data-cpick]');if(b)openCat('korp','ldsp',{t:16,back:'korp'})});
 $('fly-fac').addEventListener('click',e=>{const b=e.target.closest('[data-cpick]');if(!b)return;const t=b.dataset.cpick,pn=t==='fac'&&mergedFor(selMod).fMat==='panel';openCat(t,pn?(['agt','kastamonu','rehau'].find(k=>(DS[k]||[]).some(y=>y.u===mergedFor(selMod).fCat))||'agt'):'ldsp',{t:pn?null:16,back:'fac',cats:pn?['agt','kastamonu','rehau']:null})});
 $('kCols').addEventListener('click',e=>{const b=e.target.closest('[data-kc]');if(!b)return;P.kColor=b.dataset.kc;P.kCat=null;const m=matSet();m.grain=kc()[2]==='wood';renderKorp();update()});
+$('fCols').addEventListener('change',e=>{if(e.target.matches('[data-fcc]')){setK('fColor',e.target.value.toLowerCase());renderFacadeUI();update()}});
+$('kCols').addEventListener('change',e=>{if(e.target.matches('[data-kcc]')){P.kColor=e.target.value.toLowerCase();P.kCat=null;matSet().grain=false;renderKorp();update()}});
 $('fCols').addEventListener('click',e=>{const b=e.target.closest('[data-fc]');if(b){setK('fColor',b.dataset.fc);renderFacadeUI();update()}});
 function renderHandleUI(){asMod(selMod,_renderHandleUI)}
 function _renderHandleUI(){
@@ -1496,7 +1502,7 @@ function renderMat(){
   const SG=KS.map(k=>{const r=c.res[k],own=sheetCat(k);let x=own;
     if(!x)x=k==='ldsp'?sheetMatch('ldsp',kName(),16,[r.SW,r.SH]):k==='mdf'?(DS.mdf||[]).find(y=>y.t===18&&/односторон/i.test(y.n)&&fmtEq(y,r)):k==='hdf'?(DS.lhdf||[]).find(y=>/бел/i.test(y.n)&&fmtEq(y,r)):null;return{k,r,x,auto:!own}});
   const capX=dsGet('zaglushki',m.cCat)||capFor(kName(),kHex()),capQ=(c.hw.find(o=>o.k==='cap')||{}).q||0,TG=new Proxy({},{get:(o,k)=>KB(k)==='ldsp'?'korp':KU(k)?'facrep:'+KU(k):KB(k)==='ldspF'||KB(k)==='panel'?'fac':KB(k)});
-  const COST=[...SG.map(g=>({n:SHN[g.k][0],x:g.x,auto:g.auto,q:g.r.n,u:'л.',tgt:TG[g.k]})),...EG.map(e=>({n:`Кромка ${efmt(e.v)} мм — ${e.k==='ldsp'?'корпус':'фасады'+(dsFind(KU(e.k))?' «'+dsFind(KU(e.k)).d+'»':'')}`,x:e.x,auto:e.auto,q:e.buy,u:'м',tgt:'edge:'+e.key})),...(capQ?[{n:'Заглушки для евровинтов',x:capX,auto:!m.cCat,q:capQ,u:'шт',tgt:'cap'}]:[])];
+  const COST=[...SG.map(g=>KB(g.k)==='mdf'?{n:'МДФ крашеный 18 мм — фасады',x:{n:'МДФ крашеный',d:'МДФ крашеный, '+FCOL[P.fColor][0].toLowerCase(),p:MDFM2,s:1},auto:false,q:Math.round(g.r.area*100)/100,u:'м²',tgt:'set'}:({n:SHN[g.k][0],x:g.x,auto:g.auto,q:g.r.n,u:'л.',tgt:TG[g.k]})),...EG.map(e=>({n:`Кромка ${efmt(e.v)} мм — ${e.k==='ldsp'?'корпус':'фасады'+(dsFind(KU(e.k))?' «'+dsFind(KU(e.k)).d+'»':'')}`,x:e.x,auto:e.auto,q:e.buy,u:'м',tgt:'edge:'+e.key})),...(capQ?[{n:'Заглушки для евровинтов',x:capX,auto:!m.cCat,q:capQ,u:'шт',tgt:'cap'}]:[])];
   // ручки и толкатели из каталога; профили-ручки — хлыстами по длине позиции; Gola — по метражу
   c.hw.filter(o=>o.x&&/^(h|tip)\|/.test(o.k)).forEach(o=>{const x=o.x;let q=o.q,u='шт';
     if(PROFH.includes(x.k)&&x.L>=500){const bars=[];(HPROF[x.u]||[]).sort((a,b)=>b-a).forEach(l=>{const f=bars.findIndex(v=>v+l+4<=x.L);if(f>=0)bars[f]+=l+4;else bars.push(l)});q=bars.length||q}
