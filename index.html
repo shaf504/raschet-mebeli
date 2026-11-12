@@ -3210,12 +3210,21 @@ async function pdirEnsure(){try{if(!PDIR.h){const db=await pdirDB();PDIR.h=await
     if(PDIR.tried||!window.showDirectoryPicker)return null;PDIR.tried=true;
     const root=await window.showDirectoryPicker({id:'kprojects',mode:'readwrite'});const h=root;PDIR.h=h;
     try{const db=await pdirDB();db.transaction('h','readwrite').objectStore('h').put(h,'dir')}catch(e){}return h}catch(e){PDIR.h=null;return null}}
-async function prjToDir(){const st=$('prjSt'),nm=(/^Заказ \d+$/.test(PRJ.name||'')?PRJ.name:'Заказ '+String(P.no||0).padStart(3,'0')+(PRJ.name?' '+PRJ.name:'')).replace(/[\\/:*?"<>|]/g,'').trim();
-  const json=JSON.stringify({kitchen:1,name:PRJ.name,data:P});let pdf=null;
-  try{renderMat();const lib=await loadPDF(),D=expDoc();await expDrawings(D);const doc=new lib.jsPDF({unit:'mm',format:'a4'});D.pages.forEach((cv,i)=>{if(i)doc.addPage();doc.addImage(cv.toDataURL('image/jpeg',.88),'JPEG',0,0,210,297)});pdf=doc.output('blob')}catch(e){}
+// ZIP без сжатия: на iPhone в «Файлах» нажмите на архив — появится папка «Заказ 009»
+const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+async function zipBlob(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;const d=new Date(),dt=((d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1)),dd=(((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate());
+  for(const [name,blob] of files){const data=new Uint8Array(await blob.arrayBuffer()),nm=enc.encode(name);let c=0xFFFFFFFF;for(let i=0;i<data.length;i++)c=CRCT[(c^data[i])&255]^(c>>>8);c=(c^0xFFFFFFFF)>>>0;
+    const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(10,dt,true);h.setUint16(12,dd,true);h.setUint32(14,c,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,nm.length,true);
+    const z=new DataView(new ArrayBuffer(46));z.setUint32(0,0x02014b50,true);z.setUint16(4,20,true);z.setUint16(6,20,true);z.setUint16(8,0x0800,true);z.setUint16(12,dt,true);z.setUint16(14,dd,true);z.setUint32(16,c,true);z.setUint32(20,data.length,true);z.setUint32(24,data.length,true);z.setUint16(28,nm.length,true);z.setUint32(42,off,true);
+    parts.push(h,nm,data);cen.push(z,nm);off+=30+nm.length+data.length}
+  const cs=cen.reduce((a,x)=>a+x.byteLength,0),e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cen,e],{type:'application/zip'})}
+async function prjToDir(){const st=$('prjSt'),fd=('Заказ '+String(P.no||0).padStart(3,'0')).replace(/[\\/:*?"<>|]/g,'');
+  const files=[[fd+'.json',new Blob([JSON.stringify({kitchen:1,name:PRJ.name,data:P})],{type:'application/json'})]];
+  try{renderMat();const r=await ordPDF('blob');if(r){files.push([fd+'.pdf',r.pdf]);let i=0;for(const [cv,n] of r.sh){const b=await new Promise(ok=>cv.toBlob(ok,'image/jpeg',.9));if(b)files.push([String(++i).padStart(2,'0')+' '+n+'.jpg',b])}}}catch(e){}
   const h=PDIR.h;let msg;
-  try{if(h){const wr=async(n,d)=>{const f=await h.getFileHandle(n,{create:true}),w=await f.createWritable();await w.write(d);await w.close()};await wr(nm+'.json',json);if(pdf)await wr(nm+'.pdf',pdf);msg='В папку «'+h.name+'»: '+nm+'.json'+(pdf?' и .pdf':'')}
-    else{await saveFile(nm+'.json',json);if(pdf)await saveFile(nm+'.pdf',pdf);msg='Файлы: '+nm+'.json'+(pdf?' и .pdf':'')+' — в окне сохранения выберите «Сохранить в Файлы» → папку «Заказы приложение»'}}
+  try{if(h){const sub=await h.getDirectoryHandle(fd,{create:true});for(const [n,b] of files){const f=await sub.getFileHandle(n,{create:true}),w=await f.createWritable();await w.write(b);await w.close()}msg='Папка «'+fd+'» в «'+h.name+'»: проект, PDF и '+(files.length-2)+' фото'}
+    else{const r=await saveFile(fd+'.zip',await zipBlob(files.map(([n,b])=>[fd+'/'+n,b])));msg=r==='ok'?fd+'.zip — сохраните в «Заказы приложение», нажмите на архив: появится папка «'+fd+'» (проект, PDF, фото)':'Сохранение отменено'}}
   catch(e){msg='Файлы не записались: '+(e&&e.message||e)}
   st.textContent+=' · '+msg;const ps=$('pmSt');if(ps)ps.textContent=msg}
 // кнопка «Проект» слева сверху: Новый проект, Открыть проект, Сохранить, Сохранить как, Импорт, Экспорт
@@ -3618,7 +3627,7 @@ function ordText(){const c=ordCl(),o=ordCalc(false),fm=v=>String(v).replace('.',
     ...(o.disc?[`Скидка ${fm(o.dis)}%: − ${rub(o.disc)}`,`Итоговая цена со скидкой: ${rub(o.total)}`]:[`Итого: ${rub(o.total)}`]),'',ordSize(),...((n=>n.length?['','Материалы и фурнитура:',...n.map(x=>'• '+x)]:[])(ordNames())),...(o.pre?[`Предоплата: ${rub(o.pre)}`,`Остаток: ${rub(o.rest)}`]:[]),'',(KPM.firm||'mebelshaf — мебель на заказ')+(KPM.fph?' · '+KPM.fph:'')].join('\n')}
 async function ordSvg(){const m0=MODE,db=$('dimBtn'),d0=db.getAttribute('aria-pressed');MODE='2d';db.setAttribute('aria-pressed','true');const el=$('v2d'),h0=el.hidden,st0=el.getAttribute('style')||'';el.hidden=false;el.style.cssText+=';position:fixed;left:-5000px;top:0;width:1100px;height:1500px';render2D();const sv=el.querySelector('svg');let svg=sv?sv.outerHTML:'';
   el.setAttribute('style',st0);MODE=m0;db.setAttribute('aria-pressed',d0);render2D();el.hidden=h0;if(!svg)return null;if(!/xmlns=/.test(svg))svg=svg.replace('<svg','<svg xmlns="http://www.w3.org/2000/svg"');return svgImg(svg)}
-async function ordPDF(view){const st=$(view?'cliSt':'ordSt'),c=ordCl(),o=ordCalc(false);if(!o.rows.length){st.textContent=ordMode(c)==='k'?'Пока сумма 0: добавьте модули и проверьте цены материалов в «Цены»':'Впишите цену за метр или доплаты — пока сумма 0';return}st.textContent='Готовлю PDF…';
+async function ordPDF(view){const BL=view==='blob',st=BL?{}:$(view?'cliSt':'ordSt'),c=ordCl(),o=ordCalc(false);let SH=[];if(!o.rows.length&&!BL){st.textContent=ordMode(c)==='k'?'Пока сумма 0: добавьте модули и проверьте цены материалов в «Цены»':'Впишите цену за метр или доплаты — пока сумма 0';return}st.textContent='Готовлю PDF…';
   try{const lib=await loadPDF(),D=expDoc();D.page();const cx=D.c,lg=document.querySelector('header .logo');
     if(lg&&lg.complete&&lg.naturalWidth){const h=110,w=h*lg.naturalWidth/lg.naturalHeight;cx.drawImage(lg,EXW-EXM-w,EXM,w,h)}
     D.text(KPM.firm||'mebelshaf — мебель на заказ',20,true);if(KPM.fph)D.text(KPM.fph,16,false,'#444');D.y+=24;
@@ -3627,16 +3636,16 @@ async function ordPDF(view){const st=$(view?'cliSt':'ordSt'),c=ordCl(),o=ordCalc
     D.text(ordSize(),17,true);D.text(`Фасады: ${P.fMat==='mdf'?'МДФ 18':facNM(P)} · корпус ЛДСП 16 мм`,15,false,'#444');D.y+=14;
     const im=await ordSvg();if(im){const W=EXW-2*EXM,Hm=Math.min(620,EXH-D.y-700),k=Math.min(W/im.width,Hm/im.height);D.need(im.height*k+20);D.c.drawImage(im,EXM,D.y,im.width*k,im.height*k);D.y+=im.height*k+24}
     const fm=v=>String(v).replace('.',',');
-    const sh=await ord3D();if(sh.length){const W=(EXW-2*EXM-20)/2;for(let i=0;i<sh.length;i+=2){const h=W*sh[i][0].height/sh[i][0].width;D.need(h+40);[sh[i],sh[i+1]].forEach((q,j)=>{if(!q)return;const x=EXM+j*(W+20);D.c.drawImage(q[0],x,D.y,W,h);D.c.font='14px '+D.F;D.c.fillStyle='#555';D.c.fillText(q[1],x,D.y+h+6)});D.y+=h+34}D.y+=10}
+    const sh=await ord3D();SH=sh;if(sh.length){const W=(EXW-2*EXM-20)/2;for(let i=0;i<sh.length;i+=2){const h=W*sh[i][0].height/sh[i][0].width;D.need(h+40);[sh[i],sh[i+1]].forEach((q,j)=>{if(!q)return;const x=EXM+j*(W+20);D.c.drawImage(q[0],x,D.y,W,h);D.c.font='14px '+D.F;D.c.fillStyle='#555';D.c.fillText(q[1],x,D.y+h+6)});D.y+=h+34}D.y+=10}
     const tl=(a,b,big)=>{D.need(40);const x=D.c;x.font=(big?'700 24px ':'18px ')+D.F;x.fillStyle='#111';x.fillText(a,EXM,D.y);const tw=x.measureText(b).width;x.fillText(b,EXW-EXM-tw,D.y);D.y+=big?40:30};
     if(o.k){o.rows.forEach(r=>tl(r[0],rub(r[4])));if(o.disc){tl('Скидка '+fm(o.dis)+'%','− '+rub(o.disc));tl('Итоговая цена со скидкой',rub(o.total),1)}else tl('Итого',rub(o.total),1);if(o.pre){tl('Предоплата',rub(o.pre));tl('Остаток к оплате',rub(o.rest))}}
     else{D.table([['Позиция',.46],['Кол-во',.16,'r'],['Цена',.19,'r'],['Сумма',.19,'r']],o.rows.map(r=>[r[0],r[2]==='м'?fm(r[1])+' м':'—',r[2]==='м'?rub(r[3])+'/м':'',rub(r[4])]),16);D.y+=16;
     if(o.disc){tl('Сумма',rub(o.sum));tl('Скидка '+fm(o.dis)+'%','− '+rub(o.disc))}tl('Итого',rub(o.total),1);if(o.pre){tl('Предоплата',rub(o.pre));tl('Остаток к оплате',rub(o.rest))}}
     const nm0=ordNames();if(nm0.length){D.y+=16;D.text('Материалы и фурнитура',20,true);D.y+=4;nm0.forEach(n=>D.wrap('• '+n,EXW-2*EXM,16).forEach(t=>D.text(t,16)))}
     D.y+=20;D.text('Расчёт предварительный: точная цена — после замера.',14,false,'#777');
-    if(view){$('cliBody').innerHTML=D.pages.map(cv=>`<img src="${cv.toDataURL('image/jpeg',.85)}" style="width:100%;border:1px solid var(--line);border-radius:6px;background:#fff">`).join('');st.textContent=D.pages.length+' стр.';return}
-    const pdf=new lib.jsPDF({unit:'mm',format:'a4'});D.pages.forEach((cv,i)=>{if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',.9),'JPEG',0,0,210,297)});
-    const nm=('КП Заказ '+ordNo()).replace(/[\\/:*?"<>|]/g,'')+'.pdf',r=await saveFile(nm,pdf.output('blob'));st.textContent=r==='ok'?'Готово: '+nm:'Отменено'}catch(e){st.textContent='Ошибка: '+(e&&e.message||e)}}
+    if(view===1){$('cliBody').innerHTML=D.pages.map(cv=>`<img src="${cv.toDataURL('image/jpeg',.85)}" style="width:100%;border:1px solid var(--line);border-radius:6px;background:#fff">`).join('');st.textContent=D.pages.length+' стр.';return}
+    const pdf=new lib.jsPDF({unit:'mm',format:'a4'});D.pages.forEach((cv,i)=>{if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',.9),'JPEG',0,0,210,297)});if(BL)return{pdf:pdf.output('blob'),sh:SH};
+    const nm=('КП Заказ '+ordNo()).replace(/[\\/:*?"<>|]/g,'')+'.pdf',r=await saveFile(nm,pdf.output('blob'));st.textContent=r==='ok'?'Готово: '+nm:'Отменено'}catch(e){if(BL)throw e;st.textContent='Ошибка: '+(e&&e.message||e)}}
 async function ordCopy(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}}
 $('cliRe').onclick=()=>ordPDF(1);$('cliSave').onclick=()=>ordPDF();
 // ---------- «Цена» сверху справа: себестоимость, цена после коэффициента, скидка, процент работнику, итог ----------
