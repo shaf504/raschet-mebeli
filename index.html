@@ -3409,7 +3409,10 @@ function ordSize(){const r=[],L=totW();let H=P.H;if(V&&V.mod){try{V.scene.update
 function ordNames(){const out=[],seen=new Set();try{renderMat();expBuyRows().rows.forEach(r=>{const n=String(r[0]).replace(/\s*\([^)]*\d+\s*(шт|м)[^)]*\)/gi,'').replace(/\s*\d+\s*шт(?=[\s)]|$)/gi,'').replace(/\s*\/\d+\s*$/,'').replace(/\s*\d+\*\d+ мм/g,'').replace(/\s*(длина |h )?\d+( × \d+){0,2} мм$/,'').replace(/\s+\d+$/,'').trim(),k=n.toLowerCase();if(n&&!/^(саморез|гвоздь|евровинт|конфирмат|заглушка|клипса|полкодержатель|шкант|стяжка|дюбель)|заглушка под евровинт/i.test(n)&&!seen.has(k)){seen.add(k);out.push(n)}})}catch(e){}return out}
 async function ord3D(){if(!V||!V.r||!window.THREE)return[];const r=V.r,v0=P.view,pr=r.getPixelRatio(),W=1200,H=820,out=[];
   try{r.setPixelRatio(1);r.setSize(W,H,false);V.cam.aspect=W/H;V.cam.fov=35;V.cam.setViewOffset(W,H,0,0,W,H);V.cam.updateProjectionMatrix();
-    for(const [k,n] of [['r34','Вид справа'],['l34','Вид слева'],['front','Вид спереди'],['top','Вид сверху']]){P.view=k;fit();r.render(V.scene,V.cam);const cv=document.createElement('canvas');cv.width=W;cv.height=H;cv.getContext('2d').drawImage(r.domElement,0,0);out.push([cv,n])}}catch(e){}
+    for(const [k,n] of [['r34','Вид справа'],['l34','Вид слева'],['front','Вид спереди'],['top','Вид сверху']]){P.view=k;fit();r.render(V.scene,V.cam);const cv=document.createElement('canvas');cv.width=W;cv.height=H;cv.getContext('2d').drawImage(r.domElement,0,0);out.push([cv,n])}
+    {const a0=V.ang,t0=V.target,s0=selMod;try{selMod=null;V.ang=V.target=Math.PI*100/180;applyOpen();   // фото с открытыми фасадами и ящиками
+      for(const [k,n] of [['r34','Открыто — вид справа'],['l34','Открыто — вид слева'],['front','Открыто — вид спереди']]){P.view=k;fit();r.render(V.scene,V.cam);const cv=document.createElement('canvas');cv.width=W;cv.height=H;cv.getContext('2d').drawImage(r.domElement,0,0);out.push([cv,n])}}
+      finally{selMod=s0;V.ang=a0;V.target=t0;applyOpen()}}}catch(e){}
   P.view=v0;r.setPixelRatio(pr);window.dispatchEvent(new Event('resize'));fit();V.dirty=true;return out}
 function ordText(){const c=ordCl(),o=ordCalc(false),fm=v=>String(v).replace('.',',');
   return[`Здравствуйте${c.name?', '+c.name:''}!`,'Расчёт кухни:',...o.rows.map(r=>r[2]==='м'?`• ${r[0]}: ${fm(r[1])} м × ${rub(r[3])} = ${rub(r[4])}`:`• ${r[0]}: ${rub(r[4])}`),
