@@ -96,6 +96,7 @@ td small{display:block;color:var(--muted);font-size:12px}
 .pmb span{background:none;-webkit-text-fill-color:currentColor}
 header .brand{flex:1}
 @media (max-width:759px){header{align-items:center}header .brand{order:3;flex:1 1 100%}}
+.prx{display:flex;flex-direction:column;gap:10px}.prc{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface)}.prc h5{margin:0 0 8px;font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.prc .chips{margin-bottom:6px}.prr{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:5px 0;font-size:14px}.prr span{color:var(--muted)}.prr b{font-variant-numeric:tabular-nums;white-space:nowrap}.prr+.prr{border-top:1px dashed var(--line)}.pr-strong span{color:inherit;font-weight:600}.pr-strong b{font-size:16px}.pr-neg b{color:#e07a6a}.prt{border-radius:12px;padding:10px 12px;border:1px solid var(--accent)}.pr-big b{font-size:18px}.pr-big span{color:inherit;font-weight:600}.pr-acc b{color:var(--accent)}
 .pmenu{position:fixed;left:0;top:0;z-index:60;min-width:200px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.3);padding:6px;display:flex;flex-direction:column;gap:2px}
 .pmenu[hidden]{display:none}
 .pmenu button{all:unset;cursor:pointer;padding:11px 12px;border-radius:8px;font-size:15px;color:var(--ink)}
@@ -387,7 +388,7 @@ textarea.pname{resize:vertical}
         <div class="fly-h"><b>Заказ<small>клиент, цена за метр, КП</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
         <div id="ordBody"></div></div>
       <div class="fly" id="fly-price" hidden>
-        <div class="fly-h"><b>Цена<small>себестоимость, скидка, работник</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Цена<small>расчёт → скидка → работник → итог</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
         <div id="priceBody"></div></div>
       <div class="fly" id="fly-cli" hidden style="width:min(560px,calc(100% - 74px))">
         <div class="fly-h"><b>Проект клиента<small>как выглядит PDF для клиента</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
@@ -3636,13 +3637,17 @@ $('cliRe').onclick=()=>ordPDF(1);$('cliSave').onclick=()=>ordPDF();
 // ---------- «Цена» сверху справа: себестоимость, цена после коэффициента, скидка, процент работнику, итог ----------
 const PRWP=[[0,'Без работника'],[15,'15%'],[16,'16%'],[18,'18%'],[20,'20%']];
 function renderPrice(){const el=$('priceBody');if(!el)return;const c=ordCl(),wp=ordN(c.wp);
-  el.innerHTML='<div class="mf"><div id="prSum1"></div>'+
-    `<div class="kp"><span><b>Скидка</b></span><input inputmode="decimal" data-pr="dis" placeholder="0" value="${ordEsc(c.dis||'')}"><em>%</em></div>`+
-    '<h4>Процент работнику</h4><div class="chips">'+PRWP.map(([v,n])=>`<button class="chip" data-pwp="${v}" aria-pressed="${wp===v}">${n}</button>`).join('')+'</div>'+
+  el.innerHTML='<div class="prx"><section class="prc"><h5>1. Расчёт цены</h5><div id="prSum1"></div></section>'+
+    `<section class="prc"><h5>2. Скидка клиенту</h5><div class="kp"><span><b>Скидка</b></span><input inputmode="decimal" data-pr="dis" placeholder="0" value="${ordEsc(c.dis||'')}"><em>%</em></div><div id="prSumD"></div></section>`+
+    '<section class="prc"><h5>3. Процент работнику</h5><div class="chips">'+PRWP.map(([v,n])=>`<button class="chip" data-pwp="${v}" aria-pressed="${wp===v}">${n}</button>`).join('')+'</div><div id="prSumW"></div></section>'+
     '<div id="prSum2"></div></div>';prSum()}
-function prSum(){const a=$('prSum1'),b=$('prSum2');if(!a)return;const c=ordCl(),o=ordCalc(true),wp=ordN(c.wp),w=Math.round(o.total*wp/100),ln=(x,y,big)=>`<div class="mtot"${big?'':' style="border-top:0;padding-top:0"'}><span>${x}</span><b>${y}</b></div>`;
-  a.innerHTML=ln('Себестоимость',rub(o.cost),1)+ln('Цена после коэффициента',rub(o.sum));
-  b.innerHTML=(o.disc?ln('Скидка '+String(o.dis).replace('.',',')+'%','− '+rub(o.disc),1)+ln('Цена со скидкой',rub(o.total)):ln('Скидка','—',1))+ln(wp?'Работнику '+wp+'%':'Работник',''+(wp?'− '+rub(w):'без работника'))+ln('Итог',rub(o.total-w),1)}
+function prSum(){const a=$('prSum1'),b=$('prSum2');if(!a)return;const c=ordCl(),o=ordCalc(true),wp=ordN(c.wp),w=Math.round(o.total*wp/100),
+  r=(x,y,cl)=>`<div class="prr${cl?' '+cl:''}"><span>${x}</span><b>${y}</b></div>`,k=o.k?'× '+String(o.k).replace('.',','):'—',net=o.total-w,pf=o.cost?net-o.cost:0;
+  a.innerHTML=r('Себестоимость',rub(o.cost))+r('Коэффициент',k)+r('Цена кухни',rub(o.sum),'pr-strong');
+  $('prSumD').innerHTML=o.disc?r('Сумма скидки','− '+rub(o.disc),'pr-neg')+r('Цена для клиента',rub(o.total),'pr-strong'):r('Цена для клиента',rub(o.total),'pr-strong');
+  $('prSumW').innerHTML=wp?r('Работнику '+wp+'% от цены клиента','− '+rub(w),'pr-neg'):r('Работник','не учитывается');
+  b.innerHTML='<div class="prt"><div class="prr pr-big"><span>Клиент платит</span><b>'+rub(o.total)+'</b></div><div class="prr pr-big pr-acc"><span>Остаётся вам</span><b>'+rub(net)+'</b></div>'+
+    (o.cost?'<div class="prr"><span>Чистая прибыль</span><b>'+rub(pf)+(net?' · '+Math.round(pf/net*100)+'%':'')+'</b></div>':'')+'</div>'}
 $('priceBody').addEventListener('input',e=>{const d=e.target.dataset;if(d.pr){ordCl()[d.pr]=e.target.value;prSum()}});
 $('priceBody').addEventListener('click',e=>{const b=e.target.closest('[data-pwp]');if(!b)return;ordCl().wp=+b.dataset.pwp;renderPrice()});
 $('ordBody').addEventListener('input',e=>{const i=e.target,d=i.dataset,c=ordCl();
