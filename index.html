@@ -385,7 +385,7 @@ textarea.pname{resize:vertical}
           <p class="note" id="prjSt"></p><h4>Мои проекты и заказы</h4><p class="note" id="prjWhere"></p><div class="chips" id="prjFlt"></div><div id="prjList"></div></div>
       </div>
       <div class="fly" id="fly-ord" hidden>
-        <div class="fly-h"><b>Заказ<small>клиент, цена за метр, КП</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Заказ<small>номер, цена, КП</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
         <div id="ordBody"></div></div>
       <div class="fly" id="fly-price" hidden>
         <div class="fly-h"><b>Цена<small>расчёт → скидка → работник → итог</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
@@ -3173,8 +3173,8 @@ async function prjList(){const col=await prjCol();
   if(col){PRJSRC='cloud';if(!PRJSUB)PRJSUB=col.orderBy('at','desc').limit(200).onSnapshot(s=>{PRJL=s.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.data);renderPrj()},()=>{PRJSRC='local';PRJSUB=null;prjLocalList()});return}
   prjLocalList()}
 function prjLocalList(){PRJSRC='local';const o=prjLocal();PRJL=Object.entries(o).map(([id,x])=>({id,...x})).sort((a,b)=>b.at-a.at);renderPrj()}
-async function prjSave(asNew){await pdirEnsure();if(asNew||!P.no)P.no=prjNextNo();const st=$('prjSt'),nm=($('prjName').value||'').trim()||'Проект '+new Date().toLocaleDateString('ru-RU');PRJ.name=nm;
-  const id=asNew||!PRJ.id?'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6):PRJ.id,body={name:nm,at:Date.now(),w:totW(),n:(P.row||[]).length+(P.rowL||[]).length,cl:P.cl?(()=>{const o=ordCalc(false);return{n:P.cl.name||'',ph:P.cl.ph||'',st:P.cl.st||'zamer',sum:o.total}})():null,data:JSON.stringify(P)};
+async function prjSave(asNew){await pdirEnsure();if(asNew||!P.no)P.no=prjNextNo();const st=$('prjSt'),nm0=($('prjName').value||'').trim(),nm=nm0&&!/^(Новый проект|Заказ \d+)$/.test(nm0)?nm0:'Заказ '+String(P.no).padStart(3,'0');$('prjName').value=nm;PRJ.name=nm;
+  const id=asNew||!PRJ.id?'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6):PRJ.id,body={name:nm,at:Date.now(),w:totW(),n:(P.row||[]).length+(P.rowL||[]).length,cl:P.cl?(()=>{const o=ordCalc(false);return{no:P.no,n:P.cl.name||'',ph:P.cl.ph||'',st:P.cl.st||'zamer',sum:o.total}})():null,data:JSON.stringify(P)};
   st.textContent='Сохраняю…';const col=await prjCol();
   try{if(col)await col.doc(id).set(body);else{const o=prjLocal();o[id]=body;if(!prjLocalSet(o))throw new Error('нет места в браузере — скачайте файл')}
     PRJ={id,name:nm,at:body.at};st.textContent=(col?'Сохранено в облако — откроется на любом вашем устройстве':'Сохранено на этом устройстве')+': №'+P.no+' «'+nm+'»';if(!col)prjLocalList();else renderPrj();await prjToDir()}
@@ -3185,7 +3185,7 @@ function renderPrj(){const el=$('prjList');if(!el)return;$('prjCur').textContent
   $('prjWhere').textContent=PRJSRC==='cloud'?'В облаке — ваши проекты на телефоне и компьютере (вход в Claude)':'На этом устройстве (облако недоступно — для другого устройства скачайте файл)';
   {const f=$('prjFlt');if(f)f.innerHTML=[['','Все'],...ORDST].map(([k,n])=>`<button class="chip" data-pf="${k}" aria-pressed="${PRJF===k}">${n}</button>`).join('')}
   const PL=PRJF?PRJL.filter(p=>p.cl&&p.cl.st===PRJF):PRJL;
-  el.innerHTML=PL.length?PL.map(p=>`<div class="prow${p.id===PRJ.id?' on':''}"><button class="pop" data-po="${p.id}"><b>${p.name.replace(/</g,'&lt;')}</b><small>${new Date(p.at).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}${p.w?' · '+p.w+' мм':''}${p.n?' · модулей '+p.n:''}</small>${p.cl?`<small><span class="ost">${(ORDST.find(x=>x[0]===p.cl.st)||['',''])[1]}</span>${ordEsc(p.cl.n)}${p.cl.ph?' · '+ordEsc(p.cl.ph):''}${p.cl.sum?' · '+rub(p.cl.sum):''}</small>`:''}</button>`+
+  el.innerHTML=PL.length?PL.map(p=>`<div class="prow${p.id===PRJ.id?' on':''}"><button class="pop" data-po="${p.id}"><b>${p.name.replace(/</g,'&lt;')}</b><small>${new Date(p.at).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}${p.w?' · '+p.w+' мм':''}${p.n?' · модулей '+p.n:''}</small>${p.cl?`<small><span class="ost">${(ORDST.find(x=>x[0]===p.cl.st)||['',''])[1]}</span>${p.cl.no?'№'+String(p.cl.no).padStart(3,'0'):ordEsc(p.cl.n)}${p.cl.ph?' · '+ordEsc(p.cl.ph):''}${p.cl.sum?' · '+rub(p.cl.sum):''}</small>`:''}</button>`+
     (PRJASK===p.id?`<button class="pdel y" data-pdy="${p.id}">Удалить</button><button class="pdel" data-pdn="1">Нет</button>`:`<button class="pdel" data-pd="${p.id}" aria-label="Удалить">✕</button>`)+'</div>').join(''):'<p class="note">'+(PRJF?'Нет заказов с этим статусом.':'Пока нет сохранённых проектов.')+'</p>'}
 $('fly-prj').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(d.pa==='new'){if(PRJASK!=='new'){PRJASK='new';b.textContent='Точно? Ещё раз';return}PRJASK=null;PRJ={id:null,name:'Новый проект',at:0};prjApply(null);$('prjSt').textContent='Новый проект';renderPrj()}
@@ -3197,20 +3197,22 @@ $('prjFile').addEventListener('change',e=>{const f=e.target.files&&e.target.file
     prjApply(data);PRJ={id:null,name:(j.name||f.name.replace(/\.json$/i,'')),at:0};$('prjSt').textContent='Открыт файл «'+f.name+'» — нажмите «Сохранить», чтобы он появился в списке';renderPrj()}catch(_){$('prjSt').textContent='Это не файл проекта кухни'}e.target.value=''};rd.readAsText(f)});
 $('prjName').addEventListener('input',e=>{PRJ.name=e.target.value});
 // ---------- папка «Проекты» на устройстве: при сохранении туда автоматически пишутся проект (JSON) и PDF, имена с номером 001, 002… ----------
-function prjNextNo(){let n=0;try{n=+localStorage.getItem('kprjno')||0}catch(e){}(PRJL||[]).forEach(p=>{try{const d=JSON.parse(p.data);if(+d.no>n)n=+d.no}catch(e){}});n++;try{localStorage.setItem('kprjno',String(n))}catch(e){}return n}
+function prjPeekNo(){let n=0;try{n=+localStorage.getItem('kprjno')||0}catch(e){}(PRJL||[]).forEach(p=>{if(p.cl&&+p.cl.no>n)n=+p.cl.no;try{const d=JSON.parse(p.data);if(+d.no>n)n=+d.no}catch(e){}});return n+1}
+function prjNextNo(){const n=prjPeekNo();try{localStorage.setItem('kprjno',String(n))}catch(e){}return n}
+const ordNo=()=>String(P.no||prjPeekNo()).padStart(3,'0');
 const PDIR={h:null,tried:false};
 function pdirDB(){return new Promise((ok,no)=>{const r=indexedDB.open('kprjdir',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 async function pdirEnsure(){try{if(!PDIR.h){const db=await pdirDB();PDIR.h=await new Promise(ok=>{const q=db.transaction('h').objectStore('h').get('dir');q.onsuccess=()=>ok(q.result||null);q.onerror=()=>ok(null)})}
     if(PDIR.h){const m={mode:'readwrite'};if(await PDIR.h.queryPermission(m)==='granted'||await PDIR.h.requestPermission(m)==='granted')return PDIR.h;PDIR.h=null}
     if(PDIR.tried||!window.showDirectoryPicker)return null;PDIR.tried=true;
-    const root=await window.showDirectoryPicker({id:'kprojects',mode:'readwrite'});const h=root.name==='Проекты'?root:await root.getDirectoryHandle('Проекты',{create:true});PDIR.h=h;
+    const root=await window.showDirectoryPicker({id:'kprojects',mode:'readwrite'});const h=root;PDIR.h=h;
     try{const db=await pdirDB();db.transaction('h','readwrite').objectStore('h').put(h,'dir')}catch(e){}return h}catch(e){PDIR.h=null;return null}}
-async function prjToDir(){const st=$('prjSt'),nm=(String(P.no||0).padStart(3,'0')+' '+(PRJ.name||'Проект')).replace(/[\\/:*?"<>|]/g,'').trim();
+async function prjToDir(){const st=$('prjSt'),nm=(/^Заказ \d+$/.test(PRJ.name||'')?PRJ.name:'Заказ '+String(P.no||0).padStart(3,'0')+(PRJ.name?' '+PRJ.name:'')).replace(/[\\/:*?"<>|]/g,'').trim();
   const json=JSON.stringify({kitchen:1,name:PRJ.name,data:P});let pdf=null;
   try{renderMat();const lib=await loadPDF(),D=expDoc();await expDrawings(D);const doc=new lib.jsPDF({unit:'mm',format:'a4'});D.pages.forEach((cv,i)=>{if(i)doc.addPage();doc.addImage(cv.toDataURL('image/jpeg',.88),'JPEG',0,0,210,297)});pdf=doc.output('blob')}catch(e){}
   const h=PDIR.h;let msg;
-  try{if(h){const wr=async(n,d)=>{const f=await h.getFileHandle(n,{create:true}),w=await f.createWritable();await w.write(d);await w.close()};await wr(nm+'.json',json);if(pdf)await wr(nm+'.pdf',pdf);msg='В папку «Проекты»: '+nm+'.json'+(pdf?' и .pdf':'')}
-    else{await saveFile(nm+'.json',json);if(pdf)await saveFile(nm+'.pdf',pdf);msg='Файлы: '+nm+'.json'+(pdf?' и .pdf':'')+' — в «Загрузки» (папку «Проекты» этот браузер создать не даёт)'}}
+  try{if(h){const wr=async(n,d)=>{const f=await h.getFileHandle(n,{create:true}),w=await f.createWritable();await w.write(d);await w.close()};await wr(nm+'.json',json);if(pdf)await wr(nm+'.pdf',pdf);msg='В папку «'+h.name+'»: '+nm+'.json'+(pdf?' и .pdf':'')}
+    else{await saveFile(nm+'.json',json);if(pdf)await saveFile(nm+'.pdf',pdf);msg='Файлы: '+nm+'.json'+(pdf?' и .pdf':'')+' — в окне сохранения выберите «Сохранить в Файлы» → папку «Заказы приложение»'}}
   catch(e){msg='Файлы не записались: '+(e&&e.message||e)}
   st.textContent+=' · '+msg;const ps=$('pmSt');if(ps)ps.textContent=msg}
 // кнопка «Проект» слева сверху: Новый проект, Открыть проект, Сохранить, Сохранить как, Импорт, Экспорт
@@ -3568,8 +3570,8 @@ function ordCalc(withCost){const c=ordCl(),au=ordAuto(),rows=[];let sum=0,base=0
   const dis=Math.min(100,ordN(c.dis)),disc=Math.round(sum*dis/100),total=sum-disc,pre=Math.round(ordN(c.pre)),rest=total-pre,o={au,rows,sum,dis,disc,total,pre,rest,base,k:kk};
   if(withCost){o.mat=Math.round(ordMatCost());o.work=Math.round(ordN(c.cst));o.cost=o.mat+o.work;o.profit=total-o.cost;o.pct=total>0?Math.round(o.profit/total*100):0}return o}
 function renderOrd(){const el=$('ordBody');if(!el)return;const c=ordCl(),au=ordAuto(),f=v=>String(v).replace('.',',');
-  let h='<div class="mf"><h4>Клиент</h4>'+
-    `<input class="pname" data-oc="name" placeholder="Имя клиента" value="${ordEsc(c.name)}"><input class="pname" data-oc="ph" inputmode="tel" placeholder="Телефон, например +7 900 000-00-00" value="${ordEsc(c.ph)}"><input class="pname" data-oc="addr" placeholder="Адрес" value="${ordEsc(c.addr)}">`+
+  let h='<div class="mf"><h4>Заказ № '+ordNo()+'</h4>'+
+    `<input class="pname" data-oc="ph" inputmode="tel" placeholder="Телефон, например +7 900 000-00-00" value="${ordEsc(c.ph)}"><input class="pname" data-oc="addr" placeholder="Адрес" value="${ordEsc(c.addr)}">`+
     '<div class="chips">'+ORDST.map(([k,n])=>`<button class="chip" data-ost="${k}" aria-pressed="${c.st===k}">${n}</button>`).join('')+'</div>'+
     `<textarea class="pname" data-oc="note" rows="2" placeholder="Заметка (видна только вам)">${ordEsc(c.note)}</textarea>`+
     '<h4>Как считать цену</h4><div class="chips">'+[['k','По коэффициенту'],['m','За погонный метр']].map(([k,n])=>`<button class="chip" data-omode="${k}" aria-pressed="${ordMode(c)===k}">${n}</button>`).join('')+'</div>'+
@@ -3618,7 +3620,7 @@ async function ordPDF(view){const st=$(view?'cliSt':'ordSt'),c=ordCl(),o=ordCalc
     if(lg&&lg.complete&&lg.naturalWidth){const h=110,w=h*lg.naturalWidth/lg.naturalHeight;cx.drawImage(lg,EXW-EXM-w,EXM,w,h)}
     D.text(KPM.firm||'mebelshaf — мебель на заказ',20,true);if(KPM.fph)D.text(KPM.fph,16,false,'#444');D.y+=24;
     D.text('Коммерческое предложение',32,true);D.text('Кухня на заказ · '+new Date().toLocaleDateString('ru-RU'),16,false,'#555');D.y+=10;
-    if(c.name)D.text('Клиент: '+c.name,17);if(c.ph)D.text('Телефон: '+c.ph,17);if(c.addr)D.text('Адрес: '+c.addr,17);
+    D.text('Заказ № '+ordNo(),17,true);if(c.ph)D.text('Телефон: '+c.ph,17);if(c.addr)D.text('Адрес: '+c.addr,17);
     D.text(ordSize(),17,true);D.text(`Фасады: ${P.fMat==='mdf'?'МДФ 18':facNM(P)} · корпус ЛДСП 16 мм`,15,false,'#444');D.y+=14;
     const im=await ordSvg();if(im){const W=EXW-2*EXM,Hm=Math.min(620,EXH-D.y-700),k=Math.min(W/im.width,Hm/im.height);D.need(im.height*k+20);D.c.drawImage(im,EXM,D.y,im.width*k,im.height*k);D.y+=im.height*k+24}
     const fm=v=>String(v).replace('.',',');
@@ -3631,7 +3633,7 @@ async function ordPDF(view){const st=$(view?'cliSt':'ordSt'),c=ordCl(),o=ordCalc
     D.y+=20;D.text('Расчёт предварительный: точная цена — после замера.',14,false,'#777');
     if(view){$('cliBody').innerHTML=D.pages.map(cv=>`<img src="${cv.toDataURL('image/jpeg',.85)}" style="width:100%;border:1px solid var(--line);border-radius:6px;background:#fff">`).join('');st.textContent=D.pages.length+' стр.';return}
     const pdf=new lib.jsPDF({unit:'mm',format:'a4'});D.pages.forEach((cv,i)=>{if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',.9),'JPEG',0,0,210,297)});
-    const nm='КП '+(c.name||'кухня').replace(/[\\/:*?"<>|]/g,'')+'.pdf',r=await saveFile(nm,pdf.output('blob'));st.textContent=r==='ok'?'Готово: '+nm:'Отменено'}catch(e){st.textContent='Ошибка: '+(e&&e.message||e)}}
+    const nm=('КП Заказ '+ordNo()).replace(/[\\/:*?"<>|]/g,'')+'.pdf',r=await saveFile(nm,pdf.output('blob'));st.textContent=r==='ok'?'Готово: '+nm:'Отменено'}catch(e){st.textContent='Ошибка: '+(e&&e.message||e)}}
 async function ordCopy(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();return ok}}
 $('cliRe').onclick=()=>ordPDF(1);$('cliSave').onclick=()=>ordPDF();
 // ---------- «Цена» сверху справа: себестоимость, цена после коэффициента, скидка, процент работнику, итог ----------
