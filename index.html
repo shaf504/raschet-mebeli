@@ -3221,10 +3221,10 @@ async function zipBlob(files){const enc=new TextEncoder(),parts=[],cen=[];let of
   return new Blob([...parts,...cen,e],{type:'application/zip'})}
 async function prjToDir(){const st=$('prjSt'),fd=('Заказ '+String(P.no||0).padStart(3,'0')).replace(/[\\/:*?"<>|]/g,'');
   const files=[[fd+'.json',new Blob([JSON.stringify({kitchen:1,name:PRJ.name,data:P})],{type:'application/json'})]];
-  try{renderMat();const r=await ordPDF('blob');if(r){files.push([fd+'.pdf',r.pdf]);let i=0;for(const [cv,n] of r.sh){const b=await new Promise(ok=>cv.toBlob(ok,'image/jpeg',.9));if(b)files.push([String(++i).padStart(2,'0')+' '+n+'.jpg',b])}}}catch(e){}
+  try{renderMat();const r=await ordPDF('blob');if(r)files.push([fd+'.pdf',r.pdf])}catch(e){}
   const h=PDIR.h;let msg;
-  try{if(h){const sub=await h.getDirectoryHandle(fd,{create:true});for(const [n,b] of files){const f=await sub.getFileHandle(n,{create:true}),w=await f.createWritable();await w.write(b);await w.close()}msg='Папка «'+fd+'» в «'+h.name+'»: проект, PDF и '+(files.length-2)+' фото'}
-    else{const r=await saveFile(fd+'.zip',await zipBlob(files.map(([n,b])=>[fd+'/'+n,b])));msg=r==='ok'?fd+'.zip — сохраните в «Заказы приложение», нажмите на архив: появится папка «'+fd+'» (проект, PDF, фото)':'Сохранение отменено'}}
+  try{if(h){for(const [n,b] of files){const f=await h.getFileHandle(n,{create:true}),w=await f.createWritable();await w.write(b);await w.close()}msg='В «'+h.name+'»: '+files.map(x=>x[0]).join(' и ')}
+    else{let ok=0;for(const [n,b] of files)if(await saveFile(n,b)==='ok')ok++;msg=ok?'Сохранено: '+files.map(x=>x[0]).join(' и ')+' — положите в «Заказы приложение»':'Сохранение отменено'}}
   catch(e){msg='Файлы не записались: '+(e&&e.message||e)}
   st.textContent+=' · '+msg;const ps=$('pmSt');if(ps)ps.textContent=msg}
 // кнопка «Проект» слева сверху: Новый проект, Открыть проект, Сохранить, Сохранить как, Импорт, Экспорт
