@@ -3173,7 +3173,7 @@ async function prjList(){const col=await prjCol();
   if(col){PRJSRC='cloud';if(!PRJSUB)PRJSUB=col.orderBy('at','desc').limit(200).onSnapshot(s=>{PRJL=s.docs.map(d=>({id:d.id,...d.data()})).filter(x=>x.data);renderPrj()},()=>{PRJSRC='local';PRJSUB=null;prjLocalList()});return}
   prjLocalList()}
 function prjLocalList(){PRJSRC='local';const o=prjLocal();PRJL=Object.entries(o).map(([id,x])=>({id,...x})).sort((a,b)=>b.at-a.at);renderPrj()}
-async function prjSave(asNew){await pdirEnsure();if(asNew||!P.no)P.no=prjNextNo();const st=$('prjSt'),nm0=($('prjName').value||'').trim(),nm=nm0&&!/^(Новый проект|Заказ \d+)$/.test(nm0)?nm0:'Заказ '+String(P.no).padStart(3,'0');$('prjName').value=nm;PRJ.name=nm;
+async function prjSave(asNew){await pdirEnsure();if(asNew||!P.no)P.no=await prjNextNo();const st=$('prjSt'),nm0=($('prjName').value||'').trim(),nm=nm0&&!/^(Новый проект|Заказ \d+)$/.test(nm0)?nm0:'Заказ '+String(P.no).padStart(3,'0');$('prjName').value=nm;PRJ.name=nm;
   const id=asNew||!PRJ.id?'p'+Date.now().toString(36)+Math.random().toString(36).slice(2,6):PRJ.id,body={name:nm,at:Date.now(),w:totW(),n:(P.row||[]).length+(P.rowL||[]).length,cl:P.cl?(()=>{const o=ordCalc(false);return{no:P.no,n:P.cl.name||'',ph:P.cl.ph||'',st:P.cl.st||'zamer',sum:o.total}})():null,data:JSON.stringify(P)};
   st.textContent='Сохраняю…';const col=await prjCol();
   try{if(col)await col.doc(id).set(body);else{const o=prjLocal();o[id]=body;if(!prjLocalSet(o))throw new Error('нет места в браузере — скачайте файл')}
@@ -3197,8 +3197,11 @@ $('prjFile').addEventListener('change',e=>{const f=e.target.files&&e.target.file
     prjApply(data);PRJ={id:null,name:(j.name||f.name.replace(/\.json$/i,'')),at:0};$('prjSt').textContent='Открыт файл «'+f.name+'» — нажмите «Сохранить», чтобы он появился в списке';renderPrj()}catch(_){$('prjSt').textContent='Это не файл проекта кухни'}e.target.value=''};rd.readAsText(f)});
 $('prjName').addEventListener('input',e=>{PRJ.name=e.target.value});
 // ---------- папка «Проекты» на устройстве: при сохранении туда автоматически пишутся проект (JSON) и PDF, имена с номером 001, 002… ----------
-function prjPeekNo(){let n=0;try{n=+localStorage.getItem('kprjno')||0}catch(e){}(PRJL||[]).forEach(p=>{if(p.cl&&+p.cl.no>n)n=+p.cl.no;try{const d=JSON.parse(p.data);if(+d.no>n)n=+d.no}catch(e){}});return n+1}
-function prjNextNo(){const n=prjPeekNo();try{localStorage.setItem('kprjno',String(n))}catch(e){}return n}
+let CLNO=0;   // общий счётчик заказов в облаке — один на все устройства
+async function clNoLoad(){const col=await prjCol();if(!col)return 0;try{const d=await col.doc('ordno').get();CLNO=d.exists?+d.data().n||0:0}catch(e){}return CLNO}
+function prjPeekNo(){let n=Math.max(0,CLNO);try{n=Math.max(n,+localStorage.getItem('kprjno')||0)}catch(e){}(PRJL||[]).forEach(p=>{if(p.cl&&+p.cl.no>n)n=+p.cl.no;try{const d=JSON.parse(p.data);if(+d.no>n)n=+d.no}catch(e){}});return n+1}
+async function prjNextNo(){await clNoLoad();const n=prjPeekNo();try{localStorage.setItem('kprjno',String(n))}catch(e){}const col=await prjCol();if(col)try{await col.doc('ordno').set({n,at:Date.now()});CLNO=n}catch(e){}return n}
+clNoLoad().then(()=>{prjList();if(!$('fly-ord').hidden)renderOrd()});
 const ordNo=()=>String(P.no||prjPeekNo()).padStart(3,'0');
 const PDIR={h:null,tried:false};
 function pdirDB(){return new Promise((ok,no)=>{const r=indexedDB.open('kprjdir',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
