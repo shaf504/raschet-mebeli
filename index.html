@@ -2189,24 +2189,36 @@ function buildFacade0(par,fw,fh,y0,ft){
   const tone=dz=>dz<0?Math.max(.74,1+dz*.04):Math.min(1.06,1+dz*.02);
   const box=(x0,ya,x1,yb,z1,dz=0)=>{const b=pb(par,x0,y0+ya,0,x1,y0+yb,z1,sh(tone(dz)),false);b.add(new THREE.LineSegments(new THREE.EdgesGeometry(b.geometry),M.fedge))};
   if(ftp!=='glass')box(0,0,fw,fh,back);
+  // скосы на стенках фрезеровки (как от фрезы): у них свой наклон, свет и тень ложатся естественно — сверху/слева светлее, снизу/справа темнее
+  const SL=[],sq=(A,B,C,D)=>{[[A,B,C],[A,C,D]].forEach(([p,q,r])=>{const ux=q[0]-p[0],uy=q[1]-p[1],vx=r[0]-p[0],vy=r[1]-p[1];if(ux*vy-uy*vx<0)[q,r]=[r,q];SL.push(...p,...q,...r)})};
+  const ring=(o,i,zo,zi,inner=[0,0,fw,fh])=>{const[x0,y_0,x1,y_1]=inner,O=[x0+o,y_0+o,x1-o,y_1-o],I=[x0+i,y_0+i,x1-i,y_1-i];if(I[2]-I[0]<1||I[3]-I[1]<1)return;
+    sq([O[0],O[1],zo],[O[2],O[1],zo],[I[2],I[1],zi],[I[0],I[1],zi]);sq([O[2],O[1],zo],[O[2],O[3],zo],[I[2],I[3],zi],[I[2],I[1],zi]);
+    sq([O[2],O[3],zo],[O[0],O[3],zo],[I[0],I[3],zi],[I[2],I[3],zi]);sq([O[0],O[3],zo],[O[0],O[1],zo],[I[0],I[1],zi],[I[0],I[3],zi])};
+  {const lv=segs.map(([a,b,dz])=>[a,b,dz]),bl=segs[segs.length-1][1];if(ftp!=='glass')lv.push([bl,1e9,ftp==='lines'||ftp==='arch'?0:cz]);
+    for(let j=1;j<lv.length;j++){const i=lv[j][0],pz=lv[j-1][2],nz=lv[j][2],d=nz-pz;if(!d||(ftp==='arch'&&j===lv.length-1))continue;
+      const room=d<0?Math.min(lv[j][1],Math.min(fw,fh)/2)-i:i-lv[j-1][0],w=Math.min(Math.max(2,Math.abs(d)*1.6+1),room*.6);if(w<.4)continue;
+      d<0?ring(i,i+w,ft+pz+.02,ft+nz+.02):ring(i-w,i,ft+pz+.02,ft+nz+.02)}}
+  const slopes=()=>{if(!SL.length)return;const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(SL,3));g.computeVertexNormals();
+    const m=new THREE.Mesh(g,sh(1));m.scale.setScalar(MM);m.position.set(0,y0*MM,0);m.receiveShadow=true;par.add(m)};
   segs.forEach(([a,b,dz])=>{const z=ft+dz;
     box(a,fh-b,fw-a,fh-a,z,dz);box(a,a,fw-a,b,z,dz);box(a,b,b,fh-b,z,dz);box(fw-b,b,fw-a,fh-b,z,dz)});
   const b=segs[segs.length-1][1];
   if(ftp==='lines'){const h=fo.dir==='h',a0=b,a1=h?fh-b:fw-b,G=frezLines(fo,a0,a1);let p=a0;   // полотно, разрезанное пазами глубиной 4 мм
     const st=(u0,u1,dz)=>{if(u1-u0<.5)return;h?box(b,u0,fw-b,u1,ft+dz,dz):box(u0,b,u1,fh-b,ft+dz,dz)};
-    G.forEach(([g0,g1])=>{st(p,g0,0);st(g0,g1,-4);p=g1});st(p,a1,0);return}
+    G.forEach(([g0,g1])=>{st(p,g0,0);st(g0,g1,-4);p=g1;const w=Math.min(1.4,(g1-g0)*.3),zo=ft+.02,zi=ft-4+.02,v0=b,v1=(h?fw:fh)-b;
+      const Q=(u0,u1,z0,z1)=>h?sq([v0,u0,z0],[v1,u0,z0],[v1,u1,z1],[v0,u1,z1]):sq([u0,v0,z0],[u0,v1,z0],[u1,v1,z1],[u1,v0,z1]);Q(g0,g0+w,zo,zi);Q(g1-w,g1,zi,zo)});st(p,a1,0);slopes();return}
   if(ftp==='arch'){const m=fo.m,rx=(fw-2*m)/2,ry=Math.min(rx*.55,(fh-2*m)*.3),yA=fh-m-ry;   // рамка с аркой: полотно с вырезом, филёнка утоплена на 5 мм
     const sp=new THREE.Shape();sp.moveTo(b,b);sp.lineTo(fw-b,b);sp.lineTo(fw-b,fh-b);sp.lineTo(b,fh-b);sp.lineTo(b,b);
     const hl=new THREE.Path();hl.moveTo(m,m);hl.lineTo(fw-m,m);hl.lineTo(fw-m,yA);hl.absellipse(fw/2,yA,rx,ry,0,Math.PI,false);hl.lineTo(m,m);sp.holes.push(hl);
     const geo=new THREE.ExtrudeGeometry(sp,{depth:ft,bevelEnabled:false,curveSegments:28}),mf=new THREE.Mesh(geo,sh(1));mf.scale.setScalar(MM);mf.position.set(0,y0*MM,0);mf.castShadow=mf.receiveShadow=true;
     mf.add(new THREE.LineSegments(new THREE.EdgesGeometry(geo,30),M.fedge));par.add(mf);
-    box(m-2,m-2,fw-m+2,fh-m+2,ft-5,-5);return}
+    box(m-2,m-2,fw-m+2,fh-m+2,ft-5,-5);slopes();return}
   if(ftp==='glass'){const gM=V.vitM||(V.vitM=new THREE.MeshPhysicalMaterial({color:0xE4EFEE,roughness:.05,transparent:true,opacity:.28,depthWrite:false,clearcoat:.6}));   // стекло 4 мм в пазу рамки
     const gl=pb(par,b-6,y0+b-6,ft/2-2,fw-b+6,y0+fh-b+6,ft/2+2,gM,false);gl.castShadow=false;gl.renderOrder=2;
     if(fo.grid){const w=14,n=Math.max(1,Math.round((fh-2*b)/220)-1);   // решётка-шпроссы
       box(fw/2-w/2,b,fw/2+w/2,fh-b,ft-2,-2);for(let i=1;i<=n;i++){const y=b+(fh-2*b)*i/(n+1);box(b,y-w/2,fw-b,y+w/2,ft-2,-2)}}
-    return}
-  box(b,b,fw-b,fh-b,ft+cz,cz);
+    slopes();return}
+  box(b,b,fw-b,fh-b,ft+cz,cz);slopes();
 }
 // модуль с ящиками: корпус как у шкафа, ящики на направляющих полного выдвижения
 function buildDrawers(par,x0,W,o,id){
@@ -2584,7 +2596,7 @@ function mkMats(){   // материалы фасада и ручки для т�
   const fc=new THREE.Color(P.fMat==='mdf'?FCOL[P.fColor][1]:(fCatX()?fCatX().c:'#DCD8D0')).convertSRGBToLinear();
   const peel=V.peel||(V.peel=noiseTex('#808080',50,256,3));
   M.fac=P.fMat==='mdf'
-    ?new THREE.MeshPhysicalMaterial(P.fColor==='ash'?{map:(V.ash||(V.ash=ashTex())),roughness:.5,clearcoat:.35,clearcoatRoughness:.4}:{color:fc,roughness:.42,clearcoat:.3,clearcoatRoughness:.3,bumpMap:peel,bumpScale:.00025})
+    ?new THREE.MeshPhysicalMaterial(P.fColor==='ash'?{map:(V.ash||(V.ash=ashTex())),roughness:.5,clearcoat:.35,clearcoatRoughness:.4}:{color:fc,roughness:.42,clearcoat:.3,clearcoatRoughness:.3,bumpMap:peel,bumpScale:.00025,envMapIntensity:.6})
     :(fCatX()?new THREE.MeshStandardMaterial({map:catTex(fCatX().u),roughness:.55}):new THREE.MeshStandardMaterial({color:fc,roughness:.55,bumpMap:peel,bumpScale:.0002}));
   const dark=P.fColor==='grey'||P.fColor==='ash';
   M.fedge=new THREE.LineBasicMaterial({color:dark?new THREE.Color(fc).multiplyScalar(.45):new THREE.Color(fc).multiplyScalar(.6),transparent:true,opacity:dark?.75:.55});
@@ -2893,7 +2905,7 @@ function build(){HPROF={};if(V){const c=new THREE.Color((LEDK[ledS().K]||LEDK[40
   dims.visible=$('dimBtn').getAttribute('aria-pressed')==='true';
   // свет и тени под размер модуля: ключ сверху-слева-спереди, плотная карта теней
   const cx=0,cy=H*MM*.5,cz=(D-P.B)*MM*.5,R=Math.max(Wt,H,D+P.B)*MM*.75+.15;
-  V.key.position.set(cx-.9,cy+1.9,cz+1.5);V.key.target.position.set(cx,cy,cz);
+  V.key.position.set(cx-1.4,cy+2.1,cz+1.05);V.key.target.position.set(cx,cy,cz);
   Object.assign(V.key.shadow.camera,{left:-R,right:R,top:R,bottom:-R,near:.3,far:7});V.key.shadow.camera.updateProjectionMatrix();
   V.blob.scale.set((Wt+260)*MM,(D+P.B+220)*MM,1);V.blob.position.set(0,.0008,(D-P.B)*MM*.5+.03);
   (V.hds||[]).forEach(o=>o.visible=dims.visible);if(totW()<=0)clearGroup(dims);V.blob.visible=totW()>0;
@@ -2906,7 +2918,7 @@ function build(){HPROF={};if(V){const c=new THREE.Color((LEDK[ledS().K]||LEDK[40
   {const um=selMod&&selMod.startsWith('u_')?selMod.slice(2):null;if(selMod&&!selMod.startsWith('a_')&&(um?(!(P.up&&(V.rg[um]||V.rgLU[um]))||!!V.pens[um]):(!V.rg[selMod]&&!V.rgL[selMod]&&!(V.rgI&&V.rgI[selMod]))))selMod=null;}
   // угол справа: весь гарнитур и размеры зеркально, боковая стена — справа
   {const mir=MIR();mod.scale.x=dims.scale.x=mir?-1:1;mod.position.x=dims.position.x=mir?-sh:sh;V.lwall.rotation.y=mir?-Math.PI/2:Math.PI/2;if(mir)V.lwall.position.x=-V.lwall.position.x;
-   V.key.position.x=mir?.9:-.9;mod.updateMatrixWorld(true);dims.updateMatrixWorld(true)}
+   V.key.position.x=mir?1.4:-1.4;mod.updateMatrixWorld(true);dims.updateMatrixWorld(true)}
   {const ox=0,z0=-P.B*MM,z1=(D+FT()+70)*MM;
    V.pick=Object.entries(V.rg).map(([m,[a,b]])=>[m,new THREE.Box3(new THREE.Vector3(a*MM+ox,0,z0),new THREE.Vector3(b*MM+ox,((V.pens[m]?V.pens[m].top:H)+15)*MM,z1))]);
    if(P.up)Object.entries(V.rg).forEach(([m,[a,b]])=>{if(V.pens[m]){const pt=V.pens[m].top;if(P.ant)V.pick.push(['a_'+m,new THREE.Box3(new THREE.Vector3(a*MM+ox,pt*MM,z0),new THREE.Vector3(b*MM+ox,(pt+AH+15)*MM,z1))]);return}V.pick.push(['u_'+m,new THREE.Box3(new THREE.Vector3(a*MM+ox,(H+WPH)*MM,z0),new THREE.Vector3(b*MM+ox,(H+WPH+P.UH)*MM,(-P.B+P.UD+FT()+70)*MM))]);
