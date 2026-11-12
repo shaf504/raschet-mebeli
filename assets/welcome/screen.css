@@ -1,0 +1,165 @@
+body.welcome-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: #121311;
+  color: #f6f2e8;
+  font-family: "Onest", system-ui, -apple-system, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.welcome__layout {
+  display: grid;
+  grid-template-rows: auto minmax(170px, 1fr) auto;
+  width: min(100%, 480px);
+  min-height: 100%;
+  min-height: 100dvh;
+  margin-inline: auto;
+  padding: max(64px, calc(env(safe-area-inset-top, 0px) + 20px))
+    max(26px, env(safe-area-inset-right, 0px))
+    max(42px, calc(env(safe-area-inset-bottom, 0px) + 16px))
+    max(26px, env(safe-area-inset-left, 0px));
+}
+
+.welcome__brand {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  gap: 11px;
+  color: #f6f2e8;
+  font-size: 15px;
+  font-weight: 750;
+  letter-spacing: .15em;
+  line-height: 1;
+}
+
+.welcome__brand img {
+  width: 32px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.welcome__visual {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  margin-inline: -24px;
+}
+
+.welcome__visual img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  -webkit-mask-image: radial-gradient(ellipse 66% 63% at 50% 51%, black 49%, transparent 91%);
+  mask-image: radial-gradient(ellipse 66% 63% at 50% 51%, black 49%, transparent 91%);
+}
+
+.welcome__copy {
+  padding-top: 10px;
+}
+
+.welcome h1 {
+  margin: 0;
+  color: inherit;
+  font: 750 clamp(46px, 13vw, 65px)/.99 "Onest", system-ui, -apple-system, sans-serif;
+  letter-spacing: -.065em;
+}
+
+.welcome p {
+  margin: 16px 0 24px;
+  color: #c6c1b4;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.welcome__start {
+  display: grid;
+  grid-template-columns: 24px 1fr 24px;
+  align-items: center;
+  min-height: 58px;
+  width: 100%;
+  padding: 12px 17px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: #f4bf45;
+  color: #16130c;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.welcome__start span {
+  grid-column: 2;
+}
+
+.welcome__start svg {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.welcome__start:hover {
+  background: #ffd06b;
+}
+
+.welcome__start:active {
+  background: #e7af34;
+}
+
+.welcome__start:focus-visible {
+  outline-color: #f6f2e8;
+  outline-offset: 4px;
+}
+
+@media (max-height: 680px) and (orientation: portrait) {
+  .welcome__layout {
+    padding-block: max(28px, env(safe-area-inset-top, 0px))
+      max(24px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .welcome h1 {
+    font-size: clamp(38px, 11vw, 52px);
+  }
+
+  .welcome p {
+    margin-block: 12px 18px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 620px) {
+  .welcome__layout {
+    width: min(100%, 980px);
+    grid-template-columns: minmax(240px, 1fr) minmax(260px, 1.2fr);
+    grid-template-rows: auto 1fr;
+    gap: 12px 36px;
+    padding-block: max(28px, env(safe-area-inset-top, 0px))
+      max(28px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .welcome__visual {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    min-height: 240px;
+  }
+
+  .welcome__copy {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center;
+  }
+
+  .welcome h1 {
+    font-size: clamp(44px, 6.7vw, 72px);
+  }
+}
