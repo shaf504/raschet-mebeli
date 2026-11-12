@@ -502,7 +502,20 @@ const FREZ={
   // арка и витрины
   arka:['Арка',[[0,3,-1]],0,'arch',{m:70}],
   vitr:['Витрина под стекло',[[0,3,-1],[3,62,0],[62,68,-4]],0,'glass',{}],
-  vitr_g:['Витрина с решёткой',[[0,3,-1],[3,62,0],[62,68,-4]],0,'glass',{grid:1}]
+  vitr_g:['Витрина с решёткой',[[0,3,-1],[3,62,0],[62,68,-4]],0,'glass',{grid:1}],
+  // фрезеровки ТМФ (tmf70.ru), упрощённо по рисунку
+  tmf33:['ТМФ Рис. 33',[[0,2,-1]],0,'lines',{dir:'v',pitch:30,g:12}],
+  tmf30:['ТМФ Рис. 30',[[0,2,-1]],0,'lines',{dir:'h',pitch:22,g:8}],
+  tmf34:['ТМФ Рис. 34',[[0,3,-1],[3,55,0],[55,62,-4],[62,72,-2]],0,'lines',{dir:'v',pitch:22,g:8}],
+  tmf394:['ТМФ Рис. 394',[[0,3,-1],[3,20,0],[20,40,-1.5],[40,60,-3],[60,80,-4.5],[80,90,-6]],-6],
+  tmf355_1:['ТМФ Рис. 355-1',[[0,3,-1],[3,40,0],[40,45,-3],[45,50,-1]],-1],
+  tmf348_1:['ТМФ Рис. 348-1',[[0,3,-1],[3,20,0],[20,26,-3],[26,32,-1],[32,38,-3],[38,44,-1.5]],-1.5],
+  tmf345_2:['ТМФ Рис. 345-2',[[0,3,-1],[3,15,0],[15,20,-3],[20,45,-1],[45,50,-4],[50,58,-2]],-2],
+  tmf345_1:['ТМФ Рис. 345-1',[[0,6,-2],[6,40,0],[40,44,-3]],0],
+  tmf335:['ТМФ Рис. 335',[[0,3,-1],[3,50,0],[50,56,-4],[56,64,-2],[64,110,-2],[110,115,-5]],-2],
+  tmf311:['ТМФ Рис. 311',[[0,3,-1],[3,38,0],[38,44,-4]],0,'lines',{dir:'v',pitch:14,g:6}],
+  tmf310:['ТМФ Рис. 310',[[0,4,-1],[4,40,0],[40,46,-3],[46,55,-1],[55,59,-4]],-1],
+  tmf309:['ТМФ Рис. 309',[[0,2,-1],[2,25,0],[25,29,-3]],0]
 };
 // у маленьких фасадов (ящики) арка и витрина — простой рамкой
 const frezT=(k,fw,fh)=>{const f=FREZ[k]||FREZ.ramka,t=f[3];return (t==='arch'||t==='glass')&&(fh<350||fw<250)?['',FREZ.ramka[1],FREZ.ramka[2]]:f};
@@ -1217,7 +1230,7 @@ function frezSVG(k,col){
   let s=`<svg viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" rx="1" fill="${col}"/>`;
   segs.forEach(([a,,dz])=>{const i=a/10;s+=`<rect x="${i}" y="${i}" width="${W-2*i}" height="${H-2*i}" fill="${col}" stroke="rgba(0,0,0,.28)" stroke-width=".35"/><rect x="${i}" y="${i}" width="${W-2*i}" height="${H-2*i}" fill="${sh(dz)}"/>`});
   const b=segs[segs.length-1][1]/10,tp=FREZ[k][3],o=FREZ[k][4]||{};
-  if(tp==='lines'){const h=o.dir==='h',G=frezLines(o.pitch?{...o,pitch:o.pitch}:{...o,step:o.step},0,(h?H:W)*10);G.forEach(([g0,g1])=>{const p=g0/10,q=(g1-g0)/10;s+=h?`<rect x="1" y="${p}" width="${W-2}" height="${q}" fill="rgba(0,0,0,.22)"/>`:`<rect x="${p}" y="1" width="${q}" height="${H-2}" fill="rgba(0,0,0,.22)"/>`});return s+'</svg>'}
+  if(tp==='lines'){const h=o.dir==='h',bb=Math.max(1,b),G=frezLines(o.pitch?{...o,pitch:o.pitch}:{...o,step:o.step},bb*10,((h?H:W)-bb)*10);G.forEach(([g0,g1])=>{const p=g0/10,q=(g1-g0)/10;s+=h?`<rect x="${bb}" y="${p}" width="${W-2*bb}" height="${q}" fill="rgba(0,0,0,.22)"/>`:`<rect x="${p}" y="${bb}" width="${q}" height="${H-2*bb}" fill="rgba(0,0,0,.22)"/>`});return s+'</svg>'}
   if(tp==='arch'){const m=7,rx=(W-2*m)/2,ry=rx*.55;s+=`<path d="M${m} ${H-m}V${m+ry}A${rx} ${ry} 0 0 1 ${W-m} ${m+ry}V${H-m}Z" fill="rgba(0,0,0,.12)" stroke="rgba(0,0,0,.35)" stroke-width=".5"/>`;return s+'</svg>'}
   if(tp==='glass'){s+=`<rect x="${b}" y="${b}" width="${W-2*b}" height="${H-2*b}" fill="#BFD9DB" stroke="rgba(0,0,0,.3)" stroke-width=".35"/>`;if(o.grid)s+=`<path d="M${W/2} ${b}V${H-b}M${b} ${H/2}H${W-b}" stroke="${col}" stroke-width="1.6"/>`;return s+'</svg>'}
   s+=`<rect x="${b}" y="${b}" width="${W-2*b}" height="${H-2*b}" fill="${col}" stroke="rgba(0,0,0,.3)" stroke-width=".35"/><rect x="${b}" y="${b}" width="${W-2*b}" height="${H-2*b}" fill="${sh(c)}"/>`;
