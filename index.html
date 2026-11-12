@@ -3489,25 +3489,32 @@ function renderTech(){const el=$('techBody');if(!el)return;{const ae=document.ac
   [...C.map((c,i)=>[c,i])].sort((a,b)=>ord[a[0].lv]-ord[b[0].lv]).forEach(([c,i])=>{h+=`<div class="tck ${c.lv}"><i>${ico[c.lv]}</i><div><b>${c.t}</b><small>${c.grp}${c.d?' · '+c.d:''}</small>${c.fix?`<button class="chip" data-tfix="${i}">${c.fix[0]}</button>`:''}</div></div>`});
   el.innerHTML='<div class="mf">'+h+'</div>'}
 $('techBody').addEventListener('click',e=>{const b=e.target.closest('[data-tfix]');if(!b)return;const f=TECHF[+b.dataset.tfix];if(f){f[1]();update();renderTech()}});
-// ---------- «Технолог»: ИИ DeepSeek — свой ключ API (хранится только на этом устройстве) ----------
+// ---------- «Технолог»: ИИ (Google Gemini бесплатно; ключ sk-… — DeepSeek) — ключ хранится только на этом устройстве ----------
 let DSA='';const dsK=()=>{try{return localStorage.getItem('dsk')||''}catch(e){return ''}};
 function dsSum(){const C=techChecks(),A=[...rowLay(),...(P.left?sideLay():[])];
   return 'Кухня: ширина '+P.W+' мм, высота '+P.H+' мм, глубина '+P.D+' мм, фасады: '+(P.fMat||'')+(P.left?', угловая':'')+(P.isl?', с островом':'')+'.\nМодули: '+A.map(r=>MODN[r.id]+' '+r.w+' мм').join('; ')+
   '\nПроверки программы:\n'+C.map(c=>({err:'ОШИБКА',warn:'Замечание',ok:'OK'}[c.lv])+' ['+c.grp+'] '+c.t+(c.d?' — '+c.d:'')).join('\n')+
   '\nДетали (название | материал | размер | шт):\n'+(LASTPARTS||[]).slice(0,150).map(r=>r.slice(0,4).join(' | ')).join('\n')}
 function renderAI(){const el=$('techAI');if(!el)return;const k=dsK(),esc=t=>String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-  el.innerHTML='<div class="mf"><h4>ИИ-технолог DeepSeek</h4>'+(k?'':'<p class="note">Вставьте свой ключ API DeepSeek (platform.deepseek.com → API keys). Хранится только на этом устройстве.</p>')+
-  '<input id="dsKey" type="password" placeholder="Ключ API DeepSeek (sk-…)" value="'+esc(k)+'" style="width:100%;box-sizing:border-box;margin:4px 0">'+
+  el.innerHTML='<div class="mf"><h4>ИИ-технолог</h4>'+(k?'':'<p class="note">Вставьте бесплатный ключ Google Gemini (aistudio.google.com → Get API key). Хранится только на этом устройстве.</p>')+
+  '<input id="dsKey" type="password" placeholder="Ключ API Gemini (AIza…)" value="'+esc(k)+'" style="width:100%;box-sizing:border-box;margin:4px 0">'+
   '<textarea id="dsQ" rows="2" placeholder="Вопрос (необязательно): например, что проверить перед распилом?" style="width:100%;box-sizing:border-box;margin:4px 0"></textarea>'+
   '<div class="go"><button id="dsGo">Спросить ИИ про проект</button></div><div id="dsOut" class="note" style="white-space:pre-wrap;margin-top:8px">'+esc(DSA)+'</div></div>'}
 $('techAI').addEventListener('change',e=>{if(e.target.id==='dsKey')try{localStorage.setItem('dsk',e.target.value.trim())}catch(x){}});
 $('techAI').addEventListener('click',async e=>{if(e.target.id!=='dsGo')return;const key=$('dsKey').value.trim(),out=$('dsOut'),q=$('dsQ').value.trim();
-  if(!key){out.textContent='Сначала вставьте ключ API DeepSeek.';return}try{localStorage.setItem('dsk',key)}catch(x){}
-  try{renderMat()}catch(x){}e.target.disabled=true;out.textContent='DeepSeek думает…';
-  try{const r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-      body:JSON.stringify({model:'deepseek-chat',temperature:0.3,messages:[{role:'system',content:'Ты опытный технолог корпусной мебели (кухни из ЛДСП/МДФ). Отвечай по-русски, кратко и по делу: найди ошибки в конструкции, размерах, фурнитуре и монтаже, дай конкретные исправления в мм. Без markdown-таблиц.'},{role:'user',content:dsSum()+'\n\n'+(q||'Проверь проект как технолог: что исправить перед производством?')}]})});
-    const j=await r.json().catch(()=>({}));DSA=r.ok?(j.choices&&j.choices[0]&&j.choices[0].message.content||'Пустой ответ'):'Ошибка DeepSeek: '+(j.error&&j.error.message||r.status);
-  }catch(x){DSA='Не удалось связаться с DeepSeek: '+(x&&x.message||x)+'. Проверьте интернет и ключ.'}
+  if(!key){out.textContent='Сначала вставьте ключ API Gemini.';return}try{localStorage.setItem('dsk',key)}catch(x){}
+  try{renderMat()}catch(x){}e.target.disabled=true;out.textContent='ИИ думает…';
+  const SYS='Ты опытный технолог корпусной мебели (кухни из ЛДСП/МДФ). Отвечай по-русски, кратко и по делу: найди ошибки в конструкции, размерах, фурнитуре и монтаже, дай конкретные исправления в мм. Без markdown-таблиц.',
+    USR=dsSum()+'\n\n'+(q||'Проверь проект как технолог: что исправить перед производством?'),ds=/^sk-/.test(key),nm=ds?'DeepSeek':'Gemini';
+  try{let r,j;
+    if(ds){r=await fetch('https://api.deepseek.com/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({model:'deepseek-chat',temperature:0.3,messages:[{role:'system',content:SYS},{role:'user',content:USR}]})});
+      j=await r.json().catch(()=>({}));DSA=r.ok?(j.choices&&j.choices[0]&&j.choices[0].message.content||'Пустой ответ'):'Ошибка DeepSeek: '+(j.error&&j.error.message||r.status);}
+    else{r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+encodeURIComponent(key),{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({systemInstruction:{parts:[{text:SYS}]},contents:[{role:'user',parts:[{text:USR}]}],generationConfig:{temperature:0.3}})});
+      j=await r.json().catch(()=>({}));const c=j.candidates&&j.candidates[0]&&j.candidates[0].content;
+      DSA=r.ok?((c&&c.parts||[]).map(p=>p.text||'').join('')||'Пустой ответ'):'Ошибка Gemini: '+(j.error&&j.error.message||r.status);}
+  }catch(x){DSA='Не удалось связаться с '+nm+': '+(x&&x.message||x)+'. Проверьте интернет и ключ.'}
   out.textContent=DSA;e.target.disabled=false});
 renderAI();
 // --- правки ---
