@@ -1277,7 +1277,7 @@ function renderModFly(){
     +chipRow('Съёмные полки','data-mgls',[[0,'ЛДСП 16'],[1,'Стекло 6 мм']],Q.gls?1:0);
   if(dr)h+='<h4>Ящики</h4>'+chipRow('Ящиков','data-nd',[[2,'2'],[3,'3'],[4,'4']],Q.nDr)+chipRow('Высота фасадов','data-mdm',[['eq','Одинаковые'],['big','Нижний больше']],Q.drMode);
   if(slides)h+=chipRow('Направляющие','data-ms',[['ball','Шариковые'],['hidden','Скрытые']],Q.slide);
-  if(k!=='dwm')h+='<h4>Крепёж корпуса</h4>'+chipRow('Только этот модуль','data-mfix',[['','Как у кухни · '+(P.fix==='ecc'?'эксцентрики':'евровинты')],['conf','Евровинты'],['ecc','Эксцентрики']],(P.mods[m]||{}).fix||'');
+  if(k!=='dwm')h+='<h4>Крепёж корпуса</h4>'+chipRow('Только этот модуль','data-mfix',[['','Как у кухни · '+(P.fix==='ecc'?'эксцентрики':'евровинты')],['conf','Евровинты'],['ecc','Эксцентрики']],(P.mods[m]||{}).fix||'')+chipRow('Видимая боковина (без евровинтов)','data-mvis',[['','Нет'],['L','Левая'],['R','Правая'],['B','Обе']],(P.mods[m]||{}).vis||'');
   h+='<h4>Внешний вид — только этот модуль</h4><div class="go"><button data-go="fac">Фасад</button><button data-go="hdl">Ручка</button></div>';
   h+='<div class="go"><button data-go="parts">Детали модуля</button></div>';
   if(isRow(m))h+=`<div class="go"><button data-dup="${m}">Добавить ещё такой же</button></div>`;h+=`<button class="rm" data-rm="${m}">Убрать модуль</button>`;
@@ -1289,7 +1289,7 @@ function renderUpFly(){
   $('modSum').textContent=`${P.UH} × ${P.UD} мм`+(own?' · свои настройки':' · как у нижнего');
   let h='<h4>Размер</h4><p class="note">Ширина — по нижнему модулю. Высота и глубина общие для всех верхних — в «Модулях».</p>';
   h+='<h4>Устройство — только этот верхний</h4>'+(upSingle(m)?chipRow('Открывание','data-uhg',[['L',MIR()?'Петли справа':'Петли слева'],['R',MIR()?'Петли слева':'Петли справа']],upHingeR(m)?'R':'L'):'<p class="note">'+(m==='u_corner'||m==='u_left'?'Угловой — петли по месту.':'Шире 600 — две створки, открываются в стороны.')+'</p>')
-    +chipRow('Полки','data-mgls',[[0,'ЛДСП 16'],[1,'Стекло 6 мм']],(P.mods[m]||{}).gls?1:0)+chipRow('Крепёж корпуса','data-mfix',[['','Как у нижнего · '+(fixOf(m.slice(2))==='ecc'?'эксцентрики':'евровинты')],['conf','Евровинты'],['ecc','Эксцентрики']],(P.mods[m]||{}).fix||'');
+    +chipRow('Полки','data-mgls',[[0,'ЛДСП 16'],[1,'Стекло 6 мм']],(P.mods[m]||{}).gls?1:0)+chipRow('Крепёж корпуса','data-mfix',[['','Как у нижнего · '+(fixOf(m.slice(2))==='ecc'?'эксцентрики':'евровинты')],['conf','Евровинты'],['ecc','Эксцентрики']],(P.mods[m]||{}).fix||'')+chipRow('Видимая боковина (без евровинтов)','data-mvis',[['','Нет'],['L','Левая'],['R','Правая'],['B','Обе']],(P.mods[m]||{}).vis||'');
   h+='<h4>Внешний вид — только этот верхний</h4><div class="go"><button data-go="fac">Фасад</button><button data-go="hdl">Ручка</button></div>';
   h+=`<p class="note">Сейчас: ${Q.fMat==='mdf'?`МДФ «${FREZ[Q.frez][0]}», ${FCOL[Q.fColor][0].toLowerCase()}`:facNM(Q)} · ${Q.hType==='gola'?'без ручки (фасад ниже дна на 20)':hName(Q).toLowerCase()}</p>`;
   if(own)h+='<div class="go"><button data-ureset="1">Как у нижнего</button></div>';
@@ -1324,6 +1324,7 @@ $('modBody').addEventListener('click',e=>{
   if(d.mphg)setI('penHinge',d.mphg);if(d.mfrw)setI('frW',+d.mfrw);if(d.mfrh)setI('frH',+d.mfrh);if(d.mgls!==undefined){if(KT(selMod)==='pen')setI('gls',d.mgls==='1');else setM('gls',d.mgls==='1')}
   if(d.uhg)setM('hinge',d.uhg);
   if(d.mfix!==undefined){const o=P.mods[selMod]=P.mods[selMod]||{};if(d.mfix)o.fix=d.mfix;else delete o.fix}
+  if(d.mvis!==undefined){const o=P.mods[selMod]=P.mods[selMod]||{};if(d.mvis)o.vis=d.mvis;else delete o.vis}
   if(d.mpk){setI('penKind',d.mpk);if(d.mpk!=='shelf')setI('PW',600)}
   if(d.mph!==undefined)setI('PH',d.mph==='1'?asMod(selMod,penTop):0);
   if(d.mdw)setDim('dwW',+d.mdw);
@@ -1669,6 +1670,15 @@ function packSheets(items,W,H,alg=0){
 const FIXN={conf:'евровинты (конфирмат 7×50)',ecc:'эксцентрики Ø15 + шканты 8×30'};
 const fixOf=m=>((m&&m!=='all'?mergedFor(m):P).fix==='ecc')?'ecc':'conf';
 const r1=v=>Math.round(v*10)/10;
+// видимая боковина (P.mods[m].vis: 'L' / 'R' / 'B' — как видно спереди): с этой стороны вместо евровинтов — эксцентрики + шканты
+const visS=s=>((s==='R')!==MIR())?'R':'L';
+const fxS=(m,s)=>{const v=(P.mods[m]||{}).vis;return v&&(v==='B'||v===visS(s))?'ecc':fixOf(m)};
+const visNm=m=>({L:'левая',R:'правая',B:'обе'})[(P.mods[m]||{}).vis]||'';
+// боковины модуля: hs — сторона петель ('L'/'R') или null (зеркально); у видимой боковины — свой крепёж
+function thSides(out,sr,fo,base,pl,hs,m){const fL=fxS(m,'L'),fR=fxS(m,'R'),fxOf=s=>s==='R'?fR:fL,tag=s=>fxOf(s)!==fixOf(m)?' · видимая, без евровинтов':'';
+  if(hs){const o=hs==='R'?'L':'R';out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(hs==='R')+' (со стороны петель)'+tag(hs),...fo,H:thSide({...base,fx:fxOf(hs),plates:pl})});out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(o==='R')+' (без петель)'+tag(o),...fo,H:thSide({...base,fx:fxOf(o),plates:[]})});return}
+  if(fL===fR){out.push({r:sr,q:+sr[3],nm:sr[0]+' — левая и правая (зеркально)',...fo,H:thSide({...base,fx:fL,plates:pl})});return}
+  ['L','R'].forEach(s=>out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(s==='R')+tag(s),...fo,H:thSide({...base,fx:fxOf(s),plates:pl})}))}
 // точки крепежа по длине соединения L: до 350 — 2, до 600 — 3, больше — 4; от краёв 50 мм (короткие — L/4)
 function jPos(L){const n=L<=350?2:L<=600?3:4,o=L<=150?Math.round(L/4):50;return[...Array(n)].map((_,i)=>r1(o+(L-2*o)*i/(n-1)))}
 // соединение: евровинты, или эксцентрики, у каждого — шкант на 32 мм ближе к середине (короткое ≤150 — эксцентрик в центре и 2 шканта по краям)
@@ -1712,10 +1722,10 @@ function thSide(o){const H=[],A=(tp,x,y,f='f')=>H.push({t:tp,x:r1(x),y:r1(y),f})
   (o.slides||[]).forEach(s=>slX(s.nl).forEach(x=>A('sl',x,s.y)));
   return H}
 // деталь между боковинами: X — по длине от левого торца, Y — по ширине от переднего края (у вертикальных — от низа)
-function thHor(len,w,fx){const H=[];joint(w,fx).forEach(j=>[['L',0],['R',len]].forEach(([e,x0])=>{
+function thHor(len,w,fx,fxR){const H=[];[['L',0,fx],['R',len,fxR||fx]].forEach(([e,x0,f])=>joint(w,f).forEach(j=>{
   if(j.k==='conf')H.push({t:'confE',x:x0,y:j.p,f:e});else if(j.k==='ecc')H.push({t:'ecc',x:e==='L'?34:r1(len-34),y:j.p,f:'f'},{t:'eccE',x:x0,y:j.p,f:e});else H.push({t:'dowE',x:x0,y:j.p,f:e})}));return H}
 // дно нижнего модуля: боковины стоят на нём — крепёж через дно снизу в торцы боковин
-function thBot(W,D,fx){const H=[];joint(D,fx).forEach(j=>[t/2,W-t/2].forEach(x=>H.push({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(x),y:j.p,f:'f'})));return H}
+function thBot(W,D,fx,fxR){const H=[];[[t/2,fx],[W-t/2,fxR||fx]].forEach(([x,f])=>joint(D,f).forEach(j=>H.push({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(x),y:j.p,f:'f'})));return H}
 // фасад: X — от края со стороны петель, Y — от низа, вид с тыльной стороны
 function thFac(w,h,hy,where){const H=[];(hy||[]).forEach(y=>H.push({t:'cup',x:22.5,y:r1(y),f:'f'},{t:'cupS',x:32,y:r1(y-22.5),f:'f'},{t:'cupS',x:32,y:r1(y+22.5),f:'f'}));
   hdlXY(w,h,where).forEach(([x,y])=>H.push({t:'h',x:r1(x),y:r1(y),f:'f'}));return H}
@@ -1728,7 +1738,7 @@ function thBox(r,fx,ball,out){const d=dimsOf(r[2]);if(!d)return;const[a,b,b2]=d,
     out.push({r,q:1,nm:r[0].replace('перед / зад','перед'),ax:'ab',eTop:1,dims:[a,b],lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НИЗ','ВЕРХ'],face:'внутренняя пласть',xl:'X — от левого торца',yl:'Y — от низа',H:fr(a,b)});
     out.push({r,q:1,nm:r[0].replace('перед / зад','зад'),ax:'ab',eTop:1,dims:[a,b2||b],lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НИЗ','ВЕРХ'],face:'внутренняя пласть',xl:'X — от левого торца',yl:'Y — от низа',H:thHor(a,b2||b,fx),note:b2?'Зад стоит на дне ящика. Отверстия под крючок направляющей — по шаблону направляющей.':''})}}
 // нижний модуль (шкаф, ящики, духовка, варочная, мойка, 800, угловой, у угла)
-function thBase(id){return asMod(id,()=>{const k=id==='corner'?'corner':KT(id),rows=(LASTPARTS||[]).filter(r=>r.m===id&&!r.up),fx=fixOf(id),L=P.L,hc=Hc(),Hs=hc-t,D=P.D,gz=P.hType==='gola'?28:0,top=L+hc,ball=P.slide==='ball';
+function thBase(id){return asMod(id,()=>{const k=id==='corner'?'corner':KT(id),rows=(LASTPARTS||[]).filter(r=>r.m===id&&!r.up),fx=fixOf(id),fxL=fxS(id,'L'),fxR=fxS(id,'R'),L=P.L,hc=Hc(),Hs=hc-t,D=P.D,gz=P.hType==='gola'?28:0,top=L+hc,ball=P.slide==='ball';
   const out=[],notes=[],R=re=>rows.filter(r=>re.test(thR(r[0]))),dm=r=>r&&dimsOf(r[2]);
   const bot=R(/^дно$/)[0],W=bot?dm(bot)[0]:iW(id);
   const hor=[],ver=[],sh=[],doors=[],slides=[];
@@ -1750,18 +1760,18 @@ function thBase(id){return asMod(id,()=>{const k=id==='corner'?'corner':KT(id),r
   if(sr){const base={D,H:Hs,fx,onBot:true,hor,ver,shelves:sh,slides},pl=s=>doors.filter(d=>d.side===s||d.side==='B').flatMap(d=>hYs(d.fh).map(h=>d.y0+h));
     const lab=['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],fo={ax:'ba',lab,face:'внутренняя пласть',xl:'X — от переднего края',yl:'Y — от нижнего торца'};
     const one=doors.length===1&&doors[0].side!=='B';
-    if(one){const s=doors[0].side;out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(s==='R')+' (со стороны петель)',...fo,H:thSide({...base,plates:pl(s)})});out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(s!=='R')+' (без петель)',...fo,H:thSide({...base,plates:[]})})}
-    else out.push({r:sr,q:+sr[3],nm:sr[0]+' — левая и правая (зеркально)',...fo,H:thSide({...base,plates:pl('L')})})}
+    if(one){const s=doors[0].side;thSides(out,sr,fo,base,pl(s),s,id)}
+    else thSides(out,sr,fo,base,pl('L'),null,id)}
   // дно, царги, полка под духовку, стойка под петли
-  if(bot){const H=thBot(W,D,fx);if(k==='corner'){const xs=W-CRD+t/2;joint(100,fx).forEach(j=>H.push({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(xs),y:j.p,f:'f'}))}
+  if(bot){const H=thBot(W,D,fxL,fxR);if(k==='corner'){const xs=W-CRD+t/2;joint(100,fx).forEach(j=>H.push({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(xs),y:j.p,f:'f'}))}
     out.push({r:bot,q:+bot[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'верхняя пласть (внутрь шкафа)',xl:'X — от левого торца',yl:'Y — от переднего края',H,note:'Боковины стоят на дне. '+(fx==='conf'?'Евровинты — снизу, через дно в торец боковины (зенковка снизу).':'Шток эксцентрика — в дно, эксцентрик — в боковине.')})}
-  R(/^царга$/).forEach(r=>{const[a,b]=dm(r),H=thHor(a,b,fx);
+  R(/^царга$/).forEach(r=>{const[a,b]=dm(r),H=thHor(a,b,fxL,fxR);
     if(k==='corner'){const xr=W-CRD-t+t/2,Hf=H.concat(joint(100,fx).map(j=>({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(xr),y:j.p,f:'f'})));
       out.push({r,q:1,nm:r[0]+' передняя',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'нижняя пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:Hf,note:'Через царгу — крепёж в верхний торец стойки под петли.'});
       out.push({r,q:1,nm:r[0]+' задняя',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ЗАД','ПЕРЕД'],face:'нижняя пласть',xl:'X — от левого торца',yl:'Y — от заднего края',H})}
     else out.push({r,q:+r[3],nm:r[0]+' — передняя и задняя',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НАРУЖНЫЙ КРАЙ','ВНУТРЕННИЙ КРАЙ'],face:'нижняя пласть',xl:'X — от левого торца',yl:'Y — от наружного края (передняя — от фасада, задняя — от стены)',H,note:'Лежат плашмя под столешницей, вровень с верхом боковин.'})});
-  R(/^(царга передняя|планка задняя)$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НИЗ','ВЕРХ'],face:'пласть',xl:'X — от левого торца',yl:'Y — от низа',H:thHor(a,b,fx),note:/царга/.test(thR(r[0]))?'Стоит на ребре спереди, вровень с верхом боковин.':`Стоит на ребре сзади, низ — на ${SKBACK} мм от дна.`})});
-  R(/^полка под духовку$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'верхняя пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fx),note:`Неподвижная, низ полки — ${r1(ovenParts().shelf-t-(L+t))} мм от низа боковины.`})});
+  R(/^(царга передняя|планка задняя)$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НИЗ','ВЕРХ'],face:'пласть',xl:'X — от левого торца',yl:'Y — от низа',H:thHor(a,b,fxL,fxR),note:/царга/.test(thR(r[0]))?'Стоит на ребре спереди, вровень с верхом боковин.':`Стоит на ребре сзади, низ — на ${SKBACK} мм от дна.`})});
+  R(/^полка под духовку$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'верхняя пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fxL,fxR),note:`Неподвижная, низ полки — ${r1(ovenParts().shelf-t-(L+t))} мм от низа боковины.`})});
   R(/^стойка под петли$/).forEach(r=>{const[a,b]=dm(r),H=[];joint(b,fx).forEach(j=>[['B',0],['T',a]].forEach(([e,y0])=>{if(j.k==='conf')H.push({t:'confE',x:j.p,y:y0,f:e});else if(j.k==='ecc')H.push({t:'ecc',x:j.p,y:e==='B'?34:r1(a-34),f:'f'},{t:'eccE',x:j.p,y:y0,f:e});else H.push({t:'dowE',x:j.p,y:y0,f:e})}));
     hYs(Fh()).forEach(h=>{const y=h-t;H.push({t:'pl',x:37,y:r1(y-16),f:'f'},{t:'pl',x:37,y:r1(y+16),f:'f'})});
     out.push({r,q:+r[3],ax:'ba',lab:['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],face:'пласть со стороны дверцы',xl:'X — от переднего края',yl:'Y — от низа',H,note:'Стоит на дне между дном и передней царгой, на ней — планки петель дверцы.'})});
@@ -1783,9 +1793,9 @@ function thUp(m,rows){return asMod(m,()=>{const fx=fixOf(m),out=[],notes=[],R=re
   const sh=[];for(let i=1;i<=ns;i++)sh.push(t+Math.round((uh-2*t)*i/(ns+1))-t/2);
   const hor=[{y:0,x0:0,w:ud},{y:uh-t,x0:0,w:ud}],pl=lift||!nd?[]:hYs(fh).map(h=>y0+h),fo={ax:'ba',lab:['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],face:'внутренняя пласть',xl:'X — от переднего края',yl:'Y — от нижнего торца'},base={D:ud,H:uh,fx,hor,shelves:sh};
   const R0=upHingeR(m.startsWith('a_')&&KT(m)==='pen'?'a_pen':m);
-  if(nd===1&&!lift&&!/угл/.test(rows.map(r=>r[0]).join(' '))){out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(R0)+' (со стороны петель)',...fo,H:thSide({...base,plates:pl})});out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(!R0)+' (без петель)',...fo,H:thSide({...base,plates:[]})})}
-  else out.push({r:sr,q:+sr[3],nm:sr[0]+' — левая и правая (зеркально)',...fo,H:thSide({...base,plates:pl})});
-  R(/(^|, )дно \/ крыша$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],nm:r[0]+' (одинаковые)',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'внутренняя пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fx)})});
+  if(nd===1&&!lift&&!/угл/.test(rows.map(r=>r[0]).join(' ')))thSides(out,sr,fo,base,pl,R0?'R':'L',m);
+  else thSides(out,sr,fo,base,pl,null,m);
+  R(/(^|, )дно \/ крыша$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],nm:r[0]+' (одинаковые)',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'внутренняя пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fxS(m,'L'),fxS(m,'R'))})});
   if(fr){const[w,h]=dm(fr);out.push({r:fr,q:nd,nm:fr[0]+(nd>1?' — левый и правый (зеркально)':''),ax:'ab',lab:[lift?'':'СТОРОНА ПЕТЕЛЬ','','НИЗ','ВЕРХ'],face:'тыльная сторона',xl:lift?'X — от левого края':'X — от края со стороны петель',yl:'Y — от низа',H:thFac(w,h,lift?null:hYs(h),lift?'mid':'bot'),note:lift?'Подъёмник: крепление — по шаблону механизма.':''})}
   notes.push(`Боковины на всю высоту, дно и крыша — между боковинами. Корпус ${dm(R(/(^|, )дно \/ крыша$/)[0])?dm(R(/(^|, )дно \/ крыша$/)[0])[0]+2*t:''} × ${uh} × ${ud} мм.`);
   if(nd&&!lift)notes.push(`Фасад накладной, зазор ${SGAP} мм с каждой стороны`+(g&&!ant?', ниже дна на 20 мм (открывание за край).':'.')+` Петли — 100 мм от низа и верха фасада.`);
@@ -1799,9 +1809,9 @@ function thPen(id){return asMod(id,()=>{const rows=(LASTPARTS||[]).filter(r=>r.m
   else if(P.penKind==='shelf'){const f1=Fh(),ys=L+f1+P.gapD/2;hor.push({y:ys-t/2-L,x0:20,w:PD-20});penShelves().filter(q=>q.rm).forEach(q=>sh.push(q.y-t/2-L));doors.push({y0:0,fh:f1},{y0:f1+P.gapD,fh:PT-SGAP-(L+f1+P.gapD)})}
   else{const q=penLay();hor.push({y:q.oy-t-L,x0:0,w:PD},{y:q.shTop[0]-L,x0:0,w:PD});if(q.mw&&!q.mo)hor.push({y:q.my-t-L,x0:0,w:PD});penShelves().filter(x=>x.rm).forEach(x=>sh.push(x.y-t/2-L));doors.push({y0:q.dy-L,fh:q.dh});notes.push('Ящик под техникой: направляющие — по линии 37 мм от низа короба, по месту.')}
   const two=penLeaves()===2,hR=P.penHinge==='R',pl=doors.flatMap(d=>hYs(d.fh,penHinges(d.fh)).map(h=>d.y0+h)),fo={ax:'ba',lab:['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],face:'внутренняя пласть',xl:'X — от переднего края',yl:'Y — от нижнего торца'},base={D:PD,H:ch,fx,hor,shelves:sh};
-  if(two||!doors.length)out.push({r:sr,q:+sr[3],nm:sr[0]+' — левая и правая (зеркально)',...fo,H:thSide({...base,plates:doors.length?pl:[]})});
-  else{out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(hR)+' (со стороны петель)',...fo,H:thSide({...base,plates:pl})});out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(!hR)+' (без петель)',...fo,H:thSide({...base,plates:[]})})}
-  R(/^(дно \/ крыша|крыша|полка неподвижная|полка над холодильником|полка под духовку|полка под свч|полка над техникой)$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fx)})});
+  if(two||!doors.length)thSides(out,sr,fo,base,doors.length?pl:[],null,id);
+  else thSides(out,sr,fo,base,pl,hR?'R':'L',id);
+  R(/^(дно \/ крыша|крыша|полка неподвижная|полка над холодильником|полка под духовку|полка под свч|полка над техникой)$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fxS(id,'L'),fxS(id,'R'))})});
   R(/^фасад (нижний|верхний)$|^фасад шкафа$|^фасад$/).forEach(r=>{const[w,h]=dm(r),low=/нижний/.test(r[0]);out.push({r,q:+r[3],nm:r[0]+(+r[3]>1?' — левый и правый (зеркально)':''),ax:'ab',lab:['СТОРОНА ПЕТЕЛЬ','','НИЗ','ВЕРХ'],face:'тыльная сторона',xl:'X — от края со стороны петель',yl:'Y — от низа',H:thFac(w,h,hYs(h,penHinges(h)),low?'top':'bot')})});
   notes.unshift(FR?'Стойки проёма — от пола, крыша и полка над холодильником — между стойками.':`Боковины на всю высоту, дно, крыша и полки — между боковинами. Пенал до стены: глубина ${PD} мм.`);
   if(doors.length)notes.push(`Петли: по ${penHinges(doors[0].fh)} на дверцу, 100 мм от низа и верха, остальные — поровну.`);
@@ -1916,7 +1926,7 @@ async function thDoc(D){renderInfo();const mods=thMods(),{M:EM,C}=thEdgeMap(),m=
   const T=thTotals(mods),TT=[['Евровинт 7×50',T.conf||0],['Эксцентрик Ø15 со штоком',T.ecc||0],['Шкант 8×30',T.dow||0],['Петля (чашка Ø35)',T.cup||0],['Полкодержатель',(T.pin||0)],['Ручка — отверстий',T.h||0]].filter(x=>x[1]);
   if(TT.length){D.y+=8;D.text('Итого по карте',18,true);D.table([['Позиция',.7],['Шт.',.3,'r']],TT.map(([n,q])=>[n,String(q)]),13)}
   // модули
-  mods.forEach(md=>{D.page();D.text(md.nm,24,true);D.text('Крепёж корпуса: '+FIXN[fixOf(md.id)],14,true,'#1F5FA8');md.notes.forEach(s=>D.wrap('• '+s,EXW-2*EXM,13).forEach(l=>D.text(l,13,false,'#333')));D.y+=10;
+  mods.forEach(md=>{D.page();D.text(md.nm,24,true);D.text('Крепёж корпуса: '+FIXN[fixOf(md.id)],14,true,'#1F5FA8');if(visNm(md.id))D.text('Видимая боковина: '+visNm(md.id)+' — с её стороны '+FIXN.ecc+', евровинтов снаружи не видно',14,true,'#1F5FA8');md.notes.forEach(s=>D.wrap('• '+s,EXW-2*EXM,13).forEach(l=>D.text(l,13,false,'#333')));D.y+=10;
     md.out.forEach(p=>thDraw(D,p,EM));
     const rest=(md.id.startsWith('u_')||md.id.startsWith('a_')&&KT(md.id)!=='pen'?(window.SELPARTS||[]):(LASTPARTS||[])).filter(r=>r.m===md.id&&!r.up&&dimsOf(r[2])&&matKind(r)&&!md.out.some(p=>p.r===r));
     if(rest.length){D.text('Без присадки',15,true);D.table([['Деталь',.4],['Материал',.4],['Размер, мм',.2]],rest.map(r=>[r[0]+(+r[3]>1?' ×'+r[3]:''),String(r[1]).replace(/^ХДФ 3.*$/,'ХДФ 3 — на гвозди / скобы, шаг 150 мм'),r[2]]),12)}})}
@@ -1939,7 +1949,7 @@ function calcMat(){
       if(c2!==null){const h1=Math.ceil(q/2);push(a,c,h1);push(a,c2,q-h1)}else push(a,c,q);
       if(k==='hdf')nails+=Math.ceil(2*(a+c)/150)*q;
       if(k==='ldsp'){
-        const b1=b.replace(/ \d+$/,'');if(JRE.test(b1)&&!/(, ящик \d+|^ящик под духовкой): дно$/.test(nl)&&!r.up)jAdd(c,fixOf(r.m),q*2);   // номер модуля в конце («Дно 1») не мешает
+        const b1=b.replace(/ \d+$/,'');if(JRE.test(b1)&&!/(, ящик \d+|^ящик под духовкой): дно$/.test(nl)&&!r.up)(/(перед \/ зад|стойка под петли)$/.test(b1)?jAdd(c,fixOf(r.m),q*2):(jAdd(c,fxS(r.m,'L'),q),jAdd(c,fxS(r.m,'R'),q)));   // номер модуля в конце («Дно 1») не мешает
         if(/^полка( в нише)?$/.test(b1))pins+=4*q}
       return}
     if(/^направляющие/.test(nl)){add('sl|'+n+'|'+sz,n,sz.replace('L ','длина ')+' мм, пара',q,'пар');slides+=q;return}
@@ -1959,7 +1969,7 @@ function calcMat(){
     if(/полкодержатель/.test(nl)){pins+=q;return}
     if(/^стеновая панель|^верх: |^антресоль: |^ниша /.test(nl)&&!/шина/.test(nl))return;
     const bn=n.replace(/^([^:]*?) \d+:/,'$1:'),key=bn+'|'+mt+'|'+sz;(misc[key]||(misc[key]={n:bn[0].toUpperCase()+bn.slice(1),sub:[mt,sz].filter(Boolean).join(' · '),q:0})).q+=q});
-  (window.SELPARTS||[]).forEach(r=>{const d=dimsOf(r[2]);if(d&&matKind(r)==='ldsp'&&JRE.test(baseN(r[0])))jAdd(d[1],fixOf(r.m),(+r[3]||0)*2)});   // верхние — по модулям: у каждого свой крепёж
+  (window.SELPARTS||[]).forEach(r=>{const d=dimsOf(r[2]);if(d&&matKind(r)==='ldsp'&&JRE.test(baseN(r[0]))){const n=+r[3]||0;jAdd(d[1],fxS(r.m,'L'),n);jAdd(d[1],fxS(r.m,'R'),n)}});   // верхние — по модулям: у каждого свой крепёж
   // карниз: доски из раскладки; длиннее листа — несколько частей
   {const cb=corniceBoxes();if(cb.boxes.length){const k=facKind(P),[SW]=sheetOf(k),Lmax=SW-2*TRIM;
     cb.boxes.forEach(bx=>{const ds=[bx[3]-bx[0],bx[4]-bx[1],bx[5]-bx[2]].map(v=>Math.round(Math.abs(v))).sort((a,b)=>b-a),len=ds[0],wd=ds[1];if(wd<20||len<20)return;
