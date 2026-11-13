@@ -1548,15 +1548,16 @@ $('rowList').addEventListener('click',rowClick);$('rowLList').addEventListener('
 let LASTPARTS=[],MATSEL=null,MATTXT='',DETTXT=[];
 let KERF=4,TRIM=10;   // пропил и торцовка — настраиваются в «Раскрое»
 const SHF={ldsp:[[2800,2070],[2750,1830],[2440,1830],[3500,1750]],mdf:[[2800,2070],[2750,2070],[2440,1830],[2440,1220]],hdf:[[2800,2070],[2745,1700],[2440,1220]]};
-const KB=k=>String(k).split(':')[0],KU=k=>String(k).split(':')[1]||null,KORD=k=>['ldsp','ldspF','panel','mdf','hdf'].indexOf(KB(k));
+const KB=k=>String(k).split('~')[0].split(':')[0],KU=k=>String(k).split('~')[0].split(':')[1]||null,KO=k=>String(k).split('~')[1]||null,KORD=k=>['ldsp','ldspF','panel','mdf','hdf'].indexOf(KB(k));
 const facKind=Q=>Q.fMat==='alu'?'ldsp':Q.fMat==='mdf'?'mdf':(Q.fMat==='panel'?'panel':'ldspF')+(fCatX(Q)?':'+Q.fCat:'');
 function shn(k){const b=KB(k),x=dsFind(KU(k));return b==='ldsp'?['ЛДСП 16 мм · '+kName(),'корпуса, цоколи, ящики']:b==='ldspF'?['ЛДСП 16 мм — фасадная'+(x?' · '+x.d:''),'фасады и планки из ЛДСП']:b==='panel'?['Панель 18 мм'+(x?' · '+x.d:''),'фасады'+(x&&x.m?', '+x.m:'')]:b==='mdf'?['МДФ 18 мм','фасады, планки, карниз']:['ХДФ 3 мм','задние стенки, дно ящиков']}
-const SHN=new Proxy({},{get:(o,k)=>shn(k)});
+const SHN=new Proxy({},{get:(o,k)=>{const r=shn(k);return KO(k)?[r[0]+' · остаток '+KO(k).replace('x','×'),'деловой остаток со склада']:r}});
+const ALGN=['Оптимально','Вдоль','Поперёк'];   // варианты раскроя, как в SketchCut
 const EDGES=[0,0.4,1,2],EDC={0.4:'#2F7FD8',1:'#2E9E5B',2:'#E07A1F'},efmt=v=>String(v).replace('.',',');
 function matSet(){const m=P.mat=(P.mat&&typeof P.mat==='object')?P.mat:{};if(!(m.kerf>=0&&m.kerf<=20))m.kerf=4;if(!(m.trim>=0&&m.trim<=20))m.trim=10;KERF=+m.kerf;TRIM=+m.trim;['ldsp','mdf','hdf'].forEach(k=>{if(!m[k])m[k]=SHF[k][0].join('x')});
   m.grain=!!m.grain;m.cut=m.cut||{};m.ov=m.ov||{};if(![0.4,1,2].includes(m.ec))m.ec=0.4;if(![0,1,2].includes(m.ef))m.ef=2;return m}
 function sheetCat(k){const m=matSet(),b=KB(k);return b==='ldsp'?dsGet('ldsp',P.kCat):b==='ldspF'||b==='panel'?dsFind(KU(k)):b==='hdf'?dsGet('lhdf',m.hCat):b==='mdf'?dsGet('mdf',m.mCat):null}
-function sheetOf(k){{const fo=(matSet().fo||{})[k];if(fo){const[a,b]=String(fo).split('x').map(Number);if(a>0&&b>0)return[Math.max(a,b),Math.min(a,b)]}}const cx=sheetCat(k);if(cx&&dsSheet(cx))return dsSheet(cx);if(KB(k)==='panel')return[2800,1220];const m=matSet(),g=KB(k)==='ldspF'?'ldsp':KB(k),v=m[g];if(v==='own'){const[a,b]=(m['own_'+g]||'2800x2070').split('x').map(Number);return[Math.max(a,b),Math.min(a,b)]}return v.split('x').map(Number)}
+function sheetOf(k){if(KO(k)){const[a,b]=KO(k).split('x').map(Number);return[Math.max(a,b),Math.min(a,b)]}{const fo=(matSet().fo||{})[k];if(fo){const[a,b]=String(fo).split('x').map(Number);if(a>0&&b>0)return[Math.max(a,b),Math.min(a,b)]}}const cx=sheetCat(k);if(cx&&dsSheet(cx))return dsSheet(cx);if(KB(k)==='panel')return[2800,1220];const m=matSet(),g=KB(k)==='ldspF'?'ldsp':KB(k),v=m[g];if(v==='own'){const[a,b]=(m['own_'+g]||'2800x2070').split('x').map(Number);return[Math.max(a,b),Math.min(a,b)]}return v.split('x').map(Number)}
 function matKind(r){const n=r[0].toLowerCase(),M0=r[1]||'',m=M0.toLowerCase();
   {const x=M0.match(/^(ЛДСП 16|Панель 18) · ([^,]+)/);if(x){const u=FDEC[x[2].trim()];return (x[1]==='Панель 18'?'panel':'ldspF')+(u?':'+u:'')}}
   if(/^панель 18/.test(m))return 'panel';
@@ -1590,9 +1591,9 @@ function packSheets(items,W,H,alg=0){
 function calcMat(){
   const m=matSet(),G={},hw={},misc={},seen={},AL={};let conf=0,pins=0,nails=0,legs=0,hinges=0,slides=0,lifts=0;
   const add=(k,n,sub,q,u='шт')=>{const o=hw[k]||(hw[k]={k,n,sub,q:0,u});o.q+=q};
-  const part=(k,n,a,b)=>{const nm=n.replace(/^Верх: /,'Верх, ').replace(/^Антресоль: /,'Антресоль, '),key0=k+'|'+nm+'|'+a+'x'+b,i=seen[key0]=(seen[key0]||0)+1,id=key0+'|'+i,o=m.ov[id]||{};
-    const e=o.e||defEdge(k,n),th=v=>v>=1?v:0,ca=Math.round((a-th(e[2])-th(e[3]))*10)/10,cb=Math.round((b-th(e[0])-th(e[1]))*10)/10;   // в распил — за вычетом толстой кромки
-    const dir=o.dir||(m.grain&&k!=='hdf'?(/фасад/i.test(n)?'W':'L'):'auto'),w=dir==='W'?cb:ca,h=dir==='W'?ca:cb;
+  const part=(k,n,a,b,e0,d0)=>{const nm=n.replace(/^Верх: /,'Верх, ').replace(/^Антресоль: /,'Антресоль, '),key0=k+'|'+nm+'|'+a+'x'+b,i=seen[key0]=(seen[key0]||0)+1,id=key0+'|'+i,o=m.ov[id]||{};
+    const e=o.e||e0||defEdge(k,n),th=v=>v>=1?v:0,ca=Math.round((a-th(e[2])-th(e[3]))*10)/10,cb=Math.round((b-th(e[0])-th(e[1]))*10)/10;   // в распил — за вычетом толстой кромки
+    const dir=o.dir||d0||(m.grain&&k!=='hdf'?(/фасад/i.test(n)?'W':'L'):'auto'),w=dir==='W'?cb:ca,h=dir==='W'?ca:cb;
     (G[k]||(G[k]=[])).push({id,k,n:nm,a,b,ca,cb,e,dir,w,h,rot:dir==='auto',pin:o.pin!=null?o.pin:null,ord:o.ord!=null?o.ord:null,own:!!(o.e||o.dir||o.pin!=null),gk:[a,b,e.join(','),dir].join('|')})};
   LASTPARTS.forEach(r=>{const [n,mt,sz,q0]=r,q=+q0||0,b=baseN(n),k=matKind(r),d=dimsOf(sz),nl=n.toLowerCase();if(!q||n==='Карниз')return;
     if(/^Рамка алюм\./.test(mt)&&d){const pk=Object.keys(ALUP).find(k=>mt.includes(ALUP[k][0]))||'z1',ck=Object.keys(ALUC).find(k=>mt.includes(ALUC[k][0].toLowerCase()))||'silver',gk=Object.keys(GLS).find(k=>mt.includes('стекло '+GLS[k][0].toLowerCase()))||'sat',pw=ALUP[pk][1],[a,c]=d;
@@ -1627,6 +1628,14 @@ function calcMat(){
   {const cb=corniceBoxes();if(cb.boxes.length){const k=facKind(P),[SW]=sheetOf(k),Lmax=SW-2*TRIM;
     cb.boxes.forEach(bx=>{const ds=[bx[3]-bx[0],bx[4]-bx[1],bx[5]-bx[2]].map(v=>Math.round(Math.abs(v))).sort((a,b)=>b-a),len=ds[0],wd=ds[1];if(wd<20||len<20)return;
       const np=Math.ceil(len/Lmax);for(let i=0;i<np;i++)part(k,'Карниз',Math.round(len/np)+(np>1?20:0),wd)})}}
+  // детали из Excel / CSV (другие заказы того же материала) — в общий раскрой
+  Object.entries(m.imp||{}).forEach(([k,L])=>(L||[]).forEach(x=>{for(let i=0;i<x.q;i++)part(k,x.n,x.a,x.b,x.e,x.d)}));
+  // деловые остатки: сначала раскладываем на них (от больших к меньшим), что не влезло — на целые листы
+  Object.keys(G).filter(k=>!KO(k)).forEach(k=>{let its=G[k];((m.off||{})[k]||[]).filter(o=>o.w>0&&o.h>0&&o.q>0).sort((p,q)=>q.w*q.h-p.w*p.h).forEach(o=>{
+    const SW=Math.max(o.w,o.h),SH=Math.min(o.w,o.h),W=SW-2*TRIM,H=SH-2*TRIM;if(W<50||H<50||!its.length)return;let best=null;
+    [0,1,2].forEach(al=>{const pk=packSheets(its,W,H,al),ids=new Set(pk.sheets.slice(0,o.q).flatMap(s=>s.used.map(u=>u.id))),ar=its.filter(i=>ids.has(i.id)).reduce((a,i)=>a+i.a*i.b,0);if(!best||ar>best.ar)best={ar,ids}});
+    if(!best.ids.size)return;const kk=k+'~'+SW+'x'+SH;(G[kk]||(G[kk]=[])).push(...its.filter(i=>best.ids.has(i.id)));its=its.filter(i=>!best.ids.has(i.id))});
+    if(its.length)G[k]=its;else delete G[k]});
   const res={},edge={};Object.entries(G).sort((a,b)=>KORD(a[0])-KORD(b[0])).forEach(([k,its])=>{if(!its.length)return;const[SW,SH]=sheetOf(k),W=SW-2*TRIM,H=SH-2*TRIM;
     const vars=[0,1,2].map(al=>packSheets(its,W,H,al)),bi=vars.reduce((b,v,i)=>v.score<vars[b].score?i:b,0),ch=m.alg&&m.alg[k]!=null?m.alg[k]:bi,pk=layResolve(k,its,W,H)||vars[ch],area=its.reduce((s,i)=>s+i.a*i.b,0)/1e6;
     // одинаковые детали (размер, кромка, направление) — одна строка с номером, как в SketchCut
@@ -1688,10 +1697,10 @@ function renderMat(){
   // кромка — сразу сверху: главный итог
   const ek=Object.keys(c.edge).map(Number).sort((a,b)=>a-b);
   // привязка к каталогу Дизайн Сервис: выбранное вручную или подобранное по декору
-  const KS=Object.keys(c.res),EG=[];KS.filter(k=>['ldsp','ldspF','panel'].includes(KB(k))).forEach(k=>{const r=c.res[k];Object.keys(r.ek).map(Number).sort((a,b)=>a-b).forEach(v=>{const key=k+'|'+v,dx=dsFind(KU(k)),dec=KB(k)==='ldsp'?kName():(dx?dx.d:'Белый'),own=dsGet('kromka',(m.eCat||{})[key]);
+  const KS=Object.keys(c.res),EG=[];[...new Set(KS.map(k=>k.split('~')[0]))].filter(k=>['ldsp','ldspF','panel'].includes(KB(k))).forEach(k=>{const r={ek:{}};KS.filter(k2=>k2.split('~')[0]===k).forEach(k2=>Object.entries(c.res[k2].ek).forEach(([v,l])=>r.ek[v]=(r.ek[v]||0)+l));Object.keys(r.ek).map(Number).sort((a,b)=>a-b).forEach(v=>{const key=k+'|'+v,dx=dsFind(KU(k)),dec=KB(k)==='ldsp'?kName():(dx?dx.d:'Белый'),own=dsGet('kromka',(m.eCat||{})[key]);
     EG.push({k,v,key,dec,x:own||edgeFor(dec,v,KB(k)==='panel'?22:19),auto:!own,net:r.ek[v],buy:Math.ceil(r.ek[v]*1.1/1000)})})});
   const fmtEq=(y,r)=>dsSheet(y)&&dsSheet(y).join()===[r.SW,r.SH].join();
-  const SG=KS.map(k=>{const r=c.res[k],own=sheetCat(k);let x=own;
+  const SG=KS.filter(k=>!KO(k)).map(k=>{const r=c.res[k],own=sheetCat(k);let x=own;
     if(!x)x=k==='ldsp'?sheetMatch('ldsp',kName(),16,[r.SW,r.SH]):k==='mdf'?(DS.mdf||[]).find(y=>y.t===18&&/односторон/i.test(y.n)&&fmtEq(y,r)):k==='hdf'?(DS.lhdf||[]).find(y=>/бел/i.test(y.n)&&fmtEq(y,r)):null;return{k,r,x,auto:!own}});
   const capX=dsGet('zaglushki',m.cCat)||capFor(kName(),kHex()),capQ=(c.hw.find(o=>o.k==='cap')||{}).q||0,TG=new Proxy({},{get:(o,k)=>KB(k)==='ldsp'?'korp':KU(k)?'facrep:'+KU(k):KB(k)==='ldspF'||KB(k)==='panel'?'fac':KB(k)});
   const COST=[...SG.map(g=>KB(g.k)==='mdf'?{n:`МДФ крашеный 18 мм — фасады (листов МДФ: ${g.r.n}, ${g.r.SW}×${g.r.SH})`,x:{n:'МДФ крашеный',d:'МДФ крашеный, '+FCOL[P.fColor][0].toLowerCase()+` · листов: ${g.r.n} (${g.r.SW}×${g.r.SH})`,p:MDFM2,s:1},auto:false,q:Math.round(g.r.area*100)/100,u:'м²',tgt:'set'}:({n:SHN[g.k][0],x:g.x,auto:g.auto,q:g.r.n,u:'л.',tgt:TG[g.k]})),...EG.map(e=>({n:`Кромка ${efmt(e.v)} мм — ${e.k==='ldsp'?'корпус':'фасады'+(dsFind(KU(e.k))?' «'+dsFind(KU(e.k)).d+'»':'')}`,x:e.x,auto:e.auto,q:e.buy,u:'м',tgt:'edge:'+e.key})),...(capQ?[{n:'Заглушки для евровинтов',x:capX,auto:!m.cCat,q:capQ,u:'шт',tgt:'cap'}]:[])];
@@ -1714,15 +1723,16 @@ function renderMat(){
   txt.push('','Листы:');
   KS.forEach(k=>{const r=c.res[k];if(!r)return;const g=KB(k)==='ldspF'?'ldsp':k,cur=m[g];
     h+=`<div class="mblk" data-blk="${k}"><b class="t">${SHN[k][0]}<small class="note" style="display:block;font-weight:400">${SHN[k][1]}</small></b>`;
-    {const g=SG.find(q=>q.k===k);h+=costCard({n:'Лист из каталога',x:g.x,auto:g.auto,q:r.n,u:'л.',tgt:TG[k]})}
-    if(m.fo&&m.fo[k])h+=`<p class="note">Формат ${r.SW}×${r.SH} — выбран в «Раскрое»</p>`;
+    if(KO(k))h+=`<p class="note">Деловой остаток ${r.SW}×${r.SH} — уже есть, не покупается. Задаётся в «Раскрое» → «Остатки».</p>`;
+    else{const g=SG.find(q=>q.k===k);h+=costCard({n:'Лист из каталога',x:g.x,auto:g.auto,q:r.n,u:'л.',tgt:TG[k]})}
+    if(KO(k));else if(m.fo&&m.fo[k])h+=`<p class="note">Формат ${r.SW}×${r.SH} — выбран в «Раскрое»</p>`;
     else if(sheetCat(k))h+=`<p class="note">Формат по каталогу: ${r.SW}×${r.SH}${sheetCat(k).m?' ('+sheetCat(k).m+')':''}</p>`;
     else if(SHF[k]){h+=`<div class="chips">${SHF[k].map(([a,b])=>`<button class="chip" data-shf="${k}" data-v="${a}x${b}" aria-pressed="${cur===a+'x'+b}">${a}×${b}</button>`).join('')}<button class="chip" data-shf="${k}" data-v="own" aria-pressed="${cur==='own'}">Свой</button></div>`;
       if(cur==='own'){const[a,b]=sheetOf(k);h+=`<div class="mcust"><input data-own="${k}" data-i="0" inputmode="numeric" value="${a}">×<input data-own="${k}" data-i="1" inputmode="numeric" value="${b}">мм</div>`}}
     else h+=`<p class="note">Формат как у ЛДСП: ${r.SW}×${r.SH}</p>`;
     const nOwn=r.its.filter(i=>i.own).length,ekS=Object.keys(r.ek).map(Number).sort((x,y)=>x-y);
     h+=`<div class="mres">${sheetsW(r.n)}${r.big.length?` + не помещаются: ${r.big.length}`:''}<span>${r.cnt} дет. (${r.gl.length} поз.) · ${fmt(r.area)} м² · отход ${Math.round((1-r.fill)*100)}%<br>рез ${fmt(r.cutLen/1000)} м, ${r.cuts} резов${ekS.length?' · кромка '+ekS.map(v=>efmt(v)+' — '+fmt(r.ek[v]/1000)+' м').join(', '):''}${nOwn?` · изменено: ${nOwn}`:''}</span></div>`;
-    h+=chipRow('Вариант раскроя','data-alg',[0,1,2].map(i=>[i,`${i+1}: ${r.vars[i]} л.${i===r.best?' ★':''}`]),r.alg);
+    h+=chipRow('Вариант раскроя','data-alg',[0,1,2].map(i=>[i,`${ALGN[i]}: ${r.vars[i]} л.${i===r.best?' ★':''}`]),r.alg);
     if(r.big.length)h+=`<p class="note" style="color:#B23A2E">Больше листа: ${r.big.map(i=>i.n+' '+i.a+'×'+i.b).join(', ')}</p>`;
     h+=`<div class="go"><button data-cut="${k}">${m.cut[k]?'Скрыть раскрой':'Карта раскроя'}</button>${nOwn?`<button data-reset="${k}">Сбросить правки</button>`:''}</div>`;
     if(m.cut[k]){const sg=MATSEL&&MATSEL.k===k?r.gl.find(g=>g.ids.includes(MATSEL.id)):null,sel=sg?sg.ids:null;
@@ -3410,7 +3420,7 @@ const CI={set:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3
   l:'<path d="M4 4v16M20 12H8M13 7l-5 5 5 5"/>',r:'<path d="M20 4v16M4 12h12M11 7l5 5-5 5"/>',u:'<path d="M4 4h16M12 20V8M7 13l5-5 5 5"/>',d:'<path d="M4 20h16M12 4v12M7 11l5 5 5-5"/>',
   rot:'<path d="M3 12a9 9 0 1 0 2.6-6.4M3 4v5h5"/>',swap:'<path d="M7 4l-4 4 4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',
   move:'<rect x="2" y="6" width="9" height="12" rx="1"/><rect x="13" y="6" width="9" height="12" rx="1"/><path d="M6 12h10M13 9l3 3-3 3"/>',
-  buf:'<path d="M3 13h5l2 3h4l2-3h5M5 5h14l2 8v6H3v-6z"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'};
+  buf:'<path d="M3 13h5l2 3h4l2-3h5M5 5h14l2 8v6H3v-6z"/>',off:'<rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 14h9V3"/><path d="M15 17h3M16.5 15.5v3"/>',imp:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/>',dxf:'<path d="M3 21l6-6M14 4l6 6-9 9H5v-6z"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'};
 const cib=(ic,attr,title,on,dis)=>`<button class="ib" ${attr} title="${title}" aria-label="${title}"${on!==undefined?` aria-pressed="${!!on}"`:''}${dis?' disabled':''}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${CI[ic]}</svg></button>`;
 function cutFmtKey(k){const b=KB(k);return b==='ldspF'?'ldsp':b}
 function renderCut(){const el=$('cutBody');if(!el)return;{const ae=document.activeElement;if(ae&&el.contains(ae))ae.blur()}const m=matSet(),{c,KS,r}=cutData();
@@ -3419,11 +3429,14 @@ function renderCut(){const el=$('cutBody');if(!el)return;{const ae=document.acti
   const allOk=r.sheets.every(s=>s.g.ok);
   let h='<div class="cutL">';
   if(KS.length>1)h+='<div class="chips">'+KS.map(k=>`<button class="chip" data-ck="${k}" aria-pressed="${k===CUTK}">${SHN[k][0]} · ${c.res[k].n} л.</button>`).join('')+'</div>';
-  h+=`<div class="ibar">${cib('fmt','data-cp="fmt"','Формат листа',CUTP==='fmt')}${cib('set','data-cp="set"','Пропил и торцовка',CUTP==='set')}${cib('grain','data-cgr="1"','Текстура: '+(m.grain?'учитывается':'не учитывается'),m.grain)}${cib('cuts','data-cl="1"','Показать резы',CUTL)}${cib('zout','data-cz="-1"','Уменьшить',undefined,CUTZ<=1)}${cib('zin','data-cz="1"','Увеличить',undefined,CUTZ>=4)}${cib('auto','data-cp="var"',man?'Ручные правки / авто-раскрой':'Вариант авто-раскроя',CUTP==='var')}${cib('pdf','data-ct="pdf"','Карты раскроя — PDF')}${cib('lbl','data-ct="lbl"','Этикетки деталей — PDF')}</div>`;
+  h+=`<div class="ibar">${KO(CUTK)?'':cib('fmt','data-cp="fmt"','Формат листа',CUTP==='fmt')}${cib('off','data-cp="off"','Остатки со склада',CUTP==='off')}${cib('imp','data-cp="imp"','Детали из Excel / CSV · объединить заказы',CUTP==='imp')}${cib('set','data-cp="set"','Пропил и торцовка',CUTP==='set')}${cib('grain','data-cgr="1"','Текстура: '+(m.grain?'учитывается':'не учитывается'),m.grain)}${cib('cuts','data-cl="1"','Показать резы',CUTL)}${cib('zout','data-cz="-1"','Уменьшить',undefined,CUTZ<=1)}${cib('zin','data-cz="1"','Увеличить',undefined,CUTZ>=4)}${cib('auto','data-cp="var"',man?'Ручные правки / авто-раскрой':'Вариант авто-раскроя',CUTP==='var')}${cib('pdf','data-ct="pdf"','Карты раскроя — PDF')}${cib('lbl','data-ct="lbl"','Этикетки деталей — PDF')}${cib('dxf','data-ct="dxf"','Карты раскроя — DXF')}</div>`;
   if(CUTP==='fmt'){const g=cutFmtKey(CUTK),F=SHF[g]||SHF.ldsp,cur=r.SW+'x'+r.SH,fo=m.fo&&m.fo[CUTK],cat=sheetCat(CUTK)&&dsSheet(sheetCat(CUTK)),own=fo?!F.some(([a,b])=>a+'x'+b===fo):!cat&&m[g]==='own';
     h+=`<div class="cpanel"><b>Формат листа</b><div class="chips">${cat?`<button class="chip" data-cf="cat" aria-pressed="${!fo}">По каталогу ${cat[0]}×${cat[1]}</button>`:''}${F.map(([a,b])=>`<button class="chip" data-cf="${a}x${b}" aria-pressed="${(fo||(!cat&&cur))===a+'x'+b}">${a}×${b}</button>`).join('')}<button class="chip" data-cf="own" aria-pressed="${!!own||CUTP==='fmt'&&CUTOWN}">Свой</button></div>${own||CUTOWN?`<div class="cutbar"><input data-cown="0" inputmode="numeric" value="${r.SW}"> × <input data-cown="1" inputmode="numeric" value="${r.SH}"> мм</div>`:''}</div>`}
   if(CUTP==='set')h+=`<div class="cpanel cutbar"><label>Пропил <input data-cset="kerf" inputmode="decimal" value="${KERF}"> мм</label><label>Торцовка <input data-cset="trim" inputmode="decimal" value="${TRIM}"> мм</label></div>`;
-  if(CUTP==='var')h+=`<div class="cpanel">${man?`<span class="note">Раскладка изменена вручную</span><div class="go"><button data-ct="auto">Вернуть авто-раскрой</button></div>`:`<div class="chips">${[0,1,2].map(i=>`<button class="chip" data-calg="${i}" aria-pressed="${i===r.alg}">${i+1}: ${r.vars[i]} л.${i===r.best?' ★':''}</button>`).join('')}</div>`}</div>`;
+  {const b0=String(CUTK).split('~')[0];
+  if(CUTP==='off'){const L=(m.off||{})[b0]||[];h+=`<div class="cpanel"><b>Остатки — ${SHN[b0][0]}</b><span class="note">Целые листы и пригодные обрезки со склада. Детали сначала раскладываются на остатки (от больших к меньшим), остальное — на новые листы.</span>${L.map((o,i)=>`<div class="cutbar"><input data-offi="${i}" data-f="w" inputmode="numeric" value="${o.w}"> × <input data-offi="${i}" data-f="h" inputmode="numeric" value="${o.h}"> мм, <input data-offi="${i}" data-f="q" inputmode="numeric" value="${o.q}"> шт <button class="chip" data-offx="${i}">✕</button></div>`).join('')}<div class="go"><button data-offadd="1">+ Добавить остаток</button></div></div>`}
+  if(CUTP==='imp'){const L=(m.imp||{})[b0]||[],n=L.reduce((a,x)=>a+x.q,0);h+=`<div class="cpanel"><b>Детали из Excel / CSV — ${SHN[b0][0]}</b><span class="note">Столбцы: Название; Длина; Ширина; Кол-во; Кромка 1–4 (0,4 / 1 / 2); Текстура (по длине / по ширине). Детали другого заказа из того же материала добавятся в общий раскрой. Из PRO100 — выгрузите деталировку в CSV / Excel.</span><div class="cutbar"><input type="file" data-cimp="1" accept=".csv,.txt,.xlsx,.xls"></div>${n?`<span class="note">Добавлено: ${n} дет. (${L.length} поз.)</span>`:''}<div class="go"><button data-ct="csv">Скачать детали — CSV</button>${n?`<button data-ct="impx">Убрать добавленные</button>`:''}</div></div>`}}
+  if(CUTP==='var')h+=`<div class="cpanel">${man?`<span class="note">Раскладка изменена вручную</span><div class="go"><button data-ct="auto">Вернуть авто-раскрой</button></div>`:`<div class="chips">${[0,1,2].map(i=>`<button class="chip" data-calg="${i}" aria-pressed="${i===r.alg}">${ALGN[i]}: ${r.vars[i]} л.${i===r.best?' ★':''}</button>`).join('')}</div>`}</div>`;
   h+='<div class="chips cutpg">'+r.sheets.map((s,i)=>`<button class="chip" data-cs="${i}" aria-pressed="${i===CUTS}">${i+1}${s.g.ok?'':' ⚠'}</button>`).join('')+(r.big.length?`<button class="chip warn" data-cbuf="1">Буфер: ${r.big.length}</button>`:'')+'</div>';
   h+=`<div class="cutst"><b>${r.SW}×${r.SH}</b> · ${r.n} л. · отход ${Math.round((1-r.fill)*100)}%${allOk?'':' · <span style="color:#C0392B">⚠ сдвиньте детали — нет сквозного реза</span>'}</div>`;
   if(r.big.length&&!sp)h+=`<div class="chips">${r.big.map(i=>`<button class="chip${CUTSEL===i.id?' on':''}" data-cbi="${i.id}" aria-pressed="${CUTSEL===i.id}">№${i.no} ${i.a}×${i.b}</button>`).join('')}</div>`;
@@ -3567,11 +3580,14 @@ function cutPlace(L,r,id,s){const it=r.its.find(i=>i.id===id)||r.big.find(i=>i.i
   const si=s==='new'?L.S.length:s,O=si<L.S.length?laySheetParts(L,r,si,id):[],sp=laySpot(O,r.W,r.H,it.ca,it.cb,layRots(it));
   if(!sp){CUTMSG='На листе '+(si+1)+' нет места для этой детали';return false}
   if(f)L.S[f[0]].splice(f[1],1);L.B=(L.B||[]).filter(x=>x!==id);if(si>=L.S.length)L.S.push([]);L.S[si].push({id,x:sp.x,y:sp.y,r:sp.r});CUTS=si;CUTMSG='Перенесена на лист '+(si+1);return true}
-$('cutBody').addEventListener('change',e=>{const i=e.target;const m=matSet();if(i.dataset.cset){const v=parseFloat(String(i.value).replace(',','.'));if(isFinite(v)&&v>=0&&v<=20){if(m[i.dataset.cset]!==v&&m.lay&&Object.keys(m.lay).length){m.lay={};CUTMSG='Пропил или торцовка изменены — раскрой пересчитан заново, ручные правки сброшены'}m[i.dataset.cset]=v;save()}else CUTMSG='Введите число от 0 до 20';renderCut();if(!$('fly-mat').hidden)renderMat()}
+$('cutBody').addEventListener('change',e=>{const i=e.target;const m=matSet();if(i.dataset.offi!==undefined){const L=(m.off||{})[String(CUTK).split('~')[0]],o=L&&L[+i.dataset.offi];if(o){o[i.dataset.f]=Math.max(0,Math.min(i.dataset.f==='q'?99:5000,+String(i.value).replace(/\D/g,'')||0));cutOffReset();save()}renderCut();if(!$('fly-mat').hidden)renderMat();return}
+  if(i.dataset.cimp&&i.files&&i.files[0]){cutImport(i.files[0]);return}
+  if(i.dataset.cset){const v=parseFloat(String(i.value).replace(',','.'));if(isFinite(v)&&v>=0&&v<=20){if(m[i.dataset.cset]!==v&&m.lay&&Object.keys(m.lay).length){m.lay={};CUTMSG='Пропил или торцовка изменены — раскрой пересчитан заново, ручные правки сброшены'}m[i.dataset.cset]=v;save()}else CUTMSG='Введите число от 0 до 20';renderCut();if(!$('fly-mat').hidden)renderMat()}
   else if(i.dataset.cown!==undefined){const W0=cutData().r,v=[W0.SW,W0.SH];v[+i.dataset.cown]=Math.max(500,Math.min(5000,+String(i.value).replace(/\D/g,'')||0))||v[+i.dataset.cown];cutSetFmt(v[0]+'x'+v[1])}});
 function cutSetFmt(v){const m=matSet(),cx=sheetCat(CUTK),g=cutFmtKey(CUTK);m.fo=m.fo||{};if(v==='cat')delete m.fo[CUTK];else if(cx&&dsSheet(cx))m.fo[CUTK]=v;else{delete m.fo[CUTK];if((SHF[g]||[]).some(([a,b])=>a+'x'+b===v))m[g]=v;else{m[g]='own';m['own_'+g]=v}}if(m.lay)delete m.lay[CUTK];CUTS=0;CUTSEL=null;save();renderCut();if(!$('fly-mat').hidden)renderMat()}
 $('cutBody').addEventListener('click',e=>{const m=matSet(),b=e.target.closest('button');if(!b)return;const d=b.dataset;
-  if(d.ck){CUTK=d.ck;CUTS=0;CUTSEL=null;CUTOWN=false}else if(d.cp){CUTP=CUTP===d.cp?null:d.cp;CUTOWN=false}else if(d.cgr){m.grain=!m.grain;save();if(!$('fly-mat').hidden)renderMat()}
+  if(d.offadd||d.offx!==undefined){const b0=String(CUTK).split('~')[0];m.off=m.off||{};const L=m.off[b0]=m.off[b0]||[];if(d.offadd)L.push({w:1200,h:600,q:1});else L.splice(+d.offx,1);cutOffReset();save();if(!$('fly-mat').hidden)renderMat()}
+  else if(d.ck){CUTK=d.ck;CUTS=0;CUTSEL=null;CUTOWN=false}else if(d.cp){CUTP=CUTP===d.cp?null:d.cp;CUTOWN=false}else if(d.cgr){m.grain=!m.grain;save();if(!$('fly-mat').hidden)renderMat()}
   else if(d.cf){if(d.cf==='own'){CUTOWN=true}else{CUTOWN=false;cutSetFmt(d.cf);return}}else if(d.cs!==undefined){CUTS=+d.cs;CUTSEL=null;if(CUTP==='move')CUTP=null}else if(d.calg!==undefined){m.alg=m.alg||{};m.alg[CUTK]=+d.calg;save()}
   else if(d.cz!==undefined){CUTZ=d.cz==='0'?1:Math.max(1,Math.min(4,CUTZ*(d.cz==='1'?1.5:1/1.5)))}else if(d.cl){CUTL=!CUTL}
   else if(d.cbi){CUTSEL=CUTSEL===d.cbi?null:d.cbi;CUTP=null}else if(d.cbuf){const{r}=cutData();CUTSEL=r.big[0]&&r.big[0].id}
@@ -3588,6 +3604,7 @@ $('cutBody').addEventListener('click',e=>{const m=matSet(),b=e.target.closest('b
       if(layFits(O,r.W,r.H,p)){e0.r=nr;return}const sp=laySpot(O,r.W,r.H,it.ca,it.cb,[nr]);if(sp){e0.x=sp.x;e0.y=sp.y;e0.r=nr;CUTMSG='Повёрнута и переставлена в свободное место'}else CUTMSG='Повёрнутая деталь не помещается на этом листе'});return}
     if(t==='swap')CUTSW=!CUTSW;else if(t==='desel'){CUTSEL=null;CUTSW=false;if(CUTP==='move')CUTP=null}
     else if(t==='auto'){if(d.ok!=='1'){b.dataset.ok='1';b.textContent='Точно? Ручные правки пропадут';return}if(m.lay)delete m.lay[CUTK];CUTSEL=null;CUTP=null;save();if(!$('fly-mat').hidden)renderMat()}
+    else if(t==='dxf'){cutDXF();return}else if(t==='csv'){cutCSV();return}else if(t==='impx'){const b0=String(CUTK).split('~')[0];if(m.imp)delete m.imp[b0];cutOffReset();CUTMSG='Добавленные детали убраны';save();if(!$('fly-mat').hidden)renderMat()}
     else if(t==='pdf'){cutPDF(false);return}else if(t==='lbl'){cutPDF(true);return}}
   else return;renderCut()});
 // перетаскивание деталей: прилипание к краям листа и соседей (с пропилом), красный — нельзя поставить
@@ -3612,6 +3629,36 @@ $('cutBody').addEventListener('pointerdown',e=>{if(!CUTSW||!CUTSEL)return;const 
     const Oa=laySheetParts(L,r,fb[0],b).filter(q=>q.id!==a),Ob=laySheetParts(L,r,fa[0],a).filter(q=>q.id!==b);
     if(layFits(Oa,r.W,r.H,pa)&&layFits(Ob,r.W,r.H,pb)){L.S[fa[0]][fa[1]]={id:b,x:pb.x,y:pb.y,r:eb.r};L.S[fb[0]][fb[1]]={id:a,x:pa.x,y:pa.y,r:ea.r};CUTMSG='Детали поменялись местами'}
     else CUTMSG='Поменять нельзя — детали разного размера не помещаются на места друг друга'})},true);
+function cutOffReset(){const m=matSet(),b0=String(CUTK).split('~')[0];if(m.lay)Object.keys(m.lay).forEach(k=>{if(k.split('~')[0]===b0)delete m.lay[k]});CUTS=0;CUTSEL=null}
+const EXXLS='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';let _xls=null;
+function loadXLS(){if(window.XLSX)return Promise.resolve(window.XLSX);if(_xls)return _xls;return _xls=new Promise((ok,no)=>{const s=document.createElement('script');s.src=EXXLS;s.onload=()=>ok(window.XLSX);s.onerror=()=>{_xls=null;no(new Error('Не удалось загрузить модуль Excel'))};document.head.appendChild(s)})}
+function impRows(rows){rows=rows.filter(r=>r&&r.some(v=>String(v??'').trim()));if(!rows.length)return[];const num=v=>parseFloat(String(v??'').replace(',','.').replace(/[^\d.]/g,''))||0;
+  const H=rows[0].map(v=>String(v??'').toLowerCase()),hasH=H.some(v=>/длин|ширин|кол|назв|наим|детал/.test(v));let ci;
+  if(hasH){const f=re=>H.findIndex(v=>re.test(v));ci={n:f(/назв|наим|детал/),a:f(/длин/),b:f(/шир/),q:f(/кол|шт/),g:f(/текст|напр|волок/),e:[1,2,3,4].map(j=>H.findIndex(v=>new RegExp('кром\\D*'+j).test(v)))};rows=rows.slice(1)}
+  else{const t=!num(rows[0][0]);ci=t?{n:0,a:1,b:2,q:3,g:-1,e:[4,5,6,7]}:{n:3,a:0,b:1,q:2,g:-1,e:[4,5,6,7]}}
+  const ev=v=>{const x=num(v);return x>=1.5?2:x>=.8?1:x>0?0.4:0};
+  return rows.map(r=>{const a=num(r[ci.a]),b=num(r[ci.b]),q=Math.round(num(r[ci.q]))||1,g=ci.g>=0?String(r[ci.g]??'').toLowerCase():'';
+    return{n:(ci.n>=0&&String(r[ci.n]??'').trim())||'Деталь',a:Math.round(a*10)/10,b:Math.round(b*10)/10,q:Math.min(q,500),e:ci.e.map(j=>j>=0?ev(r[j]):0),d:/шир|попер|↕/.test(g)?'W':/длин|вдол|↔/.test(g)?'L':null}}).filter(x=>x.a>=10&&x.b>=10)}
+async function cutImport(f){const st=$('cutSt');try{let rows;
+  if(/\.xlsx?$/i.test(f.name)){const X=await loadXLS(),wb=X.read(await f.arrayBuffer()),ws=wb.Sheets[wb.SheetNames[0]];rows=X.utils.sheet_to_json(ws,{header:1,raw:false})}
+  else{const t=await f.text(),sep=(t.split('\n')[0].match(/;/g)||[]).length?';':(t.split('\n')[0].match(/\t/)?'\t':',');rows=t.split(/\r?\n/).map(l=>l.split(sep).map(v=>v.replace(/^"|"$/g,'').trim()))}
+  const L=impRows(rows);if(!L.length){CUTMSG='В файле не нашлось деталей — нужны столбцы Длина, Ширина, Кол-во';renderCut();return}
+  const m=matSet(),b0=String(CUTK).split('~')[0];m.imp=m.imp||{};m.imp[b0]=(m.imp[b0]||[]).concat(L);cutOffReset();save();CUTMSG=`Добавлено из «${f.name}»: ${L.reduce((a,x)=>a+x.q,0)} дет.`;renderCut();if(!$('fly-mat').hidden)renderMat()}
+  catch(e){if(st)st.textContent='Ошибка: '+(e&&e.message||e)}}
+async function cutCSV(){const{c}=cutData(),b0=String(CUTK).split('~')[0],G={};Object.keys(c.res).filter(k=>k.split('~')[0]===b0).forEach(k=>c.res[k].gl.forEach(g=>{const o=G[g.gk]||(G[g.gk]={...g,q:0});o.q+=g.q}));
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"',L=[['Название','Длина','Ширина','Кол-во','Кромка 1','Кромка 2','Кромка 3','Кромка 4','Текстура'].join(';'),
+    ...Object.values(G).map(g=>[q(g.names.join(', ')),String(g.a).replace('.',','),String(g.b).replace('.',','),g.q,...g.e.map(v=>v?efmt(v):'0'),g.dir==='L'?'по длине':g.dir==='W'?'по ширине':''].join(';'))];
+  const r2=await saveFile('Детали — '+SHN[b0][0].replace(/[\\/:*?"<>|]/g,'')+'.csv',new Blob(['\ufeff'+L.join('\r\n')],{type:'text/csv'}));$('cutSt').textContent=r2==='ok'?'Готово: детали в CSV':'Отменено'}
+// DXF: все листы всех материалов в ряд, слои SHEET / TRIM / PARTS / CUTS / TEXT, мм
+async function cutDXF(){const st=$('cutSt');try{const{c,KS}=cutData(),o=[],T=TRIM,f=v=>(Math.round(v*10)/10).toString();
+  const ln=(l,x1,y1,x2,y2)=>o.push('0','LINE','8',l,'10',f(x1),'20',f(y1),'30','0','11',f(x2),'21',f(y2),'31','0'),
+    rc=(l,x,y,w,h)=>{ln(l,x,y,x+w,y);ln(l,x+w,y,x+w,y+h);ln(l,x+w,y+h,x,y+h);ln(l,x,y+h,x,y)},
+    tx=(x,y,hh,s,rot)=>o.push('0','TEXT','8','TEXT','10',f(x),'20',f(y),'30','0','40',f(hh),'1',s,...(rot?['50','90']:[]));
+  let Y=0,n=0;KS.forEach((k,ki)=>{const r=c.res[k];let X=0;r.sheets.forEach((sh,i)=>{if(!sh.g)sh.g=guilSheet(sh.used,r.W,r.H);const fy=y=>Y+r.SH-y;   // ось Y вверх
+      rc('SHEET',X,Y,r.SW,r.SH);if(T)rc('TRIM',X+T,Y+T,r.W,r.H);tx(X,Y+r.SH+30,40,`M${ki+1} L${i+1} ${r.SW}x${r.SH}`);
+      sh.used.forEach(p=>{rc('PARTS',X+p.x+T,fy(p.y+T+p.h),p.w,p.h);const hh=Math.max(10,Math.min(60,p.h*.3,p.w*.15));tx(X+p.x+T+8,fy(p.y+T)-hh-8,hh,`${p.no}: ${p.lr?p.b:p.a}x${p.lr?p.a:p.b}`)});
+      sh.g.cuts.forEach(q=>ln('CUTS',X+q.x1+T,fy(q.y1+T),X+q.x2+T,fy(q.y2+T)));X+=r.SW+200;n++});Y-=Math.max(...r.sheets.map(()=>r.SH),0)+300});
+  const s=['0','SECTION','2','ENTITIES',...o,'0','ENDSEC','0','EOF'].join('\r\n');const r2=await saveFile('Карты раскроя.dxf',new Blob([s],{type:'application/dxf'}));st.textContent=r2==='ok'?`Готово: Карты раскроя.dxf · ${n} л.`:'Отменено'}catch(e){st.textContent='Ошибка: '+(e&&e.message||e)}}
 async function cutPDF(labels){const st=$('cutSt');st.textContent='Готовлю PDF…';try{const lib=await loadPDF(),D=expDoc(),{c,KS}=cutData();
   if(!labels)for(const k of KS){const r=c.res[k];r.sheets.forEach(sh=>{sh.used.forEach(p=>{if(p.lr===undefined)p.lr=Math.abs(p.w-p.ca)>.01});if(!sh.g)sh.g=guilSheet(sh.used,r.W,r.H)});for(let i=0;i<r.n;i++){const sh=r.sheets[i];D.page();D.text(`${SHN[k][0]} — лист ${i+1} из ${r.n}`,24,true);
       D.text(`Формат ${r.SW}×${r.SH} мм · пропил ${KERF} мм · торцовка ${TRIM} мм`,14,false,'#444');
