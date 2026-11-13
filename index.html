@@ -1820,40 +1820,80 @@ function thEdgeOf(EM,r,a,b){const nm=r[0].replace(/^Верх: /,'Верх, ').re
   const k=matKind(r),e=k?defEdge(k,r[0]):[0,0,0,0],m=matSet(),th=v=>v>=1?v:0,pr=v=>v>0?(+m.pre||0):0;return{e,ca:r1(a-th(e[2])-th(e[3])+pr(e[2])+pr(e[3])),cb:r1(b-th(e[0])-th(e[1])+pr(e[0])+pr(e[1]))}}
 // рисунок детали + таблица отверстий
 function thDraw(D,p,EM){let c=D.c;const F=D.F,d=p.dims||dimsOf(p.r[2]);if(!d)return;const a=d[0],b=d[1],X=p.ax==='ab'?a:b,Y=p.ax==='ab'?b:a,ed=thEdgeOf(EM,p.r,a,b),e=ed.e;
-  const sd=p.ax==='ab'?(p.eTop?{L:e[2],R:e[3],B:e[1],T:e[0]}:{L:e[2],R:e[3],B:e[0],T:e[1]}):{L:e[0],R:e[1],B:e[2],T:e[3]};   // у короба ящика кромка — на верхний торец   // кромка по сторонам рисунка
+  const sd=p.ax==='ab'?(p.eTop?{L:e[2],R:e[3],B:e[1],T:e[0]}:{L:e[2],R:e[3],B:e[0],T:e[1]}):{L:e[0],R:e[1],B:e[2],T:e[3]};   // кромка по сторонам рисунка (у короба ящика — на верхний торец)
   const H=p.H.slice().sort((u,v)=>u.y-v.y||u.x-v.x);H.forEach((h,i)=>h.no=i+1);
-  const W0=EXW-2*EXM,dw=W0*.42,tw=W0-dw-20,rowH=17,dh=Math.max(330,Math.min(560,60+H.length*rowH)),tbH=20+Math.max(1,H.length)*rowH;
+  const W0=EXW-2*EXM,isE=h=>/^[LRBT]$/.test(h.f),f1=v=>String(r1(v)).replace('.',',');
   const lab=k=>p.lab[{L:0,R:1,B:2,T:3}[k]]||'',eTxt=['L','R','B','T'].filter(k=>sd[k]).map(k=>(lab(k)||({L:'левая',R:'правая',B:'низ',T:'верх'}[k])).toLowerCase()+' '+efmt(sd[k])+' мм').join(', ');
-  const L1=D.wrap(`${String(p.r[1]).split(',')[0]} · готовая ${a} × ${b} мм · в распил ${ed.ca} × ${ed.cb} мм · кромка: ${eTxt||'нет'}`,W0,13),L2=D.wrap(`Вид: ${p.face}. ${p.xl}, ${p.yl}.`+(p.note?' '+p.note:''),W0,13),hd=30+(L1.length+L2.length)*18;
-  D.need(hd+Math.max(dh,tbH)+20);c=D.c;let y0=D.y;
+  const L1=D.wrap(`${String(p.r[1]).split(',')[0]} · готовая ${a} × ${b} мм · в распил ${ed.ca} × ${ed.cb} мм · кромка: ${eTxt||'нет'}`,W0,13),L2=D.wrap(`Вид: ${p.face}.`+(p.note?' '+p.note:''),W0,13);
+  // уникальные координаты: X — у отверстий в пласти и в нижнем/верхнем торце, Y — в пласти и в боковых торцах
+  const xs=[...new Set(H.filter(h=>!/^[LR]$/.test(h.f)).map(h=>h.x))].sort((u,v)=>u-v),ys=[...new Set(H.filter(h=>!/^[BT]$/.test(h.f)).map(h=>h.y))].sort((u,v)=>u-v);
+  const ML=150,MR=150,MT=118,MB=150,dhMax=780,k=Math.min((W0-ML-MR)/X,(dhMax-MT-MB)/Y,1.2),pw=X*k,ph=Y*k,dh=ph+MT+MB,hd=30+(L1.length+L2.length+1)*18;
+  D.need(hd+dh+60);c=D.c;let y0=D.y;
   c.fillStyle='#111';c.font='700 17px '+F;c.fillText((p.nm||p.r[0])+(p.q>1?'  ×'+p.q:''),EXM,y0);y0+=26;
-  c.font='13px '+F;L1.forEach(l=>{c.fillStyle='#1E5631';c.fillText(l,EXM,y0);y0+=18});L2.forEach(l=>{c.fillStyle='#444';c.fillText(l,EXM,y0);y0+=18});y0+=8;
-  // деталь
-  const bx=EXM,by=y0,k=Math.min((dw-110)/X,(dh-80)/Y),pw=X*k,ph=Y*k,px=bx+60+(dw-110-pw)/2,py=by+30+(dh-80-ph)/2,TX=x=>px+x*k,TY=y=>py+ph-y*k;
+  c.font='13px '+F;L1.forEach(l=>{c.fillStyle='#1E5631';c.fillText(l,EXM,y0);y0+=18});L2.forEach(l=>{c.fillStyle='#444';c.fillText(l,EXM,y0);y0+=18});
+  c.fillStyle='#1F5FA8';c.fillText('Синие размеры — от края детали до центра отверстия, мм: сверху — от левого края, снизу — от правого, слева — от нижнего, справа — от верхнего.',EXM,y0);y0+=26;
+  const px=EXM+ML+(W0-ML-MR-pw)/2,py=y0+MT,TX=x=>px+x*k,TY=y=>py+ph-y*k;
   c.fillStyle='#F4EFE6';c.fillRect(px,py,pw,ph);c.strokeStyle='#333';c.lineWidth=1.5;c.strokeRect(px,py,pw,ph);
   const seg={L:[px,py,px,py+ph],R:[px+pw,py,px+pw,py+ph],B:[px,py+ph,px+pw,py+ph],T:[px,py,px+pw,py]};
   Object.entries(sd).forEach(([s,v])=>{if(!v)return;const[x1,y1,x2,y2]=seg[s];c.strokeStyle=EDC[v]||'#2E9E5B';c.lineWidth=v>=2?7:v>=1?5:3;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()});
-  c.font='700 11px '+F;c.fillStyle='#555';
-  if(lab('B')){const s=lab('B');c.fillText(s,px+pw/2-c.measureText(s).width/2,py+ph+44)}if(lab('T')){const s=lab('T');c.fillText(s,px+pw/2-c.measureText(s).width/2,py-30)}
-  if(lab('L')){c.save();c.translate(px-30,py+ph/2);c.rotate(-Math.PI/2);const s=lab('L');c.fillText(s,-c.measureText(s).width/2,-12);c.restore()}
-  if(lab('R')){c.save();c.translate(px+pw+22,py+ph/2);c.rotate(-Math.PI/2);const s=lab('R');c.fillText(s,-c.measureText(s).width/2,0);c.restore()}
-  c.font='13px '+F;c.fillStyle='#1F5FA8';{const s=String(X);c.fillText(s,px+pw/2-c.measureText(s).width/2+(H.some(h=>h.f==='B')?24:0),py+ph+26)}{c.save();c.translate(px-16,py+ph/2);c.rotate(-Math.PI/2);const s=String(Y);c.fillText(s,-c.measureText(s).width/2,-6);c.restore()}
-  c.fillStyle='#C0392B';c.font='700 11px '+F;c.fillText('0',px-10,py+ph+2);
+  // ординатные размеры: метки не налезают друг на друга — уходят на следующий ряд
+  const lev=(pos,gap)=>{const last=[];return pos.map(q=>{let L=0;while(L<3&&last[L]!=null&&q-last[L]<gap)L++;if(L===3)L=last.reduce((bi,v,i)=>q-v>q-last[bi]?i:bi,0);last[L]=q;return L})};
+  const guide=(x1,y1,x2,y2)=>{c.strokeStyle='#8FB3D9';c.lineWidth=.8;c.setLineDash([3,3]);c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();c.setLineDash([])};
+  const vtxt=(s,x,y,up)=>{c.save();c.translate(x+4,y);c.rotate(-Math.PI/2);c.fillText(s,up?0:-c.measureText(s).width,0);c.restore()};   // вертикальная надпись: up — вверх от y, иначе вниз от y
+  c.font='700 12px '+F;
+  const lx=lev(xs.map(TX),15),STEP=44;
+  xs.forEach((x,i)=>{const sx=TX(x),Lv=lx[i];c.fillStyle='#1F5FA8';
+    const yt=py-8-Lv*STEP;guide(sx,py,sx,yt);vtxt(f1(x),sx-10,yt-2,true);
+    const yb=py+ph+8+Lv*STEP;guide(sx,py+ph,sx,yb);c.fillStyle='#1F5FA8';vtxt(f1(X-x),sx-10,yb+2,false)});
+  const ly=lev(ys.map(y=>-TY(y)),15);
+  ys.forEach((y,i)=>{const sy=TY(y),Lv=ly[i];c.fillStyle='#1F5FA8';const s1=f1(y),s2=f1(Y-y);
+    const xl=px-8-Lv*48;guide(px,sy,xl,sy);c.fillText(s1,xl-c.measureText(s1).width-2,sy-6);
+    const xr=px+pw+8+Lv*48;guide(px+pw,sy,xr,sy);c.fillStyle='#1F5FA8';c.fillText(s2,xr+2,sy-6)});
+  // подписи полос и габариты
+  c.font='11px '+F;c.fillStyle='#555';
+  const cap=(s,x,y)=>c.fillText(s,x,y);
+  cap(`↓ от левого края${lab('L')?' ('+lab('L').toLowerCase()+')':''}`,px,py-MT+4);cap(`↑ от правого края${lab('R')?' ('+lab('R').toLowerCase()+')':''}`,px,py+ph+MB-36);
+  c.save();c.translate(px-ML+14,py+ph);c.rotate(-Math.PI/2);cap(`→ от нижнего края${lab('B')?' ('+lab('B').toLowerCase()+')':''}`,0,0);c.restore();
+  c.save();c.translate(px+pw+MR-4,py);c.rotate(Math.PI/2);cap(`→ от верхнего края${lab('T')?' ('+lab('T').toLowerCase()+')':''}`,0,0);c.restore();
+  c.font='700 14px '+F;c.fillStyle='#111';{const s=`${X} мм`,yy=py+ph+MB-18;c.strokeStyle='#111';c.lineWidth=1;c.beginPath();c.moveTo(px,yy);c.lineTo(px+pw,yy);[px,px+pw].forEach(v=>{c.moveTo(v,yy-6);c.lineTo(v,yy+6)});c.stroke();c.fillStyle='#fff';const w=c.measureText(s).width;c.fillRect(px+pw/2-w/2-4,yy-9,w+8,18);c.fillStyle='#111';c.fillText(s,px+pw/2-w/2,yy-8)}
+  {const s=`${Y} мм`,xx=px-ML+40;c.strokeStyle='#111';c.beginPath();c.moveTo(xx,py);c.lineTo(xx,py+ph);[py,py+ph].forEach(v=>{c.moveTo(xx-6,v);c.lineTo(xx+6,v)});c.stroke();c.save();c.translate(xx,py+ph/2);c.rotate(-Math.PI/2);const w=c.measureText(s).width;c.fillStyle='#fff';c.fillRect(-w/2-4,-9,w+8,18);c.fillStyle='#111';c.fillText(s,-w/2,-8);c.restore()}
+  // названия сторон — внутри детали у края
+  c.font='700 11px '+F;c.fillStyle='rgba(0,0,0,.45)';
+  if(lab('B')){const s=lab('B');c.fillText(s,px+pw/2-c.measureText(s).width/2,py+ph-16)}if(lab('T')){const s=lab('T');c.fillText(s,px+pw/2-c.measureText(s).width/2,py+5)}
+  if(lab('L')){c.save();c.translate(px+5,py+ph/2);c.rotate(-Math.PI/2);const s=lab('L');c.fillText(s,-c.measureText(s).width/2,0);c.restore()}
+  if(lab('R')){c.save();c.translate(px+pw-17,py+ph/2);c.rotate(-Math.PI/2);const s=lab('R');c.fillText(s,-c.measureText(s).width/2,0);c.restore()}
+  // отверстия
   H.forEach(h=>{const T=HT[h.t],col=T[0];let cx,cy;
     if(h.f==='L'){cx=px;cy=TY(h.y)}else if(h.f==='R'){cx=px+pw;cy=TY(h.y)}else if(h.f==='B'){cx=TX(h.x);cy=py+ph}else if(h.f==='T'){cx=TX(h.x);cy=py}else{cx=TX(h.x);cy=TY(h.y)}
     c.strokeStyle=col;c.fillStyle=col;c.lineWidth=1.6;c.beginPath();
-    if(/^[LRBT]$/.test(h.f)){const L=10,o=h.f==='L'?[-1,0]:h.f==='R'?[1,0]:h.f==='B'?[0,1]:[0,-1];c.moveTo(cx-o[0]*L,cy-o[1]*L);c.lineTo(cx+o[0]*4,cy+o[1]*4);c.stroke();c.beginPath();c.arc(cx+o[0]*6,cy+o[1]*6,3,0,7);c.fill()}
-    else{const rr=Math.max(2.5,T[3]*k/2);c.arc(cx,cy,rr,0,7);T[4]?c.fill():c.stroke()}
-    c.font='10px '+F;c.fillStyle=col;const s=String(h.no),ox=/^[LR]$/.test(h.f)?(h.f==='L'?-24:12):5,oy=/^[BT]$/.test(h.f)?(h.f==='B'?12:-22):-13;c.fillText(s,cx+ox,cy+oy)});
-  // таблица
-  const tx=EXM+dw+20,cols=[['№',28],['Для чего',172],['Сверло',tw-28-172-52-52-92],['X',52],['Y',52],['Где',92]];let ty=by;
-  c.fillStyle='#EEE';c.fillRect(tx,ty,tw,20);c.fillStyle='#111';c.font='700 12px '+F;{let xx=tx;cols.forEach(([n,w])=>{c.fillText(n,xx+4,ty+4);xx+=w})}ty+=20;
+    if(isE(h)){const o=h.f==='L'?[1,0]:h.f==='R'?[-1,0]:h.f==='B'?[0,-1]:[0,1],L=Math.min(14,Math.max(6,(T[1].match(/гл\. (\d+)/)||[0,20])[1]*k));c.lineWidth=3;c.moveTo(cx,cy);c.lineTo(cx+o[0]*L,cy+o[1]*L);c.stroke()}   // в торец: штрих внутрь на глубину
+    else{const rr=Math.max(2.5,T[3]*k/2);c.arc(cx,cy,rr,0,7);T[4]?c.fill():c.stroke();c.beginPath();c.lineWidth=.7;c.moveTo(cx-rr-3,cy);c.lineTo(cx+rr+3,cy);c.moveTo(cx,cy-rr-3);c.lineTo(cx,cy+rr+3);c.stroke()}
+    c.font='700 10px '+F;c.fillStyle=col;const s=String(h.no),ox=h.f==='L'?6:h.f==='R'?-16:5,oy=h.f==='B'?-24:h.f==='T'?10:-14;c.fillText(s,cx+ox,cy+oy)});
+  D.y=py+ph+MB+6;
+  // таблица на всю ширину
+  const cols=[['№',32],['Для чего',210],['Сверло',300],['от лев.',72,'r'],['от прав.',72,'r'],['от низа',72,'r'],['от верха',72,'r'],['Где',W0-32-210-300-288]],rowH=18;
+  const head=()=>{c=D.c;c.fillStyle='#EEE';c.fillRect(EXM,D.y,W0,22);c.fillStyle='#111';c.font='700 12px '+F;let xx=EXM;cols.forEach(([n,w,al])=>{c.fillText(n,al?xx+w-6-c.measureText(n).width:xx+4,D.y+5);xx+=w});D.y+=22};
   const where=h=>h.f==='f'?'пласть':h.f==='b'?'обор. пласть':'торец'+(lab(h.f)?': '+lab(h.f).toLowerCase():'');
-  if(!H.length){c.font='12px '+F;c.fillStyle='#555';c.fillText('Присадки нет.',tx+4,ty+4);ty+=rowH}
-  H.forEach((h,i)=>{if(i%2){c.fillStyle='#F7F7F5';c.fillRect(tx,ty,tw,rowH)}const T=HT[h.t];let xx=tx;c.font='11.5px '+F;
-    const isE=/^[LRBT]$/.test(h.f),vals=[String(h.no),T[2],T[1],isE&&/^[LR]$/.test(h.f)?'—':String(h.x).replace('.',','),isE&&/^[BT]$/.test(h.f)?'—':String(h.y).replace('.',','),where(h)];
-    vals.forEach((v,j)=>{c.fillStyle=j===0?T[0]:'#111';let s=v;while(c.measureText(s).width>cols[j][1]-8&&s.length>4)s=s.slice(0,-2);if(s!==v)s=s.slice(0,-1)+'…';c.fillText(s,xx+4,ty+3);xx+=cols[j][1]});ty+=rowH});
-  D.y=Math.max(by+dh,ty)+22;c.strokeStyle='#DDD';c.lineWidth=1;c.beginPath();c.moveTo(EXM,D.y-11);c.lineTo(EXW-EXM,D.y-11);c.stroke()}
+  D.need(22+rowH);head();
+  if(!H.length){c.font='12px '+F;c.fillStyle='#555';c.fillText('Присадки нет.',EXM+4,D.y+4);D.y+=rowH}
+  H.forEach((h,i)=>{if(D.y+rowH>EXH-70){D.page();c=D.c;c.font='700 13px '+F;c.fillStyle='#111';c.fillText((p.nm||p.r[0])+' — продолжение таблицы',EXM,D.y);D.y+=22;head()}
+    c=D.c;if(i%2){c.fillStyle='#F7F7F5';c.fillRect(EXM,D.y,W0,rowH)}const T=HT[h.t];let xx=EXM;c.font='12px '+F;
+    const xL=/^[LR]$/.test(h.f)?(h.f==='L'?'0 (торец)':'—'):f1(h.x),xR=/^[LR]$/.test(h.f)?(h.f==='R'?'0 (торец)':'—'):f1(X-h.x),yB=/^[BT]$/.test(h.f)?(h.f==='B'?'0 (торец)':'—'):f1(h.y),yT=/^[BT]$/.test(h.f)?(h.f==='T'?'0 (торец)':'—'):f1(Y-h.y);
+    [String(h.no),T[2],T[1],xL,xR,yB,yT,where(h)].forEach((v,j)=>{const[,w,al]=cols[j];c.fillStyle=j===0?T[0]:j>=3&&j<=6?'#1F5FA8':'#111';c.font=(j>=3&&j<=6?'700 ':'')+'12px '+F;let s=v;while(c.measureText(s).width>w-8&&s.length>4)s=s.slice(0,-2);if(s!==v)s=s.slice(0,-1)+'…';c.fillText(s,al?xx+w-6-c.measureText(s).width:xx+4,D.y+3);xx+=w});D.y+=rowH});
+  D.y+=24;c=D.c;c.strokeStyle='#DDD';c.lineWidth=1;c.beginPath();c.moveTo(EXM,D.y-12);c.lineTo(EXW-EXM,D.y-12);c.stroke()}
+// просмотр карты прямо в приложении — без скачивания
+async function thView(){const st=$('thSt');if(st)st.textContent='Готовлю карту…';try{const D=expDoc();await thDoc(D);
+    const urls=await Promise.all(D.pages.map(cv=>new Promise(ok=>cv.toBlob(b=>ok(b?URL.createObjectURL(b):cv.toDataURL('image/jpeg',.85)),'image/jpeg',.88))));D.pages.length=0;
+    if(!$('thvCss')){const s=document.createElement('style');s.id='thvCss';s.textContent='#thView{position:fixed;inset:0;z-index:9999;background:#E9E7EF;display:flex;flex-direction:column}#thView .thv-h{display:flex;gap:6px;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 8px) 10px 8px;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.12)}#thView .thv-h b{flex:1;font-size:15px}#thView .thv-h small{color:#666;margin-right:4px}#thView .thv-h button{min-width:40px;height:38px;border:0;border-radius:10px;background:#EFEAFB;font-size:17px;font-weight:700;color:#4B2BB5}#thView .thv-b{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px;touch-action:pan-x pan-y pinch-zoom}#thView .thv-b img{display:block;margin:0 auto 10px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15)}';document.head.appendChild(s)}
+    let ov=$('thView');if(ov){(ov._u||[]).forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)});ov.remove()}
+    ov=document.createElement('div');ov.id='thView';ov._u=urls;ov._z=1;
+    ov.innerHTML=`<div class="thv-h"><b>Технологические отверстия</b><small>${urls.length} стр.</small><button data-z="-1" aria-label="Мельче">−</button><button data-z="1" aria-label="Крупнее">+</button><button data-thpdf="1" style="font-size:13px;padding:0 10px">PDF</button><button data-x="1" aria-label="Закрыть">✕</button></div><div class="thv-b">${urls.map(u=>`<img src="${u}" alt="">`).join('')}</div>`;
+    document.body.appendChild(ov);const Z=[1,1.5,2,3,4],apply=()=>ov.querySelectorAll('.thv-b img').forEach(im=>im.style.width=(Z[ov._z-1]*100)+'%');ov._z=1;apply();
+    ov.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+      if(d.x){(ov._u||[]).forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)});ov.remove();return}
+      if(d.thpdf){thPDF();return}
+      if(d.z){const body=ov.querySelector('.thv-b'),fx=(body.scrollLeft+body.clientWidth/2)/body.scrollWidth,fy=(body.scrollTop+body.clientHeight/2)/body.scrollHeight;ov._z=Math.max(1,Math.min(Z.length,ov._z+(+d.z)));apply();body.scrollLeft=fx*body.scrollWidth-body.clientWidth/2;body.scrollTop=fy*body.scrollHeight-body.clientHeight/2}});
+    if(st)st.textContent='Карта открыта: '+urls.length+' стр. Кнопки + и − — крупнее и мельче.'}catch(e){if(st)st.textContent='Ошибка: '+(e&&e.message||e)}}
 // сводка: крепёж и фурнитура по карте
 function thTotals(mods){const T={};mods.forEach(m=>m.out.forEach(p=>p.H.forEach(h=>{T[h.t]=(T[h.t]||0)+(p.q||1)})));return T}
 async function thDoc(D){renderInfo();const mods=thMods(),{M:EM,C}=thEdgeMap(),m=matSet(),c0=()=>D.c;
@@ -3837,15 +3877,16 @@ function renderTech(){const el=$('techBody');if(!el)return;{const ae=document.ac
   const C=techChecks(),nE=C.filter(c=>c.lv==='err').length,nW=C.filter(c=>c.lv==='warn').length;TECHF=C.map(c=>c.fix);
   const ico={err:'⛔',warn:'⚠️',ok:'✓'};
   const mm=matSet(),own=Object.entries(P.mods||{}).filter(([k,o])=>o&&o.fix).length;
-  let th=`<div class="mf"><h4>Технологические отверстия</h4><p class="note">PDF-карта присадки: каждая деталь мм в мм — евровинты или эксцентрики, шканты, петли и планки, направляющие, полкодержатели, ручки. По каждой детали — кромка и размер в распил.</p>`
+  let th=`<div class="mf"><h4>Технологические отверстия</h4><p class="note">Карта присадки: каждая деталь мм в мм, размеры от краёв до центра каждого отверстия — евровинты или эксцентрики, шканты, петли и планки, направляющие, полкодержатели, ручки. По каждой детали — кромка и размер в распил.</p>`
     +chipRow('Крепёж корпуса — вся кухня','data-tfx',[['conf','Евровинты'],['ecc','Эксцентрики']],P.fix==='ecc'?'ecc':'conf')+`<p class="note">${own?'Свой крепёж у модулей: '+own+' — в карте показано всё как выбрано. Выбор для всей кухни сбрасывает свой крепёж модулей.':'Свой крепёж для отдельного модуля — в его настройках («Крепёж корпуса»).'}</p>`
     +chipRow('Кромка корпуса, передний торец, мм','data-tec',[[0.4,'0,4'],[1,'1'],[2,'2']],mm.ec)+chipRow('Прифуговка кромочника, на сторону, мм','data-tpre',[[0,'нет'],[0.5,'0,5'],[1,'1']],+mm.pre)
-    +'<p class="note">В распил = готовый размер − кромка 1 и 2 мм (+ прифуговка): после поклейки кромки деталь выходит ровно в размер.</p><div class="go"><button data-thole="1">Технологические отверстия — PDF</button></div><p class="note" id="thSt"></p></div>';
+    +'<p class="note">В распил = готовый размер − кромка 1 и 2 мм (+ прифуговка): после поклейки кромки деталь выходит ровно в размер.</p><div class="go"><button data-thview="1">Посмотреть отверстия</button><button data-thole="1">Скачать PDF</button></div><p class="note" id="thSt"></p></div>';
   let h=`<div class="tsum ${nE?'e':nW?'w':'o'}"><b>${nE?'Есть ошибки: '+nE:nW?'Замечания: '+nW:'Проект готов к производству'}</b><small>${nE?'Исправьте до запуска в цех.':nW?'Можно делать, но лучше поправить.':'Все проверки пройдены.'} Проверено пунктов: ${C.length}.</small></div>`;
   const ord={err:0,warn:1,ok:2},G=[...new Set(C.map(c=>c.grp))];
   [...C.map((c,i)=>[c,i])].sort((a,b)=>ord[a[0].lv]-ord[b[0].lv]).forEach(([c,i])=>{h+=`<div class="tck ${c.lv}"><i>${ico[c.lv]}</i><div><b>${c.t}</b><small>${c.grp}${c.d?' · '+c.d:''}</small>${c.fix?`<button class="chip" data-tfix="${i}">${c.fix[0]}</button>`:''}</div></div>`});
   el.innerHTML=th+'<div class="mf">'+h+'</div>'}
 $('techBody').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset,m=matSet();
+  if(d.thview){thView();return}
   if(d.thole){thPDF();return}
   if(d.tfx){P.fix=d.tfx;Object.values(P.mods||{}).forEach(o=>{if(o)delete o.fix})}else if(d.tec)m.ec=+d.tec;else if(d.tpre!==undefined)m.pre=+d.tpre;else return;
   update();renderTech()});
