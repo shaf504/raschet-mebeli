@@ -1002,7 +1002,7 @@ const frW=()=>FRW.includes(+P.frW)?+P.frW:600,frH=()=>FRH.includes(+P.frH)?+P.fr
 function frLay(){const PT=penTop(),nt=frH()+FRV,ch=PT-t-(nt+t);return{nt,cab:ch>=250,ch,PT}}   // nt — верх проёма (низ полки), cab — шкаф над холодильником
 const isFr=id=>KT(id)==='pen'&&mergedFor(id).penKind==='fr';   // широкий пенал с полками — две створки
 function penMinH(){if(P.penKind==='fr')return Math.ceil((frH()+FRV+2*t)/10)*10;if(P.penKind==='shelf')return Math.ceil((P.L+Fh()+P.gapD+300+SGAP)/10)*10;   // верхняя дверца не меньше 300
-  const oy=Math.round(P.H-595/2),ot=oy+595,mt=P.penKind==='ovmw'?ot+2+t+MWH:ot;return Math.ceil((mt+2+200+SGAP)/10)*10}   // над техникой дверца не меньше 200
+  const oy=Math.round(P.H-595/2),ot=oy+595,mt=P.penKind==='ovmw'?ot+2+t+MWH:P.penKind==='mw'?oy+MWH:ot;return Math.ceil((mt+2+200+SGAP)/10)*10}   // над техникой дверца не меньше 200
 let AH=300;   // антресоли: высота (P.AH, 250–600), над верхними и над пеналом
 const AHS=[250,300,350,400,450,500,600];
 // карниз по всему верху кухни: доска 18 в цвет фасада высотой P.CH + полка-козырёк 16 с выносом 25;
@@ -1044,8 +1044,8 @@ const endPl=r=>!['pen','dwm','corner'].includes(r.k)&&penEnds(r).some(Boolean); 
 const penEnds=r=>r.isl?[false,false]:r.side?[!!r.last,false]:[r.x===0&&!P.corner,!!r.last];   // открытые торцы пенала: слева / справа
 const MWH=382;   // микроволновка встраиваемая 595×382
 // раскладка пенала с техникой: середина духовки на уровне верха столешницы, под ней ящик, над ней микроволновка (по выбору), сверху дверца
-function penLay(){const PT=penTop(),oy=Math.round(P.H-595/2),dfh=oy-2-P.L,ot=oy+595,mw=P.penKind==='ovmw',my=ot+2+t,mt=mw?my+MWH:ot,dy=mt+2;
-  return{PT,oy,dfh,ot,mw,my,mt,dy,dh:PT-SGAP-dy,sh2:mw?[ot+2,my]:null,shTop:[mt,mt+t]}}
+function penLay(){const PT=penTop(),oy=Math.round(P.H-595/2),dfh=oy-2-P.L,mo=P.penKind==='mw',ot=mo?oy-2-t:oy+595,mw=P.penKind==='ovmw'||mo,my=ot+2+t,mt=mw?my+MWH:ot,dy=mt+2;
+  return{PT,oy,dfh,ot,mw,mo,my,mt,dy,dh:PT-SGAP-dy,sh2:mw&&!mo?[ot+2,my]:null,shTop:[mt,mt+t]}}
 const cornerSpan=()=>P.left?Math.max(CRW,P.B+P.D+FT()+P.fill+SGAP+CRD):CRW;   // от боковой стены до правого края углового   // угловой с глухой частью: 1000, дверца 450   // шкаф 800 с двумя дверцами   // задняя планка мойки: низ на 250 мм выше дна   // модуль под мойку 800
 // ряд модулей по задней стене: P.row — экземпляры по порядку слева направо (id: 'dr', 'dr-2', …), настройки каждого — в P.mods[id]
 const ROWT=['door','dr','ov','hob','sink','cab8','dwm','pen'];
@@ -1067,7 +1067,7 @@ const islNP=()=>Math.ceil(islW()/2700);   // задняя панель и цок
 const islOn=()=>!!P.isl&&(P.rowI||[]).length>0;
 // задняя глухая панель: от лица фасадов на глубину острова; между корпусами и панелью — пустота под столешницей (рёбра жёсткости)
 const islBack=()=>{const zF=P.D+FT()+24;return zF-islCtD()+(islSeat()||ISLO)};   // z задней грани задней панели (в координатах модуля)
-function iW(id){const k=KT(id),q=(P.mods&&P.mods[id])||{};return k==='door'?+(q.W||P.W):k==='dr'?+(q.W2||P.W2):k==='ov'?OVW:k==='hob'?HOBW:k==='sink'?SKW:k==='cab8'?CBW:k==='pen'?(['ov','ovmw'].includes(q.penKind||P.penKind)?600:+(q.PW||P.PW)):+(q.dwW||P.dwW)}
+function iW(id){const k=KT(id),q=(P.mods&&P.mods[id])||{};return k==='door'?+(q.W||P.W):k==='dr'?+(q.W2||P.W2):k==='ov'?OVW:k==='hob'?HOBW:k==='sink'?SKW:k==='cab8'?CBW:k==='pen'?(['ov','ovmw','mw'].includes(q.penKind||P.penKind)?600:+(q.PW||P.PW)):+(q.dwW||P.dwW)}
 function rowLay(){let x=0;return (P.row||[]).map((id,i,a)=>{const w=iW(id),r={id,k:KT(id),x,w,last:i===a.length-1};x+=w;return r})}
 const rowW=()=>(P.row||[]).reduce((s,id)=>s+iW(id),0);
 // боковая стена (от угла): P.rowL — экземпляры по порядку от угла; угол слева или справа (P.side) — справа вся кухня зеркальная
@@ -1180,10 +1180,10 @@ function render2D(){
   const OVN0=595,oven=(x,y,w)=>R(x+3,y,w-6,OVN0,'#2E3236',SK,3)+R(x+40,y+60,w-80,400,'#4A5157','none',0)+R(x+3,y+500,w-6,95,'#BFC4C8','none',0);
   const lower=(m,x,w)=>{let s=R(x,0,w,L,kPl(),SK,2)+R(x,L,w,top-L,kHex(),SK,3);
     const k=KT(m),Q=mergedFor(m);
-    if(k==='dr'||k==='hob')asMod(m,()=>drawerFronts()).forEach(([yb,h])=>{s+=fac(m,x,yb,w,h,['h',h/2+6])});
+    if(k==='dr'||k==='hob'&&!Q.hobDoor)asMod(m,()=>drawerFronts()).forEach(([yb,h])=>{s+=fac(m,x,yb,w,h,['h',h/2+6])});
     else if(k==='ov'){const o=asMod(m,()=>ovenParts());s+=fac(m,x,L,w,o.fh,['h',o.fh/2+6]);s+=Q.ovKind==='fac'?fac(m,x,o.shelf,w,top-3-o.shelf,['r',60]):oven(x,o.shelf,w)}
     else if(m==='corner')s+=R(x,L,w-CRD,top-3-L,'#E6E4DD',SK,2,'stroke-dasharray="20 14"')+fac(m,x+w-CRD,L,CRD,asMod(m,Fh),['l',60]);
-    else s+=doors(m,x,L,w,asMod(m,Fh),(k==='sink'||k==='cab8'||w>600)?2:1,60,k==='door'&&Q.hinge==='R'?'l':'r');
+    else s+=doors(m,x,L,w,asMod(m,Fh),(k==='sink'||k==='cab8'||w>600)?2:1,60,(k==='door'||k==='hob')&&Q.hinge==='R'?'l':'r');
     return G(m,s,[x,0,w,top])};
   const upper=(m,x,w,y0,h,kind)=>{if(kind==='u'){const o=uOff(m);y0+=o;h-=o}const Q=mergedFor(m);let s=R(x,y0,w,h,kHex(),SK,3);
     s+=kind==='a'&&Q.antOpen==='lift'?fac(m,x,y0,w,h,['h',Math.min(Q.hTop,h/2)+6]):doors(m,x,y0,w,h,w>600?2:1,h-Q.hTop-128,upHingeR(m)?'l':'r');return G(m,s,[x,y0,w,h])};
@@ -1198,7 +1198,7 @@ function render2D(){
         if(q.cab)s+=[...Array(n).keys()].map(i=>fac(m,x+i*lw,q.nt+2,lw,PT-1-(q.nt+2),[n===2?(i?'l':'r'):P.penHinge==='R'?'l':'r',60])).join('');return[s,PT]}
       let s=R(x,0,w,L,kPl(),SK,2)+R(x,L,w,PT-L,kHex(),SK,3);
       if(P.penKind==='shelf'){const f1=Fh(),n=penLeaves(),lw=w/n,lv=(y,h)=>[...Array(n).keys()].map(i=>fac(m,x+i*lw,y,lw,h,[n===2?(i?'l':'r'):P.penHinge==='R'?'l':'r',60])).join('');s+=lv(L,f1)+lv(L+f1+P.gapD,PT-1-(L+f1+P.gapD))}
-      else{const q=penLay();s+=fac(m,x,L,w,q.dfh,['h',q.dfh/2+6])+oven(x,q.oy,w);if(q.mw)s+=R(x+3,q.my,w-6,MWH,'#2E3236',SK,3)+R(x+30,q.my+40,w-200,MWH-80,'#4A5157','none',0);s+=fac(m,x,q.dy,w,q.dh,[P.penHinge==='R'?'l':'r',60])}
+      else{const q=penLay();s+=fac(m,x,L,w,q.dfh,['h',q.dfh/2+6])+(q.mo?'':oven(x,q.oy,w));if(q.mw)s+=R(x+3,q.my,w-6,MWH,'#2E3236',SK,3)+R(x+30,q.my+40,w-200,MWH-80,'#4A5157','none',0);s+=fac(m,x,q.dy,w,q.dh,[P.penHinge==='R'?'l':'r',60])}
       return[s,PT]});
   const penItem=(m,x,w)=>{const[b,PT]=penD(m,x,w);return G(m,b,[x,0,w,PT])+(P.up&&P.ant?upper('a_'+m,x,w,PT,AH,'a'):'')+(P.up&&P.cor?R(x,PT+(P.ant?AH:0)+2,w,P.CH,col('door'),SK,3):'')};
   // элементы развёртки: каждый рисуется от своего x=0, ширина w; seg — стена
@@ -1256,20 +1256,21 @@ function refreshSel(){
 const mStep=(k,n,v=P[k])=>{const f=ALLF.find(x=>x[0]===k);return `<div class="sz"><label>${ico(SI[k])}<span>${n}</span></label><div class="step"><button data-mk="${k}" data-d="-1" aria-label="${n} меньше">−</button><input id="m${k}" data-mk="${k}" inputmode="numeric" value="${v}"><button data-mk="${k}" data-d="1" aria-label="${n} больше">+</button></div></div>`};
 const chipRow=(lab,attr,opts,cur)=>`<div class="sz"><label>${lab}</label><div class="chips">${opts.map(([v,n])=>`<button class="chip" ${attr}="${v}" aria-pressed="${cur===v}">${n}</button>`).join('')}</div></div>`;
 function renderModFly(){
-  if(!selMod)return;if(selMod.startsWith('u_'))return renderUpFly();if(selMod.startsWith('a_'))return renderAntFly();const m=selMod,k=KT(m),Q=mergedFor(m),dr=k==='dr'||k==='hob',slides=dr||k==='ov'||(k==='pen'&&Q.penKind!=='shelf');
+  if(!selMod)return;if(selMod.startsWith('u_'))return renderUpFly();if(selMod.startsWith('a_'))return renderAntFly();const m=selMod,k=KT(m),Q=mergedFor(m),dr=k==='dr'||k==='hob'&&!Q.hobDoor,slides=dr||k==='ov'||(k==='pen'&&Q.penKind!=='shelf');
   $('modTitle').firstChild.textContent=MODN[m];
   const wTxt=isRow(m)?iW(m):{corner:CRW,left:P.WL,pen:P.PW}[m];
-  $('modSum').textContent=(k==='pen'?`${iW(m)}×${asMod(m,penTop)}`:wTxt)+' мм'+(dr?` · ${Q.nDr} ящ.`:'')+(k==='pen'?` · ${{shelf:'полки',ov:'духовка',ovmw:'духовка + СВЧ'}[Q.penKind]}`:'');
+  $('modSum').textContent=(k==='pen'?`${iW(m)}×${asMod(m,penTop)}`:wTxt)+' мм'+(dr?` · ${Q.nDr} ящ.`:'')+(k==='pen'?` · ${{shelf:'полки',ov:'духовка',ovmw:'духовка + СВЧ',mw:'СВЧ'}[Q.penKind]}`:'');
   let h='<h4>Размер</h4>';
   if(k==='door')h+=mStep('W','Ширина',Q.W);else if(k==='dr')h+=mStep('W2','Ширина',Q.W2);else if(m==='left')h+=mStep('WL','Ширина');
   else if(k==='pen'){h+=Q.penKind==='fr'?`<p class="note">Ширина проёма ${Q.PW} мм — по холодильнику (меняется ниже).</p>`:Q.penKind==='shelf'?mStep('PW','Ширина',Q.PW)+(Q.PW>600?'<p class="note">Шире 600 — две створки.</p>':''):'<p class="note">Ширина 600 мм — под встраиваемую технику.</p>';
     h+=mStep('PH','Высота',asMod(m,penTop))+`<div class="sz"><label>Верх</label><div class="chips"><button class="chip" data-mph="0" aria-pressed="${!(Q.PH>0)}">По верхним · ${penAuto()}</button><button class="chip" data-mph="1" aria-pressed="${Q.PH>0}">Свой</button></div></div>`}
   else if(k==='dwm')h+=chipRow('Ширина','data-mdw',[[450,'450'],[600,'600']],iW(m));
   else h+=`<p class="note">Ширина ${wTxt} мм — постоянная${m==='pen'?' (под технику)':''}.</p>`;
-  if(k==='door')h+='<h4>Устройство</h4>'+chipRow('Открывание','data-hg',[['L',MIR()?'Петли справа':'Петли слева'],['R',MIR()?'Петли слева':'Петли справа']],Q.hinge)+chipRow('Полки','data-sh',[[0,'0'],[1,'1'],[2,'2']],+Q.shelves);
+  if(k==='hob')h+='<h4>Под панелью</h4>'+chipRow('Наполнение','data-mhd',[[0,'Ящики'],[1,'Шкаф с дверцей']],Q.hobDoor?1:0);
+  if(k==='door'||k==='hob'&&Q.hobDoor)h+='<h4>Устройство</h4>'+chipRow('Открывание','data-hg',[['L',MIR()?'Петли справа':'Петли слева'],['R',MIR()?'Петли слева':'Петли справа']],Q.hinge)+chipRow('Полки','data-sh',[[0,'0'],[1,'1'],[2,'2']],+Q.shelves);
   if(k==='sink'||k==='cab8')h+='<h4>Устройство</h4><p class="note">Две створки — открываются в стороны, петли по краям.</p>';
-  if(k==='ov')h+='<h4>Устройство</h4>'+chipRow('Ниша','data-mok',[['oven','Духовка'],['fac','Без духовки, с фасадом']],Q.ovKind);
-  if(k==='pen')h+='<h4>Устройство</h4>'+chipRow('Наполнение','data-mpk',[['shelf','Полки'],['ov','Духовка'],['ovmw','Духовка + СВЧ'],['fr','Холодильник']],Q.penKind)
+  if(k==='ov')h+='<h4>Устройство</h4>'+chipRow('Ниша','data-mok',[['oven','Духовка'],['fac','Без духовки, с фасадом']],Q.ovKind)+chipRow('Варочная сверху','data-mohb',[[0,'Нет'],[1,'Да']],Q.ovHob?1:0);
+  if(k==='pen')h+='<h4>Устройство</h4>'+chipRow('Наполнение','data-mpk',[['shelf','Полки'],['ov','Духовка'],['ovmw','Духовка + СВЧ'],['mw','СВЧ'],['fr','Холодильник']],Q.penKind)
     +(Q.penKind==='fr'?chipRow('Холодильник, ширина','data-mfrw',FRW.map(v=>[v,v===900?'900 Side-by-Side':String(v)]),asMod(m,frW))+chipRow('Высота холодильника','data-mfrh',FRH.map(v=>[v,String(v)]),asMod(m,frH))
       +`<p class="note">Проём ${asMod(m,frW)+2*FRS} мм: по ${FRS} мм с боков и ${FRV} мм сверху на вентиляцию. Стойки ЛДСП 16 до пола, ${asMod(m,()=>frLay().cab)?'над холодильником — шкаф с дверцей':'над холодильником — полка (на шкаф не хватает высоты)'}.</p>`:'')
     +(asMod(m,penLeaves)===1?chipRow('Открывание','data-mphg',[['L',MIR()?'Петли справа':'Петли слева'],['R',MIR()?'Петли слева':'Петли справа']],Q.penHinge==='R'?'R':'L'):'<p class="note">Две створки — открываются в стороны.</p>')
@@ -1318,7 +1319,7 @@ $('modBody').addEventListener('click',e=>{
   if(d.hg)setI('hinge',d.hg);if(d.sh!==undefined)setI('shelves',+d.sh);if(d.nd)setK('nDr',+d.nd);if(d.ms)setK('slide',d.ms);if(d.mdm)setK('drMode',d.mdm);
   if(d.mao)setK('antOpen',d.mao);if(d.mah)P.AH=+d.mah;
   if(d.ureset){P.mods[selMod]={};renderFacadeUI();renderHandleUI()}
-  if(d.mok)setI('ovKind',d.mok);
+  if(d.mok)setI('ovKind',d.mok);if(d.mohb!==undefined)setI('ovHob',d.mohb==='1');if(d.mhd!==undefined)setI('hobDoor',d.mhd==='1');
   if(d.mphg)setI('penHinge',d.mphg);if(d.mfrw)setI('frW',+d.mfrw);if(d.mfrh)setI('frH',+d.mfrh);if(d.mgls!==undefined){if(KT(selMod)==='pen')setI('gls',d.mgls==='1');else setM('gls',d.mgls==='1')}
   if(d.uhg)setM('hinge',d.uhg);
   if(d.mpk){setI('penKind',d.mpk);if(d.mpk!=='shelf')setI('PW',600)}
@@ -1340,7 +1341,7 @@ const PER=['hCat','hLen','aluP','aluC','glass','fCat','antOpen','golaMode','drMo
 if(!P._gap2){P.gapD=2;P._gap2=true}   // зазор между фасадами ящиков 2 мм
 if(!P._hob2){P.mods.hob.nDr=P.mods.hob.nDr||2;P._hob2=true}   // под варочной по умолчанию 2 ящика, дальше меняется как у всех
 const mergedFor=m=>{const o=mergedFor0(m);if(o!==P&&o.fMat==='alu'&&o.hType!=='gola'){const h=Math.round(aluPW(o)/2);o.hSide=h;o.hTop=h}return o};   // на рамке ручка крепится в профиль
-const mergedFor0=m=>!m?P:m.startsWith('a_')?(KT(m)==='pen'?{...P,...(P.mods[m.slice(2)]||{}),...(P.mods[m]||{})}:{...P,...(P.mods[m.slice(2)]||{}),...(P.mods['u_'+m.slice(2)]||{}),...(P.mods[m]||{})}):m.startsWith('u_')?{...P,...(P.mods[m.slice(2)]||{}),...(P.mods[m]||{})}:KT(m)==='hob'?{...P,...(P.mods[m]||{}),W2:HOBW,isHob:true}:{...P,...(P.mods[m]||{})};
+const mergedFor0=m=>!m?P:m.startsWith('a_')?(KT(m)==='pen'?{...P,...(P.mods[m.slice(2)]||{}),...(P.mods[m]||{})}:{...P,...(P.mods[m.slice(2)]||{}),...(P.mods['u_'+m.slice(2)]||{}),...(P.mods[m]||{})}):m.startsWith('u_')?{...P,...(P.mods[m.slice(2)]||{}),...(P.mods[m]||{})}:KT(m)==='hob'?{...P,...(P.mods[m]||{}),W2:HOBW,isHob:true,...((P.mods[m]||{}).hobDoor?{W:HOBW}:{})}:{...P,...(P.mods[m]||{})};
 function asMod(m,fn){const s0=P;if(m)P=mergedFor(m);try{return fn()}finally{P=s0}}
 function setK(k,v){
   if(selMod&&PER.includes(k))(P.mods[selMod]=P.mods[selMod]||{})[k]=v;
@@ -1387,17 +1388,17 @@ function ctFitB(){const c=dsGet('ct',P.ctCat);P.ctBcut=0;if(!c||!c.f)return;cons
 function clampAll0(){
   Object.values(P.mods||{}).forEach(o=>{if('nDr' in o&&![2,3,4].includes(+o.nDr))o.nDr=3;['hTop','hSide'].forEach(k=>{if(k in o)o[k]=Math.max(15,Math.min(300,Math.round(+o[k]||50)))})});
   ALLF.forEach(([k,,,mn,mx])=>{P[k]=Math.min(mx,Math.max(mn,Math.round(+P[k]||DEF[k])))});
-  if(!['shelf','ov','ovmw','fr'].includes(P.penKind))P.penKind='shelf';if(P.penKind==='ov'||P.penKind==='ovmw')P.PW=600;if(P.PH>0)P.PH=Math.max(penMinH(),Math.min(3000,P.PH));
+  if(!['shelf','ov','ovmw','mw','fr'].includes(P.penKind))P.penKind='shelf';if(P.penKind==='ov'||P.penKind==='ovmw'||P.penKind==='mw')P.PW=600;if(P.PH>0)P.PH=Math.max(penMinH(),Math.min(3000,P.PH));
   if(!HOLES[P.hType]&&!['knob','gola',...PROFH,...NOPULL].includes(P.hType))P.hType='b128';
   if(P.hPos==='vert'&&HOLES[P.hType])P.hTop=Math.min(P.hTop,Fh()-HOLES[P.hType]-20);
   if(P.drMode!=='eq')P.drMode='big';if(P.golaMode!=='all')P.golaMode='pair';
   if(P.hinge!=='R')P.hinge='L';P.shelves=[0,1,2].includes(+P.shelves)?+P.shelves:1;
-  if(!SLIDES[P.slide])P.slide='ball';if(![2,3,4].includes(+P.nDr))P.nDr=3;syncRow();applyCt();P.corner=!!P.corner;P.dwW=[450,600].includes(+P.dwW)?+P.dwW:600;P.left=!!P.left&&P.corner;if(!['oven','fac'].includes(P.ovKind))P.ovKind='oven';P.photo=P.photo!==false;P.cor=!!P.cor;P.hobUp=[600,650,750].includes(+P.hobUp)?+P.hobUp:650;P.CH=[60,80,100,120,150].includes(+P.CH)?+P.CH:100;P.ant=!!P.ant;P.AH=Math.max(250,Math.min(600,Math.round((+P.AH||300)/10)*10));AH=P.AH;if(!['swing','lift'].includes(P.antOpen))P.antOpen='swing';if(!['up','pen'].includes(P.antD))P.antD='up';if(!['shelf','ov','ovmw','fr'].includes(P.penKind))P.penKind='shelf';if(P.penKind==='ov'||P.penKind==='ovmw')P.PW=600;P.fill=[30,50].includes(+P.fill)?+P.fill:50;P.ctJoin=P.ctJoin==='euro'?'euro':'strip';P.wp=P.wp!==false;P.up=P.up!==false;P.UD=[300,320,340,350].includes(+P.UD)?+P.UD:300;
+  if(!SLIDES[P.slide])P.slide='ball';if(![2,3,4].includes(+P.nDr))P.nDr=3;syncRow();applyCt();P.corner=!!P.corner;P.dwW=[450,600].includes(+P.dwW)?+P.dwW:600;P.left=!!P.left&&P.corner;if(!['oven','fac'].includes(P.ovKind))P.ovKind='oven';P.photo=P.photo!==false;P.cor=!!P.cor;P.hobUp=[600,650,750].includes(+P.hobUp)?+P.hobUp:650;P.CH=[60,80,100,120,150].includes(+P.CH)?+P.CH:100;P.ant=!!P.ant;P.AH=Math.max(250,Math.min(600,Math.round((+P.AH||300)/10)*10));AH=P.AH;if(!['swing','lift'].includes(P.antOpen))P.antOpen='swing';if(!['up','pen'].includes(P.antD))P.antD='up';if(!['shelf','ov','ovmw','mw','fr'].includes(P.penKind))P.penKind='shelf';if(P.penKind==='ov'||P.penKind==='ovmw'||P.penKind==='mw')P.PW=600;P.fill=[30,50].includes(+P.fill)?+P.fill:50;P.ctJoin=P.ctJoin==='euro'?'euro':'strip';P.wp=P.wp!==false;P.up=P.up!==false;P.UD=[300,320,340,350].includes(+P.UD)?+P.UD:300;
   (P.row||[]).forEach(id=>{const o=P.mods[id]||(P.mods[id]={});['W','W2'].forEach(k=>{if(k in o){const f=ALLF.find(x=>x[0]===k);o[k]=Math.min(f[4],Math.max(f[3],Math.round(+o[k]||DEF[k])))}});if('dwW' in o)o.dwW=[450,600].includes(+o.dwW)?+o.dwW:600});
   if(!HEIGHTS.includes(+P.H))P.H=HEIGHTS.reduce((a,b)=>Math.abs(b-P.H)<Math.abs(a-P.H)?b:a,900);
   if(Hc()<300)P.L=Math.max(60,P.H-P.T-300);
-  penIds().forEach(id=>{const o=P.mods[id]||(P.mods[id]={});if('penKind' in o&&!['shelf','ov','ovmw','fr'].includes(o.penKind))o.penKind='shelf';   // у каждого пенала свои ширина, высота, наполнение
-    const pk=o.penKind||P.penKind;if('PW' in o&&pk!=='fr')o.PW=Math.min(900,Math.max(300,Math.round((+o.PW||600)/10)*10));if((pk==='ov'||pk==='ovmw')&&iW(id)!==600)o.PW=600;
+  penIds().forEach(id=>{const o=P.mods[id]||(P.mods[id]={});if('penKind' in o&&!['shelf','ov','ovmw','mw','fr'].includes(o.penKind))o.penKind='shelf';   // у каждого пенала свои ширина, высота, наполнение
+    const pk=o.penKind||P.penKind;if('PW' in o&&pk!=='fr')o.PW=Math.min(900,Math.max(300,Math.round((+o.PW||600)/10)*10));if((pk==='ov'||pk==='ovmw'||pk==='mw')&&iW(id)!==600)o.PW=600;
     if('PH' in o)o.PH=+o.PH>0?Math.max(asMod(id,penMinH),Math.min(3000,Math.round(+o.PH/10)*10)):0});
   fitDW();
 }
@@ -1974,7 +1975,8 @@ function renderInfo(){renderLED();
       ['Духовка: цоколь','ЛДСП 16, в цвет корпуса',`${OVW} × ${P.L-3}`,1],['Духовка: ножка','',`h ${P.L}`,4],
       P.hType==='gola'?['Ящик под духовкой: открывание','push-to-open (без ручки)','',1]:['Ручка ящика под духовкой',HCOL[P.hColor][0].toLowerCase(),HDN(),1]);
   });
-  seq('hob',()=>{drParts(parts,'Варочная');parts.push(['Варочная панель встраиваемая',`вырез в столешнице 560 × 490, корпус уходит на ${HOBD} мм`,'590 × 520',1])});
+  seq('ov',()=>{if(P.ovHob)parts.push(['Варочная панель встраиваемая',`над духовкой, вырез в столешнице 560 × 490, корпус уходит на ${HOBD} мм`,'590 × 520',1])});
+  seq('hob',()=>{if(P.hobDoor)parts.push(...doorRows().filter(r=>r[0]!=='Столешница').map(r=>['Варочная: '+r[0][0].toLowerCase()+r[0].slice(1),...r.slice(1)]));else drParts(parts,'Варочная');parts.push(['Варочная панель встраиваемая',`вырез в столешнице 560 × 490, корпус уходит на ${HOBD} мм`,'590 × 520',1])});
   seq('sink',()=>{const dw=(SKW-2*SGAP-P.gapD)/2,g=P.hType==='gola';
     parts.push(['Мойка: боковина','ЛДСП 16',`${Hc()-t} × ${P.D}`,2],['Мойка: дно','ЛДСП 16',`${SKW} × ${P.D}`,1],
       ['Мойка: царга передняя','ЛДСП 16, на ребро',`${SKW-2*t} × 100`,1],['Мойка: планка задняя',`ЛДСП 16, на ${SKBACK} мм от дна`,`${SKW-2*t} × 100`,1],
@@ -2022,11 +2024,11 @@ function renderInfo(){renderLED();
         ...(()=>{const n=penLeaves(),lw=n===2?(W-2*SGAP-P.gapD)/2:dw;return[['Пенал: фасад нижний',fm,`${lw} × ${f1}`,n],['Пенал: фасад верхний',fm,`${lw} × ${f2}`,n],
         ['Пенал: петля накладная',HNG()+(n===2?', по краям':(P.penHinge==='R'?', петли справа':', петли слева')),'',n*(penHinges(f1)+penHinges(f2))],hdl(2*n)]})());
     }else{const q=penLay(),box=boxFor(W,P.L+t,q.oy-t);box.bh=Math.min(box.bh,BOXBIG);
-      parts.push(['Пенал: полка под духовку','ЛДСП 16, низ ниши на '+q.oy+' мм от пола',`${W-2*t} × ${PD}`,1],
-        ...(q.mw?[['Пенал: полка под СВЧ','ЛДСП 16',`${W-2*t} × ${PD}`,1]]:[]),
+      parts.push(['Пенал: полка под '+(q.mo?'СВЧ':'духовку'),'ЛДСП 16, низ ниши на '+q.oy+' мм от пола',`${W-2*t} × ${PD}`,1],
+        ...(q.mw&&!q.mo?[['Пенал: полка под СВЧ','ЛДСП 16',`${W-2*t} × ${PD}`,1]]:[]),
         ['Пенал: полка над техникой','ЛДСП 16',`${W-2*t} × ${PD}`,1],...(P.gls?[['Пенал: полка стеклянная','закалённое стекло 6 мм, кромка шлифованная',`${W-2*t-2} × ${PD-40}`,2],['Полкодержатель для стекла','с фиксатором','',8]]:[['Пенал: полка съёмная','ЛДСП 16',`${W-2*t-2} × ${PD-40}`,2],['Полкодержатель','','',8]]),
         ['Пенал: задняя стенка','ХДФ 3, ниже духовки',`${W-4} × ${q.oy-t-P.L-2}`,1],['Пенал: задняя стенка','ХДФ 3, выше техники',`${W-4} × ${PT-q.shTop[1]-2}`,1],
-        ['Ниша духовки',`духовка 595×595, середина на высоте столешницы (${P.H} мм)`,`${W-2*t} × ${q.ot-q.oy+2}`,1],
+        ...(q.mo?[]:[['Ниша духовки',`духовка 595×595, середина на высоте столешницы (${P.H} мм)`,`${W-2*t} × ${q.ot-q.oy+2}`,1]]),
         ...(q.mw?[['Ниша СВЧ','микроволновка встраиваемая 595×382',`${W-2*t} × ${MWH}`,1]]:[]),
         ['Пенал: фасад ящика',fm+', под духовкой',`${dw} × ${q.dfh}`,1],
         ['Пенал: ящик',(P.slide==='ball'?'шариковые':'скрытые')+` ${box.nl} мм, высота боковин ${box.bh}`,`${box.ow} × ${box.len}`,1],
@@ -2520,10 +2522,10 @@ function buildPen(par,x0,W,o,id='pen'){
   }else{const q=penLay();
     pb(g,-hw+t,q.oy-t,Z,hw-t,q.oy,D,M.ldsp);                       // полка под духовку
     pb(g,-hw+2,L+2,Z-3,hw-2,q.oy-t,Z,M.hdf);pb(g,-hw+2,q.shTop[1],Z-3,hw-2,PT-2,Z,M.hdf);   // ХДФ ниже и выше техники, за техникой — открыто
-    if(q.mw)pb(g,-hw+t,q.my-t,Z,hw-t,q.my,D,M.ldsp);                // полка под микроволновку
+    if(q.mw&&!q.mo)pb(g,-hw+t,q.my-t,Z,hw-t,q.my,D,M.ldsp);                // полка под микроволновку
     pb(g,-hw+t,q.shTop[0],Z,hw-t,q.shTop[1],D,M.ldsp);              // полка над техникой
     penShelves().filter(q=>q.rm).forEach(q=>shelfMesh(g,-hw+t+1,q.y,Z+20,hw-t-1,D-20,P.gls));
-    ovenApp(g,q.oy,D);if(q.mw)mwApp(g,q.my,D);
+    if(!q.mo)ovenApp(g,q.oy,D);if(q.mw)mwApp(g,q.my,D);
     const box=boxFor(W,L+t,q.oy-t);box.bh=Math.min(box.bh,BOXBIG);box.top=box.by+box.bh;
     addDrawer(g,hw,dw,L,q.dfh,box,0,{D,ft},P.hType!=='gola');
     doors=[[q.dy,q.dh,'bot']];
@@ -2910,8 +2912,8 @@ function build(){HPROF={};if(V){const c=new THREE.Color((LEDK[ledS().K]||LEDK[40
   // один модуль ряда (задняя или боковая стена): par — куда строим, x0 — левый край
   const buildInst=(par,r,x0,isl)=>{P=_P;P=mergedFor(r.id);if(isl)P.B=ISLB;mkMats();const o={D,H,L,hc,top,gz:P.hType==='gola'?28:0,ft:FT()};
     if(r.k==='door')doorCab(x0,r.w,r.id,par);
-    else if(r.k==='dr'||r.k==='hob'){buildDrawers(par,x0,r.w,o,r.id);if(r.k==='hob')buildHob(par,x0+r.w/2,top,H,D+FT()+24,r.id)}
-    else if(r.k==='ov')buildOven(par,x0,r.w,{D,L,top,gz:0,ft:FT()},r.id);
+    else if(r.k==='dr'||r.k==='hob'){if(r.k==='hob'&&P.hobDoor)doorCab(x0,r.w,r.id,par);else buildDrawers(par,x0,r.w,o,r.id);if(r.k==='hob')buildHob(par,x0+r.w/2,top,H,D+FT()+24,r.id)}
+    else if(r.k==='ov'){buildOven(par,x0,r.w,{D,L,top,gz:0,ft:FT()},r.id);if(P.ovHob)buildHob(par,x0+r.w/2,top,H,D+FT()+24,r.id)}
     else if(r.k==='sink'||r.k==='cab8')buildSink(par,x0,r.w,o,r.k,r.id);
     else if(r.k==='dwm')buildDW(par,x0,r.w,{...o,end:r.last&&!r.side&&!r.isl},r.id)
     else if(r.k==='pen'){buildPen(par,x0,r.w,{D,L,ft:FT(),ends:penEnds(r)},r.id);V.pens[r.id]={par,r:[x0,x0+r.w],top:penTop()}}
