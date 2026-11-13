@@ -522,7 +522,7 @@ header [data-fly="price"]::before{background-image:url("data:image/svg+xml,%3Csv
       <div class="fly" id="fly-exp" hidden>
         <div class="fly-h"><b>Экспорт<small>сохранить или отправить</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
         <div id="expBody"><div class="mf">
-          <h4>Чертежи</h4><p class="note">Развёртка по стенам, по каждому модулю — вид спереди, разрез сбоку, вид сверху с реальными толщинами и крепежом; присадка деталей.</p><div class="go"><button data-ex="draw">Чертежи — PDF</button></div>
+          <h4>Чертежи</h4><p class="note">Развёртка по стенам, по каждому модулю — вид спереди, разрез сбоку, вид сверху с реальными толщинами и крепежом; присадка деталей.</p><div class="go"><button data-ex="draw">Чертежи — PDF</button><button data-ex="holes">Технологические отверстия — PDF</button></div>
           <h4>Заказ поставщику: материалы и фурнитура</h4><p class="note">Только наименование с размером, артикул (если есть) и количество — без лишнего.</p><div class="go"><button data-ex="buy">PDF</button><button data-ex="copy">Скопировать список</button><button data-ex="csv">Таблица CSV</button><button data-ex="txt">Текст TXT</button></div>
           <h4>Детали для распила</h4><div class="go"><button data-ex="pcsv">Таблица CSV (Excel)</button></div>
           <h4>Вся документация</h4><p class="note">Чертежи + детали + закупка одним PDF.</p><div class="go"><button data-ex="all">Документация — PDF</button><button data-ex="proj">Проект (файл JSON)</button></div>
@@ -1277,6 +1277,7 @@ function renderModFly(){
     +chipRow('Съёмные полки','data-mgls',[[0,'ЛДСП 16'],[1,'Стекло 6 мм']],Q.gls?1:0);
   if(dr)h+='<h4>Ящики</h4>'+chipRow('Ящиков','data-nd',[[2,'2'],[3,'3'],[4,'4']],Q.nDr)+chipRow('Высота фасадов','data-mdm',[['eq','Одинаковые'],['big','Нижний больше']],Q.drMode);
   if(slides)h+=chipRow('Направляющие','data-ms',[['ball','Шариковые'],['hidden','Скрытые']],Q.slide);
+  if(k!=='dwm')h+='<h4>Крепёж корпуса</h4>'+chipRow('Только этот модуль','data-mfix',[['','Как у кухни · '+(P.fix==='ecc'?'эксцентрики':'евровинты')],['conf','Евровинты'],['ecc','Эксцентрики']],(P.mods[m]||{}).fix||'');
   h+='<h4>Внешний вид — только этот модуль</h4><div class="go"><button data-go="fac">Фасад</button><button data-go="hdl">Ручка</button></div>';
   h+='<div class="go"><button data-go="parts">Детали модуля</button></div>';
   if(isRow(m))h+=`<div class="go"><button data-dup="${m}">Добавить ещё такой же</button></div>`;h+=`<button class="rm" data-rm="${m}">Убрать модуль</button>`;
@@ -1288,7 +1289,7 @@ function renderUpFly(){
   $('modSum').textContent=`${P.UH} × ${P.UD} мм`+(own?' · свои настройки':' · как у нижнего');
   let h='<h4>Размер</h4><p class="note">Ширина — по нижнему модулю. Высота и глубина общие для всех верхних — в «Модулях».</p>';
   h+='<h4>Устройство — только этот верхний</h4>'+(upSingle(m)?chipRow('Открывание','data-uhg',[['L',MIR()?'Петли справа':'Петли слева'],['R',MIR()?'Петли слева':'Петли справа']],upHingeR(m)?'R':'L'):'<p class="note">'+(m==='u_corner'||m==='u_left'?'Угловой — петли по месту.':'Шире 600 — две створки, открываются в стороны.')+'</p>')
-    +chipRow('Полки','data-mgls',[[0,'ЛДСП 16'],[1,'Стекло 6 мм']],(P.mods[m]||{}).gls?1:0);
+    +chipRow('Полки','data-mgls',[[0,'ЛДСП 16'],[1,'Стекло 6 мм']],(P.mods[m]||{}).gls?1:0)+chipRow('Крепёж корпуса','data-mfix',[['','Как у нижнего · '+(fixOf(m.slice(2))==='ecc'?'эксцентрики':'евровинты')],['conf','Евровинты'],['ecc','Эксцентрики']],(P.mods[m]||{}).fix||'');
   h+='<h4>Внешний вид — только этот верхний</h4><div class="go"><button data-go="fac">Фасад</button><button data-go="hdl">Ручка</button></div>';
   h+=`<p class="note">Сейчас: ${Q.fMat==='mdf'?`МДФ «${FREZ[Q.frez][0]}», ${FCOL[Q.fColor][0].toLowerCase()}`:facNM(Q)} · ${Q.hType==='gola'?'без ручки (фасад ниже дна на 20)':hName(Q).toLowerCase()}</p>`;
   if(own)h+='<div class="go"><button data-ureset="1">Как у нижнего</button></div>';
@@ -1322,6 +1323,7 @@ $('modBody').addEventListener('click',e=>{
   if(d.mok)setI('ovKind',d.mok);if(d.mohb!==undefined)setI('ovHob',d.mohb==='1');if(d.mhd!==undefined)setI('hobDoor',d.mhd==='1');
   if(d.mphg)setI('penHinge',d.mphg);if(d.mfrw)setI('frW',+d.mfrw);if(d.mfrh)setI('frH',+d.mfrh);if(d.mgls!==undefined){if(KT(selMod)==='pen')setI('gls',d.mgls==='1');else setM('gls',d.mgls==='1')}
   if(d.uhg)setM('hinge',d.uhg);
+  if(d.mfix!==undefined){const o=P.mods[selMod]=P.mods[selMod]||{};if(d.mfix)o.fix=d.mfix;else delete o.fix}
   if(d.mpk){setI('penKind',d.mpk);if(d.mpk!=='shelf')setI('PW',600)}
   if(d.mph!==undefined)setI('PH',d.mph==='1'?asMod(selMod,penTop):0);
   if(d.mdw)setDim('dwW',+d.mdw);
@@ -1629,7 +1631,7 @@ const SHN=new Proxy({},{get:(o,k)=>{const r=shn(k);return KO(k)?[r[0]+' · ос�
 const ALGN=['Оптимально','Вдоль','Поперёк'];   // варианты раскроя, как в SketchCut
 const EDGES=[0,0.4,1,2],EDC={0.4:'#2F7FD8',1:'#2E9E5B',2:'#E07A1F'},efmt=v=>String(v).replace('.',',');
 function matSet(){const m=P.mat=(P.mat&&typeof P.mat==='object')?P.mat:{};if(!(m.kerf>=0&&m.kerf<=20))m.kerf=4;if(!(m.trim>=0&&m.trim<=20))m.trim=10;KERF=+m.kerf;TRIM=+m.trim;['ldsp','mdf','hdf'].forEach(k=>{if(!m[k])m[k]=SHF[k][0].join('x')});
-  m.grain=!!m.grain;m.cut=m.cut||{};m.ov=m.ov||{};if(![0.4,1,2].includes(m.ec))m.ec=0.4;if(![0,1,2].includes(m.ef))m.ef=2;return m}
+  m.grain=!!m.grain;m.cut=m.cut||{};m.ov=m.ov||{};if(![0.4,1,2].includes(m.ec))m.ec=1;if(!m._ec1){m.ec=1;m._ec1=true}if(![0,0.5,1].includes(+m.pre))m.pre=0;if(![0,1,2].includes(m.ef))m.ef=2;return m}
 function sheetCat(k){const m=matSet(),b=KB(k);return b==='ldsp'?dsGet('ldsp',P.kCat):b==='ldspF'||b==='panel'?dsFind(KU(k)):b==='hdf'?dsGet('lhdf',m.hCat):b==='mdf'?dsGet('mdf',m.mCat):null}
 function sheetOf(k){if(KO(k)){const[a,b]=KO(k).split('x').map(Number);return[Math.max(a,b),Math.min(a,b)]}{const fo=(matSet().fo||{})[k];if(fo){const[a,b]=String(fo).split('x').map(Number);if(a>0&&b>0)return[Math.max(a,b),Math.min(a,b)]}}const cx=sheetCat(k);if(cx&&dsSheet(cx))return dsSheet(cx);if(KB(k)==='panel')return[2800,1220];const m=matSet(),g=KB(k)==='ldspF'?'ldsp':KB(k),v=m[g];if(v==='own'){const[a,b]=(m['own_'+g]||'2800x2070').split('x').map(Number);return[Math.max(a,b),Math.min(a,b)]}return v.split('x').map(Number)}
 function matKind(r){const n=r[0].toLowerCase(),M0=r[1]||'',m=M0.toLowerCase();
@@ -1662,11 +1664,230 @@ function packSheets(items,W,H,alg=0){
   sheets.forEach(sh=>{sh.cutLen=sh.cuts.reduce((a,[x0,y0,x1,y1])=>a+Math.hypot(x1-x0,y1-y0),0);sh.rest=sh.free.filter(f=>Math.min(f.w,f.h)>=100&&Math.max(f.w,f.h)>=200).sort((p,q)=>q.w*q.h-p.w*p.h)});
   const last=sheets.length?sheets[sheets.length-1].free.reduce((a,f)=>Math.max(a,f.w*f.h),0):0;
   return{sheets,big,alg,score:sheets.length*1e12-last}}
+// ---------- «Технолог» → «Технологические отверстия»: карта присадки каждой детали мм в мм ----------
+// крепёж корпуса: P.fix — вся кухня ('conf' евровинт / 'ecc' эксцентрик), P.mods[модуль].fix — свой у модуля
+const FIXN={conf:'евровинты (конфирмат 7×50)',ecc:'эксцентрики Ø15 + шканты 8×30'};
+const fixOf=m=>((m&&m!=='all'?mergedFor(m):P).fix==='ecc')?'ecc':'conf';
+const r1=v=>Math.round(v*10)/10;
+// точки крепежа по длине соединения L: до 350 — 2, до 600 — 3, больше — 4; от краёв 50 мм (короткие — L/4)
+function jPos(L){const n=L<=350?2:L<=600?3:4,o=L<=150?Math.round(L/4):50;return[...Array(n)].map((_,i)=>r1(o+(L-2*o)*i/(n-1)))}
+// соединение: евровинты, или эксцентрики, у каждого — шкант на 32 мм ближе к середине (короткое ≤150 — эксцентрик в центре и 2 шканта по краям)
+function joint(L,fx){if(fx!=='ecc')return jPos(L).map(p=>({p,k:'conf'}));if(L<=150)return[{p:r1(L/2),k:'ecc'},{p:18,k:'dow'},{p:r1(L-18),k:'dow'}];return jPos(L).flatMap(p=>[{p,k:'ecc'},{p:r1(p<L/2?p+32:p-32),k:'dow'}])}
+const jCnt=(L,fx)=>{const o={conf:0,ecc:0,dow:0};joint(L,fx).forEach(j=>o[j.k]++);return o};
+// виды отверстий: [цвет, что сверлить, для чего, диаметр на рисунке, сквозное]
+const HT={
+  conf:['#C0392B','Ø7 насквозь + зенковка Ø10 снаружи','евровинт 7×50',7,1],
+  confE:['#C0392B','Ø5, гл. 40 — в торец','евровинт 7×50',5],
+  ecc:['#1F5FA8','Ø15, гл. 12,5','корпус эксцентрика',15],
+  eccE:['#1F5FA8','Ø8, гл. 34 — до эксцентрика','шток эксцентрика',8],
+  rod:['#1F5FA8','Ø8, гл. 12 (шток-саморез: Ø5)','шток эксцентрика',8],
+  dow:['#8E6E0B','Ø8, гл. 12','шкант 8×30',8],
+  dowE:['#8E6E0B','Ø8, гл. 20 — в торец','шкант 8×30',8],
+  cup:['#1E8449','Ø35, гл. 13','чашка петли',35],
+  cupS:['#1E8449','Ø2,5, гл. 8 — наметка','саморез чашки (45 × 9,5)',3],
+  pl:['#7D3C98','Ø5, гл. 12 или наметка Ø2,5','монтажная планка петли',5],
+  pin:['#B9770E','Ø5, гл. 12','полкодержатель',5],
+  pinx:['#D9A85B','Ø5, гл. 12','запас. полкодержатель ±32',5],
+  sl:['#566573','наметка Ø2,5 или Ø5, гл. 12','направляющая ящика',4],
+  fs:['#7F8C8D','Ø4 сквозное','фасад ящика к коробу (саморез 4×30)',4,1],
+  h:['#111111','Ø5 сквозное','ручка (винт М4)',5,1]};
+const thR=n=>baseN(n).replace(/ \d+$/,'');   // роль детали без номера модуля: «боковина», «дно», «царга»…
+const slX=nl=>{const a=[37],m=37+Math.round((nl/2-37)/32)*32,e=37+Math.floor((nl-60)/32)*32;[m,e].forEach(v=>{if(v>a[a.length-1]+40)a.push(v)});return a};   // система 32
+const hYs=(fh,n)=>{n=n||(fh>1600?4:fh>900?3:2);return n===2?[100,fh-100]:n===3?[100,r1(fh/2),fh-100]:[100,r1(fh/3),r1(2*fh/3),fh-100]};
+const sideNm=R=>(R!==MIR())?'правая':'левая';
+// ручка на фасаде: X — от края со стороны петель (у ящика — от левого края), Y — от низа
+function hdlXY(w,h,where){if(NOH()||P.hType==='gola'||P.fMat==='alu')return[];const c=HOLES[P.hType];if(P.hType!=='knob'&&!c)return[];
+  if(where==='mid')return P.hType==='knob'?[[w/2,h/2]]:[[w/2-c/2,h/2],[w/2+c/2,h/2]];
+  const y=where==='bot'?P.hTop:h-P.hTop;
+  if(P.hType==='knob')return[[P.hPos==='hor'?w/2:w-P.hSide,y]];
+  if(P.hPos==='hor')return[[w/2-c/2,y],[w/2+c/2,y]];
+  return[[w-P.hSide,y],[w-P.hSide,where==='bot'?y+c:y-c]]}
+// боковина: X — от переднего края, Y — от нижнего торца, вид на внутреннюю пласть
+function thSide(o){const H=[],A=(tp,x,y,f='f')=>H.push({t:tp,x:r1(x),y:r1(y),f}),fk=k=>k==='conf'?'conf':k==='ecc'?'rod':'dow';
+  if(o.onBot)joint(o.D,o.fx).forEach(j=>{if(j.k==='conf')A('confE',j.p,0,'B');else if(j.k==='ecc'){A('ecc',j.p,34);A('eccE',j.p,0,'B')}else A('dowE',j.p,0,'B')});
+  (o.hor||[]).forEach(h=>joint(h.w,o.fx).forEach(j=>A(fk(j.k),h.x0+j.p,h.y+t/2)));
+  (o.ver||[]).forEach(v=>joint(v.h,o.fx).forEach(j=>A(fk(j.k),v.x0+t/2,v.y0+j.p)));
+  (o.plates||[]).forEach(y=>{A('pl',37,y-16);A('pl',37,y+16)});
+  (o.shelves||[]).forEach(y=>{const yy=y-3;[37,o.D-37].forEach(x=>{A('pin',x,yy);[-32,32].forEach(d=>{if(yy+d>t+20&&yy+d<o.H-t-20)A('pinx',x,yy+d)})})});
+  (o.slides||[]).forEach(s=>slX(s.nl).forEach(x=>A('sl',x,s.y)));
+  return H}
+// деталь между боковинами: X — по длине от левого торца, Y — по ширине от переднего края (у вертикальных — от низа)
+function thHor(len,w,fx){const H=[];joint(w,fx).forEach(j=>[['L',0],['R',len]].forEach(([e,x0])=>{
+  if(j.k==='conf')H.push({t:'confE',x:x0,y:j.p,f:e});else if(j.k==='ecc')H.push({t:'ecc',x:e==='L'?34:r1(len-34),y:j.p,f:'f'},{t:'eccE',x:x0,y:j.p,f:e});else H.push({t:'dowE',x:x0,y:j.p,f:e})}));return H}
+// дно нижнего модуля: боковины стоят на нём — крепёж через дно снизу в торцы боковин
+function thBot(W,D,fx){const H=[];joint(D,fx).forEach(j=>[t/2,W-t/2].forEach(x=>H.push({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(x),y:j.p,f:'f'})));return H}
+// фасад: X — от края со стороны петель, Y — от низа, вид с тыльной стороны
+function thFac(w,h,hy,where){const H=[];(hy||[]).forEach(y=>H.push({t:'cup',x:22.5,y:r1(y),f:'f'},{t:'cupS',x:32,y:r1(y-22.5),f:'f'},{t:'cupS',x:32,y:r1(y+22.5),f:'f'}));
+  hdlXY(w,h,where).forEach(([x,y])=>H.push({t:'h',x:r1(x),y:r1(y),f:'f'}));return H}
+// короб ящика: бок (наружная пласть) и перед / зад
+function thBox(r,fx,ball,out){const d=dimsOf(r[2]);if(!d)return;const[a,b,b2]=d,R=thR(r[0]);
+  if(R==='бок'){const H=[];joint(b,fx).forEach(j=>[t/2,a-t/2].forEach(x=>H.push({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(x),y:j.p,f:'f'})));
+    if(ball)slX(a).forEach(x=>H.push({t:'sl',x,y:37,f:'f'}));
+    out.push({r,q:+r[3],ax:'ab',eTop:1,lab:['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],face:'наружная пласть',xl:'X — от переднего торца',yl:'Y — от низа',H,note:ball?'Направляющая — по линии 37 мм от низа бока.':'Скрытые направляющие: крепятся под дно, на боке присадки нет.'})}
+  else if(R==='перед / зад'){const fr=(len,bh)=>{const H=thHor(len,bh,fx);[[40,25],[len-40,25],[40,bh-25],[len-40,bh-25]].forEach(([x,y])=>H.push({t:'fs',x:r1(x),y:r1(y),f:'f'}));return H};
+    out.push({r,q:1,nm:r[0].replace('перед / зад','перед'),ax:'ab',eTop:1,dims:[a,b],lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НИЗ','ВЕРХ'],face:'внутренняя пласть',xl:'X — от левого торца',yl:'Y — от низа',H:fr(a,b)});
+    out.push({r,q:1,nm:r[0].replace('перед / зад','зад'),ax:'ab',eTop:1,dims:[a,b2||b],lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НИЗ','ВЕРХ'],face:'внутренняя пласть',xl:'X — от левого торца',yl:'Y — от низа',H:thHor(a,b2||b,fx),note:b2?'Зад стоит на дне ящика. Отверстия под крючок направляющей — по шаблону направляющей.':''})}}
+// нижний модуль (шкаф, ящики, духовка, варочная, мойка, 800, угловой, у угла)
+function thBase(id){return asMod(id,()=>{const k=id==='corner'?'corner':KT(id),rows=(LASTPARTS||[]).filter(r=>r.m===id&&!r.up),fx=fixOf(id),L=P.L,hc=Hc(),Hs=hc-t,D=P.D,gz=P.hType==='gola'?28:0,top=L+hc,ball=P.slide==='ball';
+  const out=[],notes=[],R=re=>rows.filter(r=>re.test(thR(r[0]))),dm=r=>r&&dimsOf(r[2]);
+  const bot=R(/^дно$/)[0],W=bot?dm(bot)[0]:iW(id);
+  const hor=[],ver=[],sh=[],doors=[],slides=[];
+  if(k==='dwm'){rows.filter(r=>/^фасад$/.test(thR(r[0]))).forEach(r=>{const[w,h]=dm(r),c=HOLES[P.hType],y=h-(P.hPos==='hor'?P.hTop:60),H=[];if(!NOH()&&P.hType!=='gola'){if(P.hType==='knob')H.push({t:'h',x:r1(w/2),y,f:'f'});else if(c)H.push({t:'h',x:r1(w/2-c/2),y,f:'f'},{t:'h',x:r1(w/2+c/2),y,f:'f'})}
+      out.push({r,q:+r[3],ax:'ab',lab:['','','НИЗ','ВЕРХ'],face:'тыльная сторона',xl:'X — от левого края',yl:'Y — от низа',H,note:'Крепится к дверце машины по шаблону из её коробки.'})});
+    notes.push('Корпуса нет: фасад — на дверце машины, торцевая стойка крепится к соседнему модулю и столешнице уголками — по месту.');return{out,notes}}
+  const door1=k==='door'||k==='left'||(k==='hob'&&P.hobDoor);
+  if(k==='sink'){ver.push({x0:gz,y0:Hs-100,h:100,nm:'царга передняя'},{x0:D-t,y0:SKBACK,h:100,nm:'планка задняя'})}
+  else hor.push({y:Hs-t,x0:gz,w:100},{y:Hs-t,x0:D-100,w:100});
+  if(door1||k==='cab8'){for(let i=1;i<=+P.shelves;i++)sh.push(Math.round((hc-2*t)*i/(+P.shelves+1))-t/2)}
+  if(k==='corner')sh.push(Math.round((hc-2*t)/2)-t/2);
+  if(door1)doors.push({y0:-t,fh:Fh(),side:P.hinge==='R'?'R':'L'});
+  if(k==='sink'||k==='cab8')doors.push({y0:-t,fh:Fh(),side:'B'});
+  if(k==='dr'||(k==='hob'&&!P.hobDoor))drawerBoxes().forEach(b=>slides.push({y:(ball?b.by+37:b.by-2)-(L+t),nl:b.nl}));
+  if(k==='ov'){const o=ovenParts();hor.push({y:o.shelf-t-(L+t),x0:0,w:D});slides.push({y:(ball?o.box.by+37:o.box.by-2)-(L+t),nl:o.box.nl});
+    if(P.ovKind==='fac'){const y0=o.shelf-3+P.gapD;doors.push({y0:y0-(L+t),fh:top-3-y0,side:'L'});sh.push((o.shelf+top)/2-t/2-(L+t))}}
+  // боковины
+  const sr=R(/^боковина$/)[0];
+  if(sr){const base={D,H:Hs,fx,onBot:true,hor,ver,shelves:sh,slides},pl=s=>doors.filter(d=>d.side===s||d.side==='B').flatMap(d=>hYs(d.fh).map(h=>d.y0+h));
+    const lab=['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],fo={ax:'ba',lab,face:'внутренняя пласть',xl:'X — от переднего края',yl:'Y — от нижнего торца'};
+    const one=doors.length===1&&doors[0].side!=='B';
+    if(one){const s=doors[0].side;out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(s==='R')+' (со стороны петель)',...fo,H:thSide({...base,plates:pl(s)})});out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(s!=='R')+' (без петель)',...fo,H:thSide({...base,plates:[]})})}
+    else out.push({r:sr,q:+sr[3],nm:sr[0]+' — левая и правая (зеркально)',...fo,H:thSide({...base,plates:pl('L')})})}
+  // дно, царги, полка под духовку, стойка под петли
+  if(bot){const H=thBot(W,D,fx);if(k==='corner'){const xs=W-CRD+t/2;joint(100,fx).forEach(j=>H.push({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(xs),y:j.p,f:'f'}))}
+    out.push({r:bot,q:+bot[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'верхняя пласть (внутрь шкафа)',xl:'X — от левого торца',yl:'Y — от переднего края',H,note:'Боковины стоят на дне. '+(fx==='conf'?'Евровинты — снизу, через дно в торец боковины (зенковка снизу).':'Шток эксцентрика — в дно, эксцентрик — в боковине.')})}
+  R(/^царга$/).forEach(r=>{const[a,b]=dm(r),H=thHor(a,b,fx);
+    if(k==='corner'){const xr=W-CRD-t+t/2,Hf=H.concat(joint(100,fx).map(j=>({t:j.k==='conf'?'conf':j.k==='ecc'?'rod':'dow',x:r1(xr),y:j.p,f:'f'})));
+      out.push({r,q:1,nm:r[0]+' передняя',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'нижняя пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:Hf,note:'Через царгу — крепёж в верхний торец стойки под петли.'});
+      out.push({r,q:1,nm:r[0]+' задняя',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ЗАД','ПЕРЕД'],face:'нижняя пласть',xl:'X — от левого торца',yl:'Y — от заднего края',H})}
+    else out.push({r,q:+r[3],nm:r[0]+' — передняя и задняя',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НАРУЖНЫЙ КРАЙ','ВНУТРЕННИЙ КРАЙ'],face:'нижняя пласть',xl:'X — от левого торца',yl:'Y — от наружного края (передняя — от фасада, задняя — от стены)',H,note:'Лежат плашмя под столешницей, вровень с верхом боковин.'})});
+  R(/^(царга передняя|планка задняя)$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','НИЗ','ВЕРХ'],face:'пласть',xl:'X — от левого торца',yl:'Y — от низа',H:thHor(a,b,fx),note:/царга/.test(thR(r[0]))?'Стоит на ребре спереди, вровень с верхом боковин.':`Стоит на ребре сзади, низ — на ${SKBACK} мм от дна.`})});
+  R(/^полка под духовку$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'верхняя пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fx),note:`Неподвижная, низ полки — ${r1(ovenParts().shelf-t-(L+t))} мм от низа боковины.`})});
+  R(/^стойка под петли$/).forEach(r=>{const[a,b]=dm(r),H=[];joint(b,fx).forEach(j=>[['B',0],['T',a]].forEach(([e,y0])=>{if(j.k==='conf')H.push({t:'confE',x:j.p,y:y0,f:e});else if(j.k==='ecc')H.push({t:'ecc',x:j.p,y:e==='B'?34:r1(a-34),f:'f'},{t:'eccE',x:j.p,y:y0,f:e});else H.push({t:'dowE',x:j.p,y:y0,f:e})}));
+    hYs(Fh()).forEach(h=>{const y=h-t;H.push({t:'pl',x:37,y:r1(y-16),f:'f'},{t:'pl',x:37,y:r1(y+16),f:'f'})});
+    out.push({r,q:+r[3],ax:'ba',lab:['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],face:'пласть со стороны дверцы',xl:'X — от переднего края',yl:'Y — от низа',H,note:'Стоит на дне между дном и передней царгой, на ней — планки петель дверцы.'})});
+  // фасады
+  R(/^фасад(| ниши)$/).forEach(r=>{const[w,h]=dm(r),n=+r[3];out.push({r,q:n,nm:r[0]+(n>1?' — левый и правый (зеркально)':''),ax:'ab',lab:['СТОРОНА ПЕТЕЛЬ','','НИЗ','ВЕРХ'],face:'тыльная сторона',xl:'X — от края со стороны петель',yl:'Y — от низа',H:thFac(w,h,hYs(h),'top')})});
+  R(/^фасад ящика( под духовкой)?$/).forEach(r=>{const[w,h]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['','','НИЗ','ВЕРХ'],face:'тыльная сторона',xl:'X — от левого края',yl:'Y — от низа',H:thFac(w,h,null,'mid'),note:'К коробу — 4 самореза 4×30 изнутри через перед ящика.'})});
+  // ящики
+  rows.filter(r=>/ящик[^:]*: (бок|перед \/ зад)$/i.test(r[0])).forEach(r=>thBox(r,fx,ball,out));
+  if(k==='corner')notes.push('Заглушка глухой части стоит вровень с корпусом спереди, крепится к боковине и стойке уголками изнутри — по месту.');
+  if(k==='sink')notes.push('Задней стенки нет — место под трубы.');
+  rows.filter(r=>/вырез в столешнице/.test(r[1])).forEach(r=>notes.push('Столешница: '+r[0].toLowerCase()+' — '+r[1].match(/вырез в столешнице[^,]*/)[0]+' (по шаблону из коробки).'));
+  notes.unshift(`Боковины стоят на дне (дно — под боковинами), царги — между боковинами вровень с верхом. Корпус ${W} × ${top} (с ножками ${L}) × ${D} мм.`);
+  if(doors.length)notes.push(`Фасад накладной: зазор ${SGAP} мм с каждой стороны — перекрывает боковину на ${t-SGAP} мм; снизу — вровень с низом дна, сверху на ${P.hType==='gola'?GOLA:3} мм ниже столешницы. Петли: ${hYs(doors[0].fh).length} шт., 100 мм от низа и верха фасада.`);
+  if(slides.length)notes.push(ball?'Направляющие шариковые H45: ось на 37 мм выше низа короба ящика, передний край — заподлицо с передним краем боковины.':'Направляющие скрытого монтажа: пластина на боковине под коробом, крепёж по шаблону производителя, первое отверстие 37 мм от переднего края.');
+  return{out,notes}})}
+// верхний модуль и антресоль
+function thUp(m,rows){return asMod(m,()=>{const fx=fixOf(m),out=[],notes=[],R=re=>rows.filter(r=>re.test(thR(r[0]))),dm=r=>r&&dimsOf(r[2]),ant=/^a_/.test(m),g=P.hType==='gola',lift=ant&&P.antOpen==='lift';
+  const sr=R(/(^|, )боковина$/)[0];if(!sr)return{out,notes};const[uh,ud]=dm(sr),fr=R(/(^|, )фасад$/)[0],nd=fr?+fr[3]:0,fh=fr?dm(fr)[1]:0,y0=g&&!ant?SGAP-20:SGAP,ns=+((R(/(^|, )полка( стеклянная)?$/)[0]||[])[3]||0);
+  const sh=[];for(let i=1;i<=ns;i++)sh.push(t+Math.round((uh-2*t)*i/(ns+1))-t/2);
+  const hor=[{y:0,x0:0,w:ud},{y:uh-t,x0:0,w:ud}],pl=lift||!nd?[]:hYs(fh).map(h=>y0+h),fo={ax:'ba',lab:['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],face:'внутренняя пласть',xl:'X — от переднего края',yl:'Y — от нижнего торца'},base={D:ud,H:uh,fx,hor,shelves:sh};
+  const R0=upHingeR(m.startsWith('a_')&&KT(m)==='pen'?'a_pen':m);
+  if(nd===1&&!lift&&!/угл/.test(rows.map(r=>r[0]).join(' '))){out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(R0)+' (со стороны петель)',...fo,H:thSide({...base,plates:pl})});out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(!R0)+' (без петель)',...fo,H:thSide({...base,plates:[]})})}
+  else out.push({r:sr,q:+sr[3],nm:sr[0]+' — левая и правая (зеркально)',...fo,H:thSide({...base,plates:pl})});
+  R(/(^|, )дно \/ крыша$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],nm:r[0]+' (одинаковые)',ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'внутренняя пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fx)})});
+  if(fr){const[w,h]=dm(fr);out.push({r:fr,q:nd,nm:fr[0]+(nd>1?' — левый и правый (зеркально)':''),ax:'ab',lab:[lift?'':'СТОРОНА ПЕТЕЛЬ','','НИЗ','ВЕРХ'],face:'тыльная сторона',xl:lift?'X — от левого края':'X — от края со стороны петель',yl:'Y — от низа',H:thFac(w,h,lift?null:hYs(h),lift?'mid':'bot'),note:lift?'Подъёмник: крепление — по шаблону механизма.':''})}
+  notes.push(`Боковины на всю высоту, дно и крыша — между боковинами. Корпус ${dm(R(/(^|, )дно \/ крыша$/)[0])?dm(R(/(^|, )дно \/ крыша$/)[0])[0]+2*t:''} × ${uh} × ${ud} мм.`);
+  if(nd&&!lift)notes.push(`Фасад накладной, зазор ${SGAP} мм с каждой стороны`+(g&&!ant?', ниже дна на 20 мм (открывание за край).':'.')+` Петли — 100 мм от низа и верха фасада.`);
+  notes.push('Навесы — в верхних задних углах на внутренней пласти боковин, по шаблону навеса (4 самореза 3,5×16). Задняя стенка ХДФ — по месту.');
+  return{out,notes}})}
+// пенал / проём холодильника
+function thPen(id){return asMod(id,()=>{const rows=(LASTPARTS||[]).filter(r=>r.m===id&&!r.up),fx=fixOf(id),out=[],notes=[],R=re=>rows.filter(r=>re.test(thR(r[0]))),dm=r=>r&&dimsOf(r[2]),L=P.L,PT=penTop(),FR=P.penKind==='fr';
+  const sr=R(/^(боковина|стойка проёма)$/)[0];if(!sr)return{out,notes};const[ch,PD]=dm(sr),y00=FR?0:L;
+  const hor=[{y:PT-t-y00,x0:0,w:PD}],sh=[],doors=[];if(!FR)hor.push({y:0,x0:0,w:PD});
+  if(FR){const q=frLay();hor.push({y:q.nt-y00,x0:0,w:PD});if(q.cab){const lw=PT-SGAP-(q.nt+2);doors.push({y0:q.nt+2-y00,fh:lw})}}
+  else if(P.penKind==='shelf'){const f1=Fh(),ys=L+f1+P.gapD/2;hor.push({y:ys-t/2-L,x0:20,w:PD-20});penShelves().filter(q=>q.rm).forEach(q=>sh.push(q.y-t/2-L));doors.push({y0:0,fh:f1},{y0:f1+P.gapD,fh:PT-SGAP-(L+f1+P.gapD)})}
+  else{const q=penLay();hor.push({y:q.oy-t-L,x0:0,w:PD},{y:q.shTop[0]-L,x0:0,w:PD});if(q.mw&&!q.mo)hor.push({y:q.my-t-L,x0:0,w:PD});penShelves().filter(x=>x.rm).forEach(x=>sh.push(x.y-t/2-L));doors.push({y0:q.dy-L,fh:q.dh});notes.push('Ящик под техникой: направляющие — по линии 37 мм от низа короба, по месту.')}
+  const two=penLeaves()===2,hR=P.penHinge==='R',pl=doors.flatMap(d=>hYs(d.fh,penHinges(d.fh)).map(h=>d.y0+h)),fo={ax:'ba',lab:['ПЕРЕД','ЗАД','НИЗ','ВЕРХ'],face:'внутренняя пласть',xl:'X — от переднего края',yl:'Y — от нижнего торца'},base={D:PD,H:ch,fx,hor,shelves:sh};
+  if(two||!doors.length)out.push({r:sr,q:+sr[3],nm:sr[0]+' — левая и правая (зеркально)',...fo,H:thSide({...base,plates:doors.length?pl:[]})});
+  else{out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(hR)+' (со стороны петель)',...fo,H:thSide({...base,plates:pl})});out.push({r:sr,q:1,nm:sr[0]+' — '+sideNm(!hR)+' (без петель)',...fo,H:thSide({...base,plates:[]})})}
+  R(/^(дно \/ крыша|крыша|полка неподвижная|полка над холодильником|полка под духовку|полка под свч|полка над техникой)$/).forEach(r=>{const[a,b]=dm(r);out.push({r,q:+r[3],ax:'ab',lab:['ЛЕВЫЙ ТОРЕЦ','ПРАВЫЙ ТОРЕЦ','ПЕРЕД','ЗАД'],face:'пласть',xl:'X — от левого торца',yl:'Y — от переднего края',H:thHor(a,b,fx)})});
+  R(/^фасад (нижний|верхний)$|^фасад шкафа$|^фасад$/).forEach(r=>{const[w,h]=dm(r),low=/нижний/.test(r[0]);out.push({r,q:+r[3],nm:r[0]+(+r[3]>1?' — левый и правый (зеркально)':''),ax:'ab',lab:['СТОРОНА ПЕТЕЛЬ','','НИЗ','ВЕРХ'],face:'тыльная сторона',xl:'X — от края со стороны петель',yl:'Y — от низа',H:thFac(w,h,hYs(h,penHinges(h)),low?'top':'bot')})});
+  notes.unshift(FR?'Стойки проёма — от пола, крыша и полка над холодильником — между стойками.':`Боковины на всю высоту, дно, крыша и полки — между боковинами. Пенал до стены: глубина ${PD} мм.`);
+  if(doors.length)notes.push(`Петли: по ${penHinges(doors[0].fh)} на дверцу, 100 мм от низа и верха, остальные — поровну.`);
+  return{out,notes}})}
+// все модули кухни по порядку
+function thMods(){const L=[];const seen=new Set();
+  const add=(id,nm,fn)=>{if(seen.has(id))return;seen.add(id);const r=fn();if(r.out.length||r.notes.length)L.push({id,nm,...r})};
+  [...rowLay(),...sideLay(),...islLay()].forEach(r=>{if(r.k==='pen'){add(r.id,MODN[r.id],()=>thPen(r.id));const a=(LASTPARTS||[]).filter(x=>x.m==='a_'+r.id);if(a.length)add('a_'+r.id,MODN['a_'+r.id],()=>thUp('a_'+r.id,a))}
+    else add(r.id,MODN[r.id],()=>r.k==='dwm'?thBase(r.id):thBase(r.id))});
+  if(P.corner)add('corner',MODN.corner,()=>thBase('corner'));
+  if(P.up){const S=window.SELPARTS||[],ids=[...new Set(S.map(r=>r.m))];ids.forEach(m=>add(m,MODN[m],()=>thUp(m,S.filter(r=>r.m===m))))}
+  return L}
+// кромка и размер в распил — из расчёта раскроя (с правками детали в «Карте раскроя»)
+function thEdgeMap(){const C=calcMat(),M={};Object.values(C.res).forEach(r=>r.its.forEach(i=>{const k=i.n+'|'+i.a+'x'+i.b;if(!M[k])M[k]=i}));return{M,C}}
+function thEdgeOf(EM,r,a,b){const nm=r[0].replace(/^Верх: /,'Верх, ').replace(/^Антресоль: /,'Антресоль, ');const i=EM[nm+'|'+a+'x'+b];if(i)return{e:i.e,ca:i.ca,cb:i.cb};
+  const k=matKind(r),e=k?defEdge(k,r[0]):[0,0,0,0],m=matSet(),th=v=>v>=1?v:0,pr=v=>v>0?(+m.pre||0):0;return{e,ca:r1(a-th(e[2])-th(e[3])+pr(e[2])+pr(e[3])),cb:r1(b-th(e[0])-th(e[1])+pr(e[0])+pr(e[1]))}}
+// рисунок детали + таблица отверстий
+function thDraw(D,p,EM){let c=D.c;const F=D.F,d=p.dims||dimsOf(p.r[2]);if(!d)return;const a=d[0],b=d[1],X=p.ax==='ab'?a:b,Y=p.ax==='ab'?b:a,ed=thEdgeOf(EM,p.r,a,b),e=ed.e;
+  const sd=p.ax==='ab'?(p.eTop?{L:e[2],R:e[3],B:e[1],T:e[0]}:{L:e[2],R:e[3],B:e[0],T:e[1]}):{L:e[0],R:e[1],B:e[2],T:e[3]};   // у короба ящика кромка — на верхний торец   // кромка по сторонам рисунка
+  const H=p.H.slice().sort((u,v)=>u.y-v.y||u.x-v.x);H.forEach((h,i)=>h.no=i+1);
+  const W0=EXW-2*EXM,dw=W0*.42,tw=W0-dw-20,rowH=17,dh=Math.max(330,Math.min(560,60+H.length*rowH)),tbH=20+Math.max(1,H.length)*rowH;
+  const lab=k=>p.lab[{L:0,R:1,B:2,T:3}[k]]||'',eTxt=['L','R','B','T'].filter(k=>sd[k]).map(k=>(lab(k)||({L:'левая',R:'правая',B:'низ',T:'верх'}[k])).toLowerCase()+' '+efmt(sd[k])+' мм').join(', ');
+  const L1=D.wrap(`${String(p.r[1]).split(',')[0]} · готовая ${a} × ${b} мм · в распил ${ed.ca} × ${ed.cb} мм · кромка: ${eTxt||'нет'}`,W0,13),L2=D.wrap(`Вид: ${p.face}. ${p.xl}, ${p.yl}.`+(p.note?' '+p.note:''),W0,13),hd=30+(L1.length+L2.length)*18;
+  D.need(hd+Math.max(dh,tbH)+20);c=D.c;let y0=D.y;
+  c.fillStyle='#111';c.font='700 17px '+F;c.fillText((p.nm||p.r[0])+(p.q>1?'  ×'+p.q:''),EXM,y0);y0+=26;
+  c.font='13px '+F;L1.forEach(l=>{c.fillStyle='#1E5631';c.fillText(l,EXM,y0);y0+=18});L2.forEach(l=>{c.fillStyle='#444';c.fillText(l,EXM,y0);y0+=18});y0+=8;
+  // деталь
+  const bx=EXM,by=y0,k=Math.min((dw-110)/X,(dh-80)/Y),pw=X*k,ph=Y*k,px=bx+60+(dw-110-pw)/2,py=by+30+(dh-80-ph)/2,TX=x=>px+x*k,TY=y=>py+ph-y*k;
+  c.fillStyle='#F4EFE6';c.fillRect(px,py,pw,ph);c.strokeStyle='#333';c.lineWidth=1.5;c.strokeRect(px,py,pw,ph);
+  const seg={L:[px,py,px,py+ph],R:[px+pw,py,px+pw,py+ph],B:[px,py+ph,px+pw,py+ph],T:[px,py,px+pw,py]};
+  Object.entries(sd).forEach(([s,v])=>{if(!v)return;const[x1,y1,x2,y2]=seg[s];c.strokeStyle=EDC[v]||'#2E9E5B';c.lineWidth=v>=2?7:v>=1?5:3;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()});
+  c.font='700 11px '+F;c.fillStyle='#555';
+  if(lab('B')){const s=lab('B');c.fillText(s,px+pw/2-c.measureText(s).width/2,py+ph+44)}if(lab('T')){const s=lab('T');c.fillText(s,px+pw/2-c.measureText(s).width/2,py-30)}
+  if(lab('L')){c.save();c.translate(px-30,py+ph/2);c.rotate(-Math.PI/2);const s=lab('L');c.fillText(s,-c.measureText(s).width/2,-12);c.restore()}
+  if(lab('R')){c.save();c.translate(px+pw+22,py+ph/2);c.rotate(-Math.PI/2);const s=lab('R');c.fillText(s,-c.measureText(s).width/2,0);c.restore()}
+  c.font='13px '+F;c.fillStyle='#1F5FA8';{const s=String(X);c.fillText(s,px+pw/2-c.measureText(s).width/2+(H.some(h=>h.f==='B')?24:0),py+ph+26)}{c.save();c.translate(px-16,py+ph/2);c.rotate(-Math.PI/2);const s=String(Y);c.fillText(s,-c.measureText(s).width/2,-6);c.restore()}
+  c.fillStyle='#C0392B';c.font='700 11px '+F;c.fillText('0',px-10,py+ph+2);
+  H.forEach(h=>{const T=HT[h.t],col=T[0];let cx,cy;
+    if(h.f==='L'){cx=px;cy=TY(h.y)}else if(h.f==='R'){cx=px+pw;cy=TY(h.y)}else if(h.f==='B'){cx=TX(h.x);cy=py+ph}else if(h.f==='T'){cx=TX(h.x);cy=py}else{cx=TX(h.x);cy=TY(h.y)}
+    c.strokeStyle=col;c.fillStyle=col;c.lineWidth=1.6;c.beginPath();
+    if(/^[LRBT]$/.test(h.f)){const L=10,o=h.f==='L'?[-1,0]:h.f==='R'?[1,0]:h.f==='B'?[0,1]:[0,-1];c.moveTo(cx-o[0]*L,cy-o[1]*L);c.lineTo(cx+o[0]*4,cy+o[1]*4);c.stroke();c.beginPath();c.arc(cx+o[0]*6,cy+o[1]*6,3,0,7);c.fill()}
+    else{const rr=Math.max(2.5,T[3]*k/2);c.arc(cx,cy,rr,0,7);T[4]?c.fill():c.stroke()}
+    c.font='10px '+F;c.fillStyle=col;const s=String(h.no),ox=/^[LR]$/.test(h.f)?(h.f==='L'?-24:12):5,oy=/^[BT]$/.test(h.f)?(h.f==='B'?12:-22):-13;c.fillText(s,cx+ox,cy+oy)});
+  // таблица
+  const tx=EXM+dw+20,cols=[['№',28],['Для чего',172],['Сверло',tw-28-172-52-52-92],['X',52],['Y',52],['Где',92]];let ty=by;
+  c.fillStyle='#EEE';c.fillRect(tx,ty,tw,20);c.fillStyle='#111';c.font='700 12px '+F;{let xx=tx;cols.forEach(([n,w])=>{c.fillText(n,xx+4,ty+4);xx+=w})}ty+=20;
+  const where=h=>h.f==='f'?'пласть':h.f==='b'?'обор. пласть':'торец'+(lab(h.f)?': '+lab(h.f).toLowerCase():'');
+  if(!H.length){c.font='12px '+F;c.fillStyle='#555';c.fillText('Присадки нет.',tx+4,ty+4);ty+=rowH}
+  H.forEach((h,i)=>{if(i%2){c.fillStyle='#F7F7F5';c.fillRect(tx,ty,tw,rowH)}const T=HT[h.t];let xx=tx;c.font='11.5px '+F;
+    const isE=/^[LRBT]$/.test(h.f),vals=[String(h.no),T[2],T[1],isE&&/^[LR]$/.test(h.f)?'—':String(h.x).replace('.',','),isE&&/^[BT]$/.test(h.f)?'—':String(h.y).replace('.',','),where(h)];
+    vals.forEach((v,j)=>{c.fillStyle=j===0?T[0]:'#111';let s=v;while(c.measureText(s).width>cols[j][1]-8&&s.length>4)s=s.slice(0,-2);if(s!==v)s=s.slice(0,-1)+'…';c.fillText(s,xx+4,ty+3);xx+=cols[j][1]});ty+=rowH});
+  D.y=Math.max(by+dh,ty)+22;c.strokeStyle='#DDD';c.lineWidth=1;c.beginPath();c.moveTo(EXM,D.y-11);c.lineTo(EXW-EXM,D.y-11);c.stroke()}
+// сводка: крепёж и фурнитура по карте
+function thTotals(mods){const T={};mods.forEach(m=>m.out.forEach(p=>p.H.forEach(h=>{T[h.t]=(T[h.t]||0)+(p.q||1)})));return T}
+async function thDoc(D){renderInfo();const mods=thMods(),{M:EM,C}=thEdgeMap(),m=matSet(),c0=()=>D.c;
+  D.page();D.text('Технологическая карта: отверстия и кромка',28,true);D.text('Дата: '+new Date().toLocaleDateString('ru-RU')+` · корпус ЛДСП ${t} мм · высота ${P.H} · глубина ${P.D} · цоколь ${P.L} мм`,14,false,'#444');D.y+=6;
+  const fx=[...new Set(mods.map(x=>fixOf(x.id)))];D.text('Крепёж корпуса: '+(fx.length>1?'смешанный — у каждого модуля указан свой':FIXN[fx[0]||'conf']),16,true);
+  if(fx.length>1)D.table([['Модуль',.6],['Крепёж',.4]],mods.map(x=>[x.nm,FIXN[fixOf(x.id)]]),13);
+  D.y+=8;D.text('Обозначения',18,true);
+  Object.values(HT).forEach(v=>{D.need(22);const c=D.c,y=D.y;c.fillStyle=v[0];c.strokeStyle=v[0];c.lineWidth=2;c.beginPath();c.arc(EXM+8,y+8,6,0,7);v[4]?c.fill():c.stroke();c.font='700 13px '+D.F;c.fillStyle='#111';c.fillText(v[2],EXM+24,y+1);c.font='13px '+D.F;c.fillStyle='#444';c.fillText(v[1],EXM+380,y+1);D.y+=21});
+  D.y+=6;D.text('Как читать',18,true);
+  ['Каждая деталь нарисована в своих координатах: 0 — левый нижний угол рисунка. X и Y — до центра отверстия, мм.',
+   'Боковины — вид на внутреннюю пласть, передний край слева. Вторая боковина — зеркально (передний край справа).',
+   'Отверстия в торец показаны стрелкой у края детали; глубина — в таблице. Сквозные — закрашенные кружки.',
+   'Евровинт: в пласти Ø7 насквозь с зенковкой снаружи, в торце ответной детали — Ø5. Эксцентрик: корпус Ø15 в пласти на 34 мм от торца, в торце — Ø8 до корпуса, шток — в пласть ответной детали; рядом шкант 8×30.',
+   'Система 32: планки петель и направляющие — 37 мм от переднего края боковины, дальше шаг 32 мм. Петля: чашка Ø35 на 22,5 мм от края фасада (отступ 5 мм), 100 мм от низа и верха.'].forEach(s=>D.wrap('• '+s,EXW-2*EXM,14).forEach(l=>D.text(l,14,false,'#222')));
+  D.y+=8;D.text('Кромка и размер в распил',18,true);
+  [`Корпус: передний торец — кромка ${efmt(m.ec)} мм${m.ec>=1?' (вычитается из размера распила)':' (тонкая, из размера не вычитается)'}. Фасады из ЛДСП — по кругу ${m.ef?efmt(m.ef)+' мм':'без кромки'}.`,
+   'В распил = готовый размер − толщина кромки 1 и 2 мм с каждой кромкуемой стороны. После поклейки кромки деталь выходит ровно в готовый размер.'+(+m.pre?` Прифуговка кромочника: +${efmt(+m.pre)} мм на каждую кромкуемую сторону (станок снимает перед поклейкой).`:''),
+   'Проверьте у каждой детали строку «готовая / в распил / кромка» — сторону с кромкой видно цветной полосой на рисунке. Любую сторону можно поменять в «Раскрое» → «Карта раскроя».'].forEach(s=>D.wrap('• '+s,EXW-2*EXM,14).forEach(l=>D.text(l,14,false,'#222')));
+  const ek=Object.keys(C.edge).map(Number).sort();if(ek.length)D.table([['Кромка',.4],['По деталям, м',.3,'r'],['К покупке с запасом 10%, м',.3,'r']],ek.map(v=>['ПВХ '+efmt(v)+' мм',fmt(C.edge[v]/1000),String(Math.ceil(C.edge[v]*1.1/1000))]),13);
+  const T=thTotals(mods),TT=[['Евровинт 7×50',T.conf||0],['Эксцентрик Ø15 со штоком',T.ecc||0],['Шкант 8×30',T.dow||0],['Петля (чашка Ø35)',T.cup||0],['Полкодержатель',(T.pin||0)],['Ручка — отверстий',T.h||0]].filter(x=>x[1]);
+  if(TT.length){D.y+=8;D.text('Итого по карте',18,true);D.table([['Позиция',.7],['Шт.',.3,'r']],TT.map(([n,q])=>[n,String(q)]),13)}
+  // модули
+  mods.forEach(md=>{D.page();D.text(md.nm,24,true);D.text('Крепёж корпуса: '+FIXN[fixOf(md.id)],14,true,'#1F5FA8');md.notes.forEach(s=>D.wrap('• '+s,EXW-2*EXM,13).forEach(l=>D.text(l,13,false,'#333')));D.y+=10;
+    md.out.forEach(p=>thDraw(D,p,EM));
+    const rest=(md.id.startsWith('u_')||md.id.startsWith('a_')&&KT(md.id)!=='pen'?(window.SELPARTS||[]):(LASTPARTS||[])).filter(r=>r.m===md.id&&!r.up&&dimsOf(r[2])&&matKind(r)&&!md.out.some(p=>p.r===r));
+    if(rest.length){D.text('Без присадки',15,true);D.table([['Деталь',.4],['Материал',.4],['Размер, мм',.2]],rest.map(r=>[r[0]+(+r[3]>1?' ×'+r[3]:''),String(r[1]).replace(/^ХДФ 3.*$/,'ХДФ 3 — на гвозди / скобы, шаг 150 мм'),r[2]]),12)}})}
+async function thPDF(){const st=$('thSt');if(st)st.textContent='Готовлю PDF…';try{const lib=await loadPDF(),D=expDoc();await thDoc(D);
+    const pdf=new lib.jsPDF({unit:'mm',format:'a4'});D.pages.forEach((cv,i)=>{if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',.9),'JPEG',0,0,210,297)});
+    const r=await saveFile('Технологические отверстия.pdf',pdf.output('blob'));if(st)st.textContent=r==='ok'?`Готово: Технологические отверстия.pdf · ${D.pages.length} стр.`:'Сохранение отменено'}catch(e){if(st)st.textContent='Ошибка: '+(e&&e.message||e)}}
 function calcMat(){
-  const m=matSet(),G={},hw={},misc={},seen={},AL={};let conf=0,pins=0,nails=0,legs=0,hinges=0,slides=0,lifts=0;
+  const m=matSet(),G={},hw={},misc={},seen={},AL={};let conf=0,ecc=0,dow=0,pins=0,nails=0,legs=0,hinges=0,slides=0,lifts=0;const JRE=/(^|, )(дно|крыша|дно \/ крыша|царга|царга передняя|планка задняя|полка неподвижная|полка под духовку|полка под свч|полка над техникой|стойка под петли|перед \/ зад)$/,jAdd=(L,fx,n)=>{const o=jCnt(L,fx);conf+=n*o.conf;ecc+=n*o.ecc;dow+=n*o.dow};
   const add=(k,n,sub,q,u='шт')=>{const o=hw[k]||(hw[k]={k,n,sub,q:0,u});o.q+=q};
   const part=(k,n,a,b,e0,d0)=>{const nm=n.replace(/^Верх: /,'Верх, ').replace(/^Антресоль: /,'Антресоль, '),key0=k+'|'+nm+'|'+a+'x'+b,i=seen[key0]=(seen[key0]||0)+1,id=key0+'|'+i,o=m.ov[id]||{};
-    const e=o.e||e0||defEdge(k,n),th=v=>v>=1?v:0,ca=Math.round((a-th(e[2])-th(e[3]))*10)/10,cb=Math.round((b-th(e[0])-th(e[1]))*10)/10;   // в распил — за вычетом толстой кромки
+    const e=o.e||e0||defEdge(k,n),th=v=>(v>=1?v:0)-(v>0?(+m.pre||0):0),ca=Math.round((a-th(e[2])-th(e[3]))*10)/10,cb=Math.round((b-th(e[0])-th(e[1]))*10)/10;   // в распил — за вычетом толстой кромки, плюс прифуговка
     const dir=o.dir||d0||(m.grain&&k!=='hdf'?(/фасад/i.test(n)?'W':'L'):'auto'),w=dir==='W'?cb:ca,h=dir==='W'?ca:cb;
     (G[k]||(G[k]=[])).push({id,k,n:nm,a,b,ca,cb,e,dir,w,h,rot:dir==='auto',pin:o.pin!=null?o.pin:null,ord:o.ord!=null?o.ord:null,own:!!(o.e||o.dir||o.pin!=null),gk:[a,b,e.join(','),dir].join('|')})};
   LASTPARTS.forEach(r=>{const [n,mt,sz,q0]=r,q=+q0||0,b=baseN(n),k=matKind(r),d=dimsOf(sz),nl=n.toLowerCase();if(!q||n==='Карниз')return;
@@ -1678,8 +1899,8 @@ function calcMat(){
       if(c2!==null){const h1=Math.ceil(q/2);push(a,c,h1);push(a,c2,q-h1)}else push(a,c,q);
       if(k==='hdf')nails+=Math.ceil(2*(a+c)/150)*q;
       if(k==='ldsp'){
-        if(/(^|, )(дно|крыша|дно \/ крыша|царга|царга передняя|планка задняя|полка неподвижная|полка под духовку|полка под свч|полка над техникой|стойка под петли|перед \/ зад)$/.test(b)&&!(/ящик/.test(nl)&&/дно$/.test(b)))conf+=q*2*(c<=350?2:c<=600?3:4);
-        if(/^полка( в нише)?$/.test(b))pins+=4*q}
+        const b1=b.replace(/ \d+$/,'');if(JRE.test(b1)&&!/(, ящик \d+|^ящик под духовкой): дно$/.test(nl)&&!r.up)jAdd(c,fixOf(r.m),q*2);   // номер модуля в конце («Дно 1») не мешает
+        if(/^полка( в нише)?$/.test(b1))pins+=4*q}
       return}
     if(/^направляющие/.test(nl)){add('sl|'+n+'|'+sz,n,sz.replace('L ','длина ')+' мм, пара',q,'пар');slides+=q;return}
     if(/пенал( \d+)?: ящик$/.test(nl)){const L=(mt.match(/(\d+) мм/)||[])[1],nm=/^шарик/.test(mt)?'Направляющие шариковые':'Направляющие скрытого монтажа';add('sl|'+nm+'|L '+L,nm,'длина '+L+' мм, пара',q,'пар');slides+=q;return}
@@ -1698,6 +1919,7 @@ function calcMat(){
     if(/полкодержатель/.test(nl)){pins+=q;return}
     if(/^стеновая панель|^верх: |^антресоль: |^ниша /.test(nl)&&!/шина/.test(nl))return;
     const bn=n.replace(/^([^:]*?) \d+:/,'$1:'),key=bn+'|'+mt+'|'+sz;(misc[key]||(misc[key]={n:bn[0].toUpperCase()+bn.slice(1),sub:[mt,sz].filter(Boolean).join(' · '),q:0})).q+=q});
+  (window.SELPARTS||[]).forEach(r=>{const d=dimsOf(r[2]);if(d&&matKind(r)==='ldsp'&&JRE.test(baseN(r[0])))jAdd(d[1],fixOf(r.m),(+r[3]||0)*2)});   // верхние — по модулям: у каждого свой крепёж
   // карниз: доски из раскладки; длиннее листа — несколько частей
   {const cb=corniceBoxes();if(cb.boxes.length){const k=facKind(P),[SW]=sheetOf(k),Lmax=SW-2*TRIM;
     cb.boxes.forEach(bx=>{const ds=[bx[3]-bx[0],bx[4]-bx[1],bx[5]-bx[2]].map(v=>Math.round(Math.abs(v))).sort((a,b)=>b-a),len=ds[0],wd=ds[1];if(wd<20||len<20)return;
@@ -1727,6 +1949,7 @@ function calcMat(){
   if(AL.cor){add('alc','Стяжка угловая для рамки','по 4 на фасад, с винтами',AL.cor);const sl=Object.values(AL).filter(o=>o&&o.seal).reduce((a,o)=>a+o.seal,0);add('als','Уплотнитель силиконовый для стекла','прозрачный/чёрный, в паз профиля',Math.ceil(sl*1.05),'м')}
   if(legs){add('leg','Ножка регулируемая','h '+P.L+' мм',legs);add('clip','Клипса для цоколя','на передние ножки',Math.ceil(legs/2))}
   if(conf){add('conf','Евровинт (конфирмат) 7×50','корпуса и короба ящиков',conf);add('cap','Заглушка для евровинта','в цвет корпуса: '+kName().toLowerCase(),conf)}
+  if(ecc){add('ecc','Эксцентриковая стяжка Ø15 со штоком','корпуса: эксцентрик + шток (минификс)',ecc);add('dow','Шкант 8×30','в паре с эксцентриками',dow);add('ecap','Заглушка для эксцентрика Ø15','в цвет корпуса: '+kName().toLowerCase(),ecc)}
   if(pins)add('pin','Полкодержатель','под съёмные полки',pins);
   const scr=hinges*4+slides*12+lifts*8;if(scr)add('scr','Саморез 3,5×16','петли, планки, направляющие, подъёмники',scr);
   if(nails)add('nail','Гвоздь / скоба для ХДФ','задние стенки и дно ящиков, шаг 150 мм',nails);
@@ -3202,14 +3425,14 @@ async function expText(kind){const st=$('expSt'),{rows,cols}=expBuyRows();let na
   else{name='Заказ поставщику.txt';data=['ЗАКАЗ: МАТЕРИАЛЫ И ФУРНИТУРА','Дата: '+new Date().toLocaleDateString('ru-RU'),'',...rows.map((r,i)=>`${i+1}. ${r[0]}${r[1]?' — арт. '+r[1]:''} — ${r[2]} ${r[3]}`)].join('\r\n')}
   try{const r=await saveFile(name,data);st.textContent=r==='ok'?'Готово: '+name:'Сохранение отменено'}catch(e){st.textContent='Ошибка: '+(e&&e.message||e)}}
 $('expBody').addEventListener('click',e=>{const b=e.target.closest('[data-ex]');if(!b)return;renderMat();const k=b.dataset.ex;
-  if(k==='draw')expPDF('Чертежи кухни.pdf',[expDrawings]);else if(k==='buy')expPDF('Заказ поставщику.pdf',[expBuyPDF]);else if(k==='all')expPDF('Документация кухни.pdf',[expDrawings,expPartsPDF,expBuyPDF]);
+  if(k==='holes')expPDF('Технологические отверстия.pdf',[thDoc]);else if(k==='draw')expPDF('Чертежи кухни.pdf',[expDrawings]);else if(k==='buy')expPDF('Заказ поставщику.pdf',[expBuyPDF]);else if(k==='all')expPDF('Документация кухни.pdf',[expDrawings,expPartsPDF,expBuyPDF]);
   else if(k==='proj')saveFile('Проект кухни.json',JSON.stringify(P,null,1)).then(r=>$('expSt').textContent=r==='ok'?'Готово: Проект кухни.json':'Сохранение отменено');else expText(k)});
 // ---------- чертёж модуля как в программах проектирования: вид спереди (без фасадов), разрез сбоку, вид сверху, реальные толщины и крепёж ----------
 function modSheet(D,id,kind){const Q=mergedFor(kind==='u'?'u_'+id:id),k0=KT(id),F=D.F;let c;
   const isP=k0==='pen',W=isP?iW(id):id==='corner'?CRW:iW(id),Tt=P.T,L=P.L,hc=Hc(),top=L+hc,Dp=P.D,B=P.B,ft=asMod(kind==='u'?'u_'+id:id,FT),G=P.hType==='gola';
   const ub=P.H+WPH,uh=P.UH-(kind==='u'?uOff(id):0),ud=P.UD,PT=isP?asMod(id,penTop):0;
   const title=(kind==='u'?'Верхний над: '+modName(id).toLowerCase():modName(id))+` — ${W} × ${kind==='u'?uh:isP?PT:hc+L} × ${kind==='u'?ud:Dp} мм`;
-  D.page();c=D.c;D.text(title,24,true);D.text('Корпус ЛДСП 16 мм · задняя стенка ХДФ 3 мм · фасад '+(Q.fMat==='mdf'?'МДФ 18':facNM(Q))+' · крепёж: евровинт 7×50',14,false,'#444');
+  D.page();c=D.c;D.text(title,24,true);D.text('Корпус ЛДСП 16 мм · задняя стенка ХДФ 3 мм · фасад '+(Q.fMat==='mdf'?'МДФ 18':facNM(Q))+' · крепёж: '+FIXN[fixOf(kind==='u'?'u_'+id:id)],14,false,'#444');
   const COL={l:'#EFE3CC',h:'#B07A4A',f:'#D9DCDF',ct:'#C9A57C',m:'#555',w:'#E8E8E8'},calls=[];let n0=0;
   const view=(bx,by,bw,bh,x0,x1,y0,y1,label)=>{const s=Math.min(bw/(x1-x0),bh/(y1-y0)),ox=bx+(bw-(x1-x0)*s)/2-x0*s,oy=by+bh-(bh-(y1-y0)*s)/2+y0*s;
     c.font='700 15px '+F;c.fillStyle='#111';c.fillText(label,bx,by-26);
@@ -3613,10 +3836,19 @@ let TECHF=[];
 function renderTech(){const el=$('techBody');if(!el)return;{const ae=document.activeElement;if(ae&&el.contains(ae))ae.blur()}
   const C=techChecks(),nE=C.filter(c=>c.lv==='err').length,nW=C.filter(c=>c.lv==='warn').length;TECHF=C.map(c=>c.fix);
   const ico={err:'⛔',warn:'⚠️',ok:'✓'};
+  const mm=matSet(),own=Object.entries(P.mods||{}).filter(([k,o])=>o&&o.fix).length;
+  let th=`<div class="mf"><h4>Технологические отверстия</h4><p class="note">PDF-карта присадки: каждая деталь мм в мм — евровинты или эксцентрики, шканты, петли и планки, направляющие, полкодержатели, ручки. По каждой детали — кромка и размер в распил.</p>`
+    +chipRow('Крепёж корпуса — вся кухня','data-tfx',[['conf','Евровинты'],['ecc','Эксцентрики']],P.fix==='ecc'?'ecc':'conf')+`<p class="note">${own?'Свой крепёж у модулей: '+own+' — в карте показано всё как выбрано. Выбор для всей кухни сбрасывает свой крепёж модулей.':'Свой крепёж для отдельного модуля — в его настройках («Крепёж корпуса»).'}</p>`
+    +chipRow('Кромка корпуса, передний торец, мм','data-tec',[[0.4,'0,4'],[1,'1'],[2,'2']],mm.ec)+chipRow('Прифуговка кромочника, на сторону, мм','data-tpre',[[0,'нет'],[0.5,'0,5'],[1,'1']],+mm.pre)
+    +'<p class="note">В распил = готовый размер − кромка 1 и 2 мм (+ прифуговка): после поклейки кромки деталь выходит ровно в размер.</p><div class="go"><button data-thole="1">Технологические отверстия — PDF</button></div><p class="note" id="thSt"></p></div>';
   let h=`<div class="tsum ${nE?'e':nW?'w':'o'}"><b>${nE?'Есть ошибки: '+nE:nW?'Замечания: '+nW:'Проект готов к производству'}</b><small>${nE?'Исправьте до запуска в цех.':nW?'Можно делать, но лучше поправить.':'Все проверки пройдены.'} Проверено пунктов: ${C.length}.</small></div>`;
   const ord={err:0,warn:1,ok:2},G=[...new Set(C.map(c=>c.grp))];
   [...C.map((c,i)=>[c,i])].sort((a,b)=>ord[a[0].lv]-ord[b[0].lv]).forEach(([c,i])=>{h+=`<div class="tck ${c.lv}"><i>${ico[c.lv]}</i><div><b>${c.t}</b><small>${c.grp}${c.d?' · '+c.d:''}</small>${c.fix?`<button class="chip" data-tfix="${i}">${c.fix[0]}</button>`:''}</div></div>`});
-  el.innerHTML='<div class="mf">'+h+'</div>'}
+  el.innerHTML=th+'<div class="mf">'+h+'</div>'}
+$('techBody').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset,m=matSet();
+  if(d.thole){thPDF();return}
+  if(d.tfx){P.fix=d.tfx;Object.values(P.mods||{}).forEach(o=>{if(o)delete o.fix})}else if(d.tec)m.ec=+d.tec;else if(d.tpre!==undefined)m.pre=+d.tpre;else return;
+  update();renderTech()});
 $('techBody').addEventListener('click',e=>{const b=e.target.closest('[data-tfix]');if(!b)return;const f=TECHF[+b.dataset.tfix];if(f){f[1]();update();renderTech()}});
 // ---------- «Технолог»: ИИ (Google Gemini бесплатно; ключ sk-… — DeepSeek) — ключ хранится только на этом устройстве ----------
 let DSA='';const dsK=()=>{try{return localStorage.getItem('dsk')||''}catch(e){return ''}};
