@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="ru">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -7,13 +8,13 @@
 <meta name="apple-mobile-web-app-title" content="Мой расчёт про">
 <link rel="manifest" href="manifest.webmanifest">
 <title>Мой расчёт про</title>
-<meta name="theme-color" content="#ECEFF4">
+<meta name="theme-color" content="#F2F3F5">
 <link rel="icon" type="image/png" href="assets/welcome/mark.png">
 <link rel="apple-touch-icon" href="assets/welcome/apple-icon.png">
 <link rel="stylesheet" href="assets/welcome/screen.css">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: one module — big 3D viewport on top, size steppers and cut list below */
 :root{   /* фирменный стиль mebelshaf: глубокий сине-бирюзовый, медь, сливочный текст */
@@ -269,263 +270,368 @@ textarea.pname{resize:vertical}
 .sbo button b{font:600 13px var(--body)}.sbo button small{font:400 11px var(--body);color:var(--muted)}.sbo button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.sbo button.off{opacity:.55}
 @media (orientation:portrait){body{padding-top:max(16px,env(safe-area-inset-top,0px))}}
 
-/* ===== Тема «Мебельшаф» (светлая лавандовая, фиолетовый акцент) — поверх старых стилей ===== */
-:root{--bg:#F1EEF9;--surface:#FFFFFF;--ink:#1F1638;--muted:#6C6386;--line:#E2DBF1;--accent:#6A2FB5;--accent-ink:#FFFFFF;--soft:#EEE7FB;
-  --copper:linear-gradient(135deg,#8247CF 0%,#6A2FB5 55%,#55229A 100%);color-scheme:light}
-body{background:#F1EEF9;color:var(--ink)}
-header{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch!important;border:0!important;border-image:none!important;padding:0 0 4px}
-header .brand{grid-column:1/-1;order:-1;flex:none!important;justify-content:center;gap:14px;padding:6px 0 14px;border-bottom:1px solid var(--line);margin-bottom:4px}
-.brand::before{content:"";width:42px;height:46px;flex:none;background:center/contain no-repeat}
-.brand .logo{display:none}
-.brand>div{border-left:2px solid #2B2140;padding-left:14px}
-.brand h1{font:800 30px/1 var(--display);letter-spacing:.02em;text-transform:uppercase;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#1F1638;-webkit-text-fill-color:#1F1638}
-.brand .tag{font:500 17px var(--body);letter-spacing:.01em;text-transform:none;color:#2B2140;margin-top:5px}
-header .pmb{justify-content:center;gap:8px;min-height:58px;padding:6px 8px;border-radius:12px;border:1px solid #CFC6E2;background:#fff;color:var(--ink);font:700 16px var(--body);box-shadow:0 1px 2px rgba(40,20,80,.06)}
-header .pmb>svg{display:none}
-header .pmb::before{content:"";width:40px;height:40px;flex:none;background:center/contain no-repeat}
-header .pmb[aria-pressed="true"]{background:var(--copper);border-color:#6A2FB5;color:#fff}
-header .pmb[aria-pressed="true"]::before{filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
-.card{background:#fff;border-color:var(--line);box-shadow:0 2px 10px rgba(60,30,120,.06)}
-/* боковые панели — крупные иконки с подписями */
-.app{gap:0}
-.rail{background:#E9E3F7;padding:10px 4px;gap:4px;border-radius:0}
-.rail-l{border-radius:16px 0 0 16px}.rail-r{border-radius:0 16px 16px 0}
-.stage{border-radius:0!important;border:0;box-shadow:none}
-.v3d{border-radius:0!important}
-.rail hr{border-top-color:#D3C8EC}
-.v2d{border-radius:0}header .pmb span{color:#1F1638;-webkit-text-fill-color:#1F1638}header .pmb[aria-pressed="true"] span{color:#fff;-webkit-text-fill-color:#fff}
-.rail button{width:84px;padding:6px 2px 7px;gap:5px;border:1px solid transparent;border-radius:14px;background:transparent;color:#1F1638;font:700 11.5px/1.1 var(--body)}
-.rail button>svg{display:none}
-.rail button::before{content:"";width:54px;height:54px;flex:none;background:center/contain no-repeat;filter:drop-shadow(0 2px 2px rgba(40,20,80,.14))}
-.rail button span{font-size:11.5px!important;letter-spacing:-.01em!important;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rail button:active{transform:scale(.96)}
-.rail button[aria-pressed="true"]{background:#DCCDF5;border-color:#B9A2E6;color:#1F1638}
-.fly{right:92px;border-color:var(--line);box-shadow:0 14px 34px rgba(60,30,120,.18)}.fly.fl{left:92px;right:auto}
-.pmenu{box-shadow:0 14px 34px rgba(60,30,120,.18)}
-@media (max-width:759px){
-  .brand h1{font-size:24px}.brand .tag{font-size:14px}.brand::before{width:34px;height:38px}
-  header .pmb{min-height:50px;font-size:14px;gap:5px;padding:4px}
-  header .pmb::before{width:30px;height:30px}
-  .rail{padding:8px 2px}
-  .rail button{width:64px;padding:5px 1px 6px;gap:3px;font-size:9.5px}
-  .rail button span{font-size:9.5px!important}
-  .rail button::before{width:42px;height:42px}
-  .fly,.fly.fl{left:70px;right:70px;width:auto}
-}
-@media (orientation:landscape) and (max-height:560px){
-  .rail{padding:6px 2px}.rail-l{grid-template-columns:repeat(2,50px)}
-  .rail button{width:50px;padding:3px 0 4px;gap:2px}.rail button span{font-size:8px!important}
-  .rail button::before{width:28px;height:28px}
-  .fly{right:58px}.fly.fl{left:108px}
-}
-.rail button#fuBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22m%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23EEF0F3%22/%3E%3Cstop offset=%221%22 stop-color=%22%238E959F%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Ccircle cx=%2219%22 cy=%2233%22 r=%2214%22 fill=%22url(%23m)%22 stroke=%22%236B727C%22 stroke-width=%221.2%22/%3E%3Ccircle cx=%2219%22 cy=%2233%22 r=%227%22 fill=%22%23D5D9DF%22 stroke=%22%236B727C%22/%3E%3Ccircle cx=%2219%22 cy=%2233%22 r=%222.5%22 fill=%22%236B727C%22/%3E%3Crect x=%2231%22 y=%2220%22 width=%227%22 height=%2226%22 rx=%222%22 fill=%22%23B3B9C1%22 stroke=%22%236B727C%22/%3E%3Cpath d=%22M38 27h17a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4H38z%22 fill=%22url(%23m)%22 stroke=%22%236B727C%22 stroke-width=%221.2%22/%3E%3Ccircle cx=%2245%22 cy=%2233%22 r=%222.4%22 fill=%22%234E545C%22/%3E%3Ccircle cx=%2253%22 cy=%2233%22 r=%222.4%22 fill=%22%234E545C%22/%3E%3C/svg%3E")}
-.rail button[data-fly="fac"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22c%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23FBF6EC%22/%3E%3Cstop offset=%221%22 stop-color=%22%23E4D7C0%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Crect x=%2215%22 y=%225%22 width=%2232%22 height=%2251%22 rx=%222%22 fill=%22url(%23c)%22 stroke=%22%23C3B092%22 stroke-width=%221.2%22/%3E%3Crect x=%2220%22 y=%2210%22 width=%2222%22 height=%2241%22 rx=%221%22 fill=%22none%22 stroke=%22%23CDBD9F%22 stroke-width=%221.5%22/%3E%3Crect x=%2238.5%22 y=%2222%22 width=%223%22 height=%2217%22 rx=%221.5%22 fill=%22%237B7F86%22/%3E%3C/svg%3E")}
-.rail button[data-fly="korp"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M50 9l7-4v46l-7 4z%22 fill=%22%23D9DCE2%22 stroke=%22%23BFC3CA%22/%3E%3Cpath d=%22M13 9l7-4h37l-7 4z%22 fill=%22%23F7F8FA%22 stroke=%22%23BFC3CA%22/%3E%3Crect x=%2213%22 y=%229%22 width=%2237%22 height=%2246%22 fill=%22%23fff%22 stroke=%22%23BFC3CA%22 stroke-width=%221.2%22/%3E%3Crect x=%2217%22 y=%2213%22 width=%2229%22 height=%2238%22 fill=%22%23E7EAF0%22/%3E%3Crect x=%2217%22 y=%2230%22 width=%2229%22 height=%223.5%22 fill=%22%23fff%22 stroke=%22%23D3D6DC%22 stroke-width=%22.8%22/%3E%3C/svg%3E")}
-.rail button[data-fly="view"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3CradialGradient id=%22l%22 cx=%22.4%22 cy=%22.35%22 r=%22.7%22%3E%3Cstop offset=%220%22 stop-color=%22%237A5BC9%22/%3E%3Cstop offset=%22.55%22 stop-color=%22%232B1F4D%22/%3E%3Cstop offset=%221%22 stop-color=%22%230B0912%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Ccircle cx=%2232%22 cy=%2231%22 r=%2225%22 fill=%22%231D1D23%22/%3E%3Ccircle cx=%2232%22 cy=%2231%22 r=%2220%22 fill=%22%2334343C%22 stroke=%22%236A2FB5%22 stroke-width=%223%22/%3E%3Ccircle cx=%2232%22 cy=%2231%22 r=%2213%22 fill=%22url(%23l)%22/%3E%3Crect x=%2224%22 y=%2227%22 width=%2216%22 height=%229%22 rx=%221%22 fill=%22%23A86A3E%22 opacity=%22.7%22/%3E%3Cellipse cx=%2226%22 cy=%2224%22 rx=%225%22 ry=%223%22 fill=%22%23fff%22 opacity=%22.45%22/%3E%3C/svg%3E")}
-.rail button[data-fly="ct"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M5 28l29-13 25 11-29 13z%22 fill=%22%23F6F5F2%22 stroke=%22%23C7C4BE%22 stroke-width=%221.1%22/%3E%3Cpath d=%22M5 28l25 11v8L5 36z%22 fill=%22%23DCD9D3%22 stroke=%22%23C7C4BE%22/%3E%3Cpath d=%22M30 39l29-13v8L30 47z%22 fill=%22%23E9E7E2%22 stroke=%22%23C7C4BE%22/%3E%3Cpath d=%22M14 27c6-3 9 1 14-2s8-3 12-1M22 33c5-2 8 0 12-3%22 fill=%22none%22 stroke=%22%23B9B6B0%22 stroke-width=%22.9%22/%3E%3C/svg%3E")}
-.rail button[data-fly="led"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3CradialGradient id=%22y%22 cx=%22.5%22 cy=%22.5%22 r=%22.5%22%3E%3Cstop offset=%220%22 stop-color=%22%23FFE2A0%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%221%22 stop-color=%22%23FFE2A0%22 stop-opacity=%220%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Cellipse cx=%2234%22 cy=%2242%22 rx=%2228%22 ry=%2210%22 fill=%22url(%23y)%22/%3E%3Cpath d=%22M6 33l46-15 6 4-46 15z%22 fill=%22%23DDE1E6%22 stroke=%22%239AA1AB%22/%3E%3Cpath d=%22M12 37l46-15v6L12 44z%22 fill=%22%23ADB4BE%22 stroke=%22%238D949E%22/%3E%3Cpath d=%22M13 41l44-14.5%22 stroke=%22%23FFF1C7%22 stroke-width=%222.4%22 stroke-linecap=%22round%22/%3E%3C/svg%3E")}
-.rail button[data-fly="mat"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22w%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23B9784A%22/%3E%3Cstop offset=%221%22 stop-color=%22%237E4A28%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M5 40l27-12 27 11-27 12z%22 fill=%22%23EBD7B0%22 stroke=%22%23C7AE84%22/%3E%3Cpath d=%22M5 40l27 11v5L5 45z%22 fill=%22%23D6BE92%22/%3E%3Cpath d=%22M32 51l27-12v5L32 56z%22 fill=%22%23C9AF82%22/%3E%3Cpath d=%22M5 42.5l27 11M32 53.5l27-12%22 stroke=%22%23B89A6B%22 stroke-width=%22.7%22/%3E%3Cpath d=%22M8 27l24-11 24 10-24 11z%22 fill=%22url(%23w)%22 stroke=%22%236E4122%22/%3E%3Cpath d=%22M8 27l24 10v6L8 33z%22 fill=%22%237E4A28%22/%3E%3Cpath d=%22M32 37l24-11v6L32 43z%22 fill=%22%236A3D20%22/%3E%3C/svg%3E")}
-.rail button[data-fly="parts"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Crect x=%227%22 y=%2214%22 width=%2215%22 height=%2241%22 rx=%221.5%22 fill=%22%23EFE5D2%22 stroke=%22%23C8B89A%22/%3E%3Ccircle cx=%2214.5%22 cy=%2224%22 r=%224.5%22 fill=%22%23BBA987%22/%3E%3Crect x=%2225%22 y=%227%22 width=%2215%22 height=%2248%22 rx=%221.5%22 fill=%22%23F2E9D8%22 stroke=%22%23C8B89A%22/%3E%3Cg fill=%22%23A99674%22%3E%3Ccircle cx=%2232.5%22 cy=%2214%22 r=%221.3%22/%3E%3Ccircle cx=%2232.5%22 cy=%2221%22 r=%221.3%22/%3E%3Ccircle cx=%2232.5%22 cy=%2228%22 r=%221.3%22/%3E%3Ccircle cx=%2232.5%22 cy=%2235%22 r=%221.3%22/%3E%3Ccircle cx=%2232.5%22 cy=%2242%22 r=%221.3%22/%3E%3Ccircle cx=%2232.5%22 cy=%2249%22 r=%221.3%22/%3E%3C/g%3E%3Crect x=%2243%22 y=%2211%22 width=%2215%22 height=%2244%22 rx=%221.5%22 fill=%22%23EFE5D2%22 stroke=%22%23C8B89A%22/%3E%3Crect x=%2248.5%22 y=%2218%22 width=%224%22 height=%2226%22 rx=%222%22 fill=%22%23BBA987%22/%3E%3C/svg%3E")}
-.rail button[data-fly="mods"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23A3B79E%22/%3E%3Cstop offset=%221%22 stop-color=%22%237C9277%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M8 21l7-5h43l-7 5z%22 fill=%22%23F4F3EF%22 stroke=%22%23C9C7C1%22/%3E%3Cpath d=%22M51 21l7-5v32l-7 6z%22 fill=%22%236E8468%22/%3E%3Crect x=%228%22 y=%2221%22 width=%2221.5%22 height=%2233%22 fill=%22url(%23g)%22 stroke=%22%236E8468%22/%3E%3Crect x=%2229.5%22 y=%2221%22 width=%2221.5%22 height=%2233%22 fill=%22url(%23g)%22 stroke=%22%236E8468%22/%3E%3Cpath d=%22M8 31h21.5M8 42h21.5%22 stroke=%22%236E8468%22/%3E%3Crect x=%2216%22 y=%2225%22 width=%226%22 height=%221.6%22 rx=%22.8%22 fill=%22%234F5D4C%22/%3E%3Crect x=%2247%22 y=%2230%22 width=%221.6%22 height=%228%22 rx=%22.8%22 fill=%22%234F5D4C%22/%3E%3C/svg%3E")}
-.rail button[data-fly="isl"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22w%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23B9784A%22/%3E%3Cstop offset=%221%22 stop-color=%22%237E4A28%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M5 25l25-10 29 10-25 11z%22 fill=%22%23F4F3EF%22 stroke=%22%23C9C7C1%22/%3E%3Cpath d=%22M5 25l29 11v3L5 28z%22 fill=%22%23E2E0DB%22/%3E%3Cpath d=%22M34 36l25-11v3L34 39z%22 fill=%22%23D7D5D0%22/%3E%3Cpath d=%22M7 28.5l27 10.5v15L7 43z%22 fill=%22url(%23w)%22/%3E%3Cpath d=%22M34 39l23-10v15L34 54z%22 fill=%22%236E4122%22/%3E%3Cpath d=%22M20 33.5v15%22 stroke=%22%236E4122%22 stroke-width=%22.8%22/%3E%3C/svg%3E")}
-.rail button[data-fly="corner"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23A3B79E%22/%3E%3Cstop offset=%221%22 stop-color=%22%237C9277%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M6 23l9-5h12v5z%22 fill=%22%23F4F3EF%22 stroke=%22%23C9C7C1%22/%3E%3Cpath d=%22M27 29l6-4h25l-6 4z%22 fill=%22%23F4F3EF%22 stroke=%22%23C9C7C1%22/%3E%3Crect x=%226%22 y=%2223%22 width=%2221%22 height=%2231%22 fill=%22url(%23g)%22 stroke=%22%236E8468%22/%3E%3Crect x=%2227%22 y=%2229%22 width=%2225%22 height=%2225%22 fill=%22url(%23g)%22 stroke=%22%236E8468%22/%3E%3Cpath d=%22M52 29l6-4v24l-6 5z%22 fill=%22%236E8468%22/%3E%3Cpath d=%22M16.5 23v31M39.5 29v25%22 stroke=%22%236E8468%22/%3E%3Cpath d=%22M6 23h21v6%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%221.6%22/%3E%3C/svg%3E")}
-.rail button[data-fly="up"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22w%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23B9784A%22/%3E%3Cstop offset=%221%22 stop-color=%22%237E4A28%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M6 14l5-4h48l-5 4z%22 fill=%22%23C88B5E%22/%3E%3Crect x=%226%22 y=%2214%22 width=%2248%22 height=%2228%22 fill=%22url(%23w)%22 stroke=%22%236E4122%22/%3E%3Cpath d=%22M54 14l5-4v28l-5 4z%22 fill=%22%236E4122%22/%3E%3Cpath d=%22M30 14v28%22 stroke=%22%235E361C%22 stroke-width=%221.2%22/%3E%3Crect x=%2225.5%22 y=%2233%22 width=%221.6%22 height=%226%22 rx=%22.8%22 fill=%22%23D8D2C8%22/%3E%3Crect x=%2233%22 y=%2233%22 width=%221.6%22 height=%226%22 rx=%22.8%22 fill=%22%23D8D2C8%22/%3E%3C/svg%3E")}
-.rail button[data-fly="cli"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Crect x=%2212%22 y=%229%22 width=%2240%22 height=%2247%22 rx=%223%22 fill=%22%23fff%22 stroke=%22%23C3C7CE%22 stroke-width=%221.2%22/%3E%3Crect x=%2224%22 y=%225%22 width=%2216%22 height=%228%22 rx=%222%22 fill=%22%237B7F86%22/%3E%3Cg fill=%22none%22 stroke=%22%239BA2AD%22 stroke-width=%221%22%3E%3Cpath d=%22M17 40h30M17 40v-10h30v10M24 30v10M31 30v10M38 30v10%22/%3E%3Cpath d=%22M17 26h30v-7H17zM27 19v7M37 19v7%22/%3E%3C/g%3E%3Cpath d=%22M18 48h18%22 stroke=%22%236A2FB5%22 stroke-width=%221.6%22 stroke-linecap=%22round%22/%3E%3C/svg%3E")}
-.rail button#doorBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22w%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23B9784A%22/%3E%3Cstop offset=%221%22 stop-color=%22%237E4A28%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Crect x=%228%22 y=%2212%22 width=%2227%22 height=%2240%22 fill=%22%23F1F0EC%22 stroke=%22%23C3C7CE%22/%3E%3Crect x=%2211%22 y=%2215%22 width=%2221%22 height=%2234%22 fill=%22%23DFE0DC%22/%3E%3Cpath d=%22M35 12l20-6v52l-20-6z%22 fill=%22url(%23w)%22 stroke=%22%236E4122%22/%3E%3Crect x=%2233%22 y=%2219%22 width=%225%22 height=%226%22 rx=%221%22 fill=%22%238D949E%22/%3E%3Crect x=%2233%22 y=%2239%22 width=%225%22 height=%226%22 rx=%221%22 fill=%22%238D949E%22/%3E%3C/svg%3E")}
-.rail button#orbitBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22g%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23A3B79E%22/%3E%3Cstop offset=%221%22 stop-color=%22%237C9277%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M32 40V6%22 stroke=%22%232F55D4%22 stroke-width=%222.2%22/%3E%3Cpath d=%22M32 4l-3 6h6z%22 fill=%22%232F55D4%22/%3E%3Cpath d=%22M32 40L8 52%22 stroke=%22%232EA043%22 stroke-width=%222.2%22/%3E%3Cpath d=%22M6 53l6.5-.5-2.7-5z%22 fill=%22%232EA043%22/%3E%3Cpath d=%22M32 40l24 12%22 stroke=%22%23E5484D%22 stroke-width=%222.2%22/%3E%3Cpath d=%22M58 53l-6.5-.5 2.7-5z%22 fill=%22%23E5484D%22/%3E%3Cpath d=%22M20 22l13-6 13 6-13 6z%22 fill=%22%23F4F3EF%22 stroke=%22%23C9C7C1%22/%3E%3Cpath d=%22M20 22l13 6v16l-13-6z%22 fill=%22url(%23g)%22 stroke=%22%236E8468%22/%3E%3Cpath d=%22M33 28l13-6v16l-13 6z%22 fill=%22%23E8E7E2%22 stroke=%22%23C9C7C1%22/%3E%3C/svg%3E")}
-.rail button#dimBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22m%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23EEF0F3%22/%3E%3Cstop offset=%221%22 stop-color=%22%238E959F%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M4 38h34v9H4z%22 fill=%22%23F2C230%22 stroke=%22%23B88D0E%22/%3E%3Cpath d=%22M8 38v4M12 38v3M16 38v4M20 38v3M24 38v4M28 38v3M32 38v4%22 stroke=%22%233A3A3A%22 stroke-width=%22.9%22/%3E%3Crect x=%2228%22 y=%2212%22 width=%2230%22 height=%2234%22 rx=%2211%22 fill=%22url(%23m)%22 stroke=%22%236B727C%22 stroke-width=%221.2%22/%3E%3Ccircle cx=%2243%22 cy=%2229%22 r=%227%22 fill=%22%23D5D9DF%22 stroke=%22%236B727C%22/%3E%3Ccircle cx=%2243%22 cy=%2229%22 r=%222%22 fill=%22%236B727C%22/%3E%3Crect x=%2234%22 y=%228%22 width=%2212%22 height=%226%22 rx=%222%22 fill=%22%236A2FB5%22/%3E%3C/svg%3E")}
-.rail button[data-fly="set"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M10 22l14-11 15 6 3 30-21 6z%22 fill=%22%23fff%22 stroke=%22%23BFC3CA%22 stroke-width=%221.2%22/%3E%3Ccircle cx=%2223%22 cy=%2218%22 r=%222.4%22 fill=%22%23E6E8EC%22 stroke=%22%239AA1AB%22/%3E%3Cpath d=%22M28 21l14-10 15 7 1 30-21 5z%22 fill=%22%236A2FB5%22 stroke=%22%234B1890%22/%3E%3Ccircle cx=%2241%22 cy=%2217%22 r=%222.4%22 fill=%22%23EDE5FB%22/%3E%3Cpath d=%22M23 18c-4-8 6-14 10-8M41 17c-3-8 6-13 9-7%22 fill=%22none%22 stroke=%22%237B7F86%22 stroke-width=%221.2%22/%3E%3C/svg%3E")}
-.rail button[data-fly="tech"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22m%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23EEF0F3%22/%3E%3Cstop offset=%221%22 stop-color=%22%238E959F%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Crect x=%2210%22 y=%2234%22 width=%2222%22 height=%2220%22 fill=%22%23E3C493%22 stroke=%22%23B89A6B%22/%3E%3Cpath d=%22M10 40h22M10 46h22%22 stroke=%22%23C9A974%22 stroke-width=%22.7%22/%3E%3Crect x=%224%22 y=%2216%22 width=%2256%22 height=%229%22 rx=%221.5%22 fill=%22url(%23m)%22 stroke=%22%236B727C%22/%3E%3Cpath d=%22M10 18v5M14 18v3M18 18v5M22 18v3M26 18v5M30 18v3M34 18v5M38 18v3M42 18v5%22 stroke=%22%234E545C%22 stroke-width=%22.8%22/%3E%3Cpath d=%22M6 25h6v9H8z%22 fill=%22%23B3B9C1%22 stroke=%22%236B727C%22/%3E%3Cpath d=%22M32 25h7v5l-4 4h-3z%22 fill=%22%23B3B9C1%22 stroke=%22%236B727C%22/%3E%3Cpath d=%22M32 12h12v4H32z%22 fill=%22%239AA1AB%22/%3E%3C/svg%3E")}
-.rail button[data-fly="cut"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22m%22 x1=%220%22 y1=%220%22 x2=%220%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23EEF0F3%22/%3E%3Cstop offset=%221%22 stop-color=%22%238E959F%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2232%22 cy=%2258%22 rx=%2222%22 ry=%223%22 fill=%22%232A1A4A%22 opacity=%22.12%22/%3E%3Cpath d=%22M4 44l27-11 29 11-27 12z%22 fill=%22%23EFE5D2%22 stroke=%22%23C8B89A%22/%3E%3Cpath d=%22M4 44l29 12v3L4 47z%22 fill=%22%23D9CBB0%22/%3E%3Ccircle cx=%2234%22 cy=%2226%22 r=%2217%22 fill=%22url(%23m)%22 stroke=%22%238D949E%22 stroke-width=%224%22 stroke-dasharray=%223 2.2%22/%3E%3Ccircle cx=%2234%22 cy=%2226%22 r=%2213%22 fill=%22url(%23m)%22 stroke=%22%236B727C%22/%3E%3Ccircle cx=%2234%22 cy=%2226%22 r=%223.5%22 fill=%22%234E545C%22/%3E%3Cpath d=%22M21 44l13-5%22 stroke=%22%238A7550%22 stroke-width=%221.6%22/%3E%3C/svg%3E")}
-header #pmBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%220%22%3E%3Cstop offset=%220%22 stop-color=%22%23C9CFD9%22/%3E%3Cstop offset=%22.5%22 stop-color=%22%23F6F7FA%22/%3E%3Cstop offset=%221%22 stop-color=%22%23C9CFD9%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M14 18l42-6v28l-42 6z%22 fill=%22%23F4F6FA%22 stroke=%22%23C3C9D3%22/%3E%3Cg stroke=%22%237E9BD8%22 stroke-width=%22.9%22 fill=%22none%22%3E%3Cpath d=%22M22 22l26-3.6v8L22 30zM30 21v8M38 20v8M22 35l26-3.6%22/%3E%3C/g%3E%3Cpath d=%22M48 33l6-1%22 stroke=%22%236A2FB5%22 stroke-width=%221.6%22/%3E%3Crect x=%224%22 y=%2216%22 width=%2212%22 height=%2234%22 rx=%226%22 fill=%22url(%23b)%22 stroke=%22%23AEB5C0%22 transform=%22rotate(-8 10 33)%22/%3E%3C/svg%3E")}
-header [data-fly="ord"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Cpath d=%22M5 12h8l7 26h28l6-18H17%22 fill=%22none%22 stroke=%22%238D949E%22 stroke-width=%223%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M18 22h34l-5 14H22z%22 fill=%22%23EDE5FB%22 stroke=%22%23B9A6E0%22/%3E%3Cpath d=%22M26 22l2 14M34 22v14M42 22l-2 14M19 29h31%22 stroke=%22%23B9A6E0%22 stroke-width=%221%22/%3E%3Ccircle cx=%2223%22 cy=%2246%22 r=%224%22 fill=%22%234E545C%22/%3E%3Ccircle cx=%2245%22 cy=%2246%22 r=%224%22 fill=%22%234E545C%22/%3E%3Cpath d=%22M46 12h10%22 stroke=%22%236A2FB5%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3C/svg%3E")}
-header [data-fly="price"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect x=%2214%22 y=%226%22 width=%2236%22 height=%2248%22 rx=%225%22 fill=%22%23ECEEF2%22 stroke=%22%23AEB5C0%22/%3E%3Crect x=%2219%22 y=%2211%22 width=%2226%22 height=%2210%22 rx=%222%22 fill=%22%23CFE3D1%22 stroke=%22%239DB8A0%22/%3E%3Cg fill=%22%23fff%22 stroke=%22%23B4BAC4%22%3E%3Crect x=%2219%22 y=%2225%22 width=%227%22 height=%226%22 rx=%221.5%22/%3E%3Crect x=%2228.5%22 y=%2225%22 width=%227%22 height=%226%22 rx=%221.5%22/%3E%3Crect x=%2219%22 y=%2234%22 width=%227%22 height=%226%22 rx=%221.5%22/%3E%3Crect x=%2228.5%22 y=%2234%22 width=%227%22 height=%226%22 rx=%221.5%22/%3E%3Crect x=%2219%22 y=%2243%22 width=%227%22 height=%226%22 rx=%221.5%22/%3E%3Crect x=%2228.5%22 y=%2243%22 width=%227%22 height=%226%22 rx=%221.5%22/%3E%3C/g%3E%3Crect x=%2238%22 y=%2225%22 width=%227%22 height=%2224%22 rx=%221.5%22 fill=%22%236A2FB5%22/%3E%3C/svg%3E")}
-.brand::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 46 50%22%3E%3Cpath d=%22M4 18L30 4v16L4 34z%22 fill=%22%236A2FB5%22/%3E%3Cpath d=%22M16 30l26-14v16L16 46z%22 fill=%22%236A2FB5%22/%3E%3C/svg%3E")}
-/* ===== «Мой расчёт про» — Soft UI (светлый неоморфизм) — поверх прежних стилей, логику не трогает ===== */
+/* =====================================================================
+   «Мой расчёт про» — дизайн-система v146 (единая, заменяет прежние темы)
+   Светлая рабочая тема: серо-белый фон, белые поверхности, графитовый
+   текст, глубокий синий акцент. Только оформление — логика не меняется.
+   ===================================================================== */
 :root{
-  --bg:#ECEFF4;--surface:#ECEFF4;--ink:#1D2230;--muted:#5F6878;--line:#DCE1EA;--soft:#E3E7EE;
-  --accent:#5B6CFF;--accent-ink:#FFFFFF;--copper:#23283A;color-scheme:light;
-  --hi:rgba(255,255,255,.95);--lo:rgba(163,174,196,.55);
-  --sh:-6px -6px 14px var(--hi),6px 6px 14px var(--lo);
-  --sh-s:-3px -3px 8px var(--hi),3px 3px 8px var(--lo);
-  --sh-in:inset 3px 3px 7px var(--lo),inset -3px -3px 7px var(--hi);
-  --sel:0 0 0 2px var(--accent),-4px -4px 10px var(--hi),4px 4px 12px rgba(91,108,255,.28);
-  --ease:cubic-bezier(.2,.8,.2,1);
+  /* цвет */
+  --bg:#F2F3F5;            /* фон приложения */
+  --surface:#FFFFFF;       /* рабочие поверхности */
+  --sunken:#F7F8FA;        /* поля внутри карточек, строки таблиц */
+  --hover:#F0F2F5;
+  --ink:#1E242C;           /* основной текст — графит */
+  --ink-2:#3B4450;         /* иконки, вторичный текст на кнопках */
+  --muted:#626B78;         /* подписи */
+  --faint:#8A929E;
+  --line:#E3E6EB;          /* разделители */
+  --line-2:#CDD2DA;        /* рамки полей и кнопок */
+  --accent:#1D4F91;        /* глубокий синий — основные действия */
+  --accent-h:#173F75;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#E8EFF8;
+  --accent-line:#9DB6D8;
+  --ok:#2F7D4F;  --ok-soft:#E8F3EC;
+  --warn:#A8620F; --warn-soft:#FBF1E2;
+  --err:#B93A2C;  --err-soft:#FBEBE8;
+  --soft:var(--sunken);
+  --copper:var(--accent);  /* совместимость со старыми правилами */
+  color-scheme:light;
+  /* типографика */
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --display:var(--body);
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  /* размеры */
+  --r-s:6px; --r:8px; --r-l:12px;
+  --sh-1:0 1px 2px rgba(16,24,40,.05);
+  --sh-2:0 10px 30px rgba(16,24,40,.12),0 2px 6px rgba(16,24,40,.06);
+  --ring:0 0 0 3px rgba(29,79,145,.18);
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --rail-b:68px;           /* ширина кнопки боковой панели */
 }
 html,body{background:var(--bg)!important;color:var(--ink)}
-body{background-image:none!important}
-/* плавность для всех нажимаемых элементов */
-button,.chip,.btn,input,select,textarea{transition:box-shadow .22s var(--ease),transform .16s var(--ease),background-color .22s var(--ease),color .22s var(--ease),border-color .22s var(--ease)}
-/* ---- карточки и панели ---- */
-.card{background:var(--surface)!important;border:0!important;border-radius:22px!important;box-shadow:var(--sh)!important}
-.stage.card{box-shadow:var(--sh)!important;border-radius:22px!important;overflow:hidden}
-.v3d,.v2d{border-radius:18px!important}
-.fly,.pmenu,.hask{background:var(--surface)!important;border:0!important;border-radius:22px!important;box-shadow:-8px -8px 20px var(--hi),10px 12px 28px rgba(120,132,160,.35)!important}
-.fly-h b{font-family:var(--display);font-weight:700;color:var(--ink)}
-/* мягкое появление панелей и карточек с результатом */
-@keyframes suiIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
-@keyframes suiFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.fly:not([hidden]),.pmenu:not([hidden]),.hask:not([hidden]){animation:suiIn .34s var(--ease) both}
-#priceBody>*,#partsCalc>*,#ordBody>*,#techBody>*,.prc,.tsum,.mcards,.mtot{animation:suiFade .42s var(--ease) both}
-#priceBody>*:nth-child(2),#partsCalc>*:nth-child(2),#ordBody>*:nth-child(2){animation-delay:.05s}
-#priceBody>*:nth-child(3),#partsCalc>*:nth-child(3),#ordBody>*:nth-child(3){animation-delay:.1s}
-#priceBody>*:nth-child(n+4),#partsCalc>*:nth-child(n+4),#ordBody>*:nth-child(n+4){animation-delay:.14s}
-/* ---- выпуклые элементы: кнопки, чипы, плитки ---- */
-.btn,.chip,.go button,.step button,.tiles button,.frez button,.addt,.mcard,.citem,.prow .pop,.pdel,.sbo button,.sbc button,.kp button,.ccard button,.rowl button,.x,.mtabs button,.ib,.pgrid button,.hask-b button,.clink,.ccard,.cback{
-  background:var(--surface)!important;border:1px solid transparent!important;box-shadow:var(--sh-s)!important;color:var(--ink)}
-.chip,.sbc button{border-radius:999px!important}
-.go button,.step button,.tiles button,.frez button,.addt,.mcard,.citem,.prow .pop,.sbo button,.pgrid button,.hask-b button,.mtabs button{border-radius:14px!important}
-.x{border-radius:12px!important;box-shadow:var(--sh-s)!important}
-.cback{box-shadow:none!important;background:none!important;color:var(--accent)!important}
-/* нажатие — лёгкое вдавливание */
-.btn:active,.chip:active,.go button:active,.step button:active,.tiles button:active,.frez button:active,.addt:active,.mcard:active,.citem:active,.prow .pop:active,.sbo button:active,.sbc button:active,.kp button:active,.rowl button:active,.x:active,.mtabs button:active,.ib:active,.pgrid button:active,.hask-b button:active,.pmenu button:active,.pmb:active,.rail button:active,.sw:active,.mcopy:active,.welcome__start:active{
-  box-shadow:var(--sh-in)!important;transform:scale(.97)}
-/* выбранное состояние — цветной контур + приподнятость */
-.btn[aria-pressed="true"],.chip[aria-pressed="true"],.tiles button[aria-pressed="true"],.frez button[aria-pressed="true"],.addt.one[aria-pressed="true"],.crow.on .citem,.prow.on .pop,.rowl li.on .rn,.sbc button[aria-current],.mtabs button[aria-selected="true"],.ib[aria-pressed=true],.prc.own input{
-  background:var(--surface)!important;color:var(--ink)!important;border-color:transparent!important;box-shadow:var(--sel)!important;-webkit-text-fill-color:currentColor}
-.chip[aria-pressed="true"]{color:var(--accent)!important;font-weight:600}
-.sw i{box-shadow:var(--sh-s);border:2px solid var(--surface)!important;transition:outline-color .2s,transform .2s var(--ease)}
-.sw[aria-pressed="true"] i{outline:2px solid var(--accent)!important;outline-offset:3px;transform:scale(1.06)}
-/* ---- поля ввода — вдавленные ---- */
-.step input,.pname,.kp input,.prc input,.cq,.cutbar input[inputmode],.mcust input,#fly-ord input,#fly-ord select,#fly-ord textarea,#fly-set input,#fly-price input,.fly input[type=text],.fly input[type=number],.fly input:not([type]),.fly select,.fly textarea{
-  background:var(--surface)!important;border:1px solid transparent!important;border-radius:12px!important;box-shadow:var(--sh-in)!important;color:var(--ink)!important}
-.step input:focus,.pname:focus,.kp input:focus,.prc input:focus,.cq:focus,.fly input:focus,.fly select:focus,.fly textarea:focus{outline:none;box-shadow:var(--sh-in),0 0 0 2px var(--accent)!important}
-.fly input[type=checkbox],.fly input[type=radio],.fly input[type=range],.fly input[type=file],.fly input[type=color]{box-shadow:none!important;background:none!important}
-/* ---- главные действия — контрастная тёмная кнопка ---- */
-.mcopy,.hask-b button:first-child,#fly-prj [data-pa="save"],#cliSave,.welcome__start{
-  background:#23283A!important;color:#fff!important;border:0!important;border-radius:16px!important;
-  box-shadow:-5px -5px 12px var(--hi),6px 8px 16px rgba(35,40,58,.35)!important;-webkit-text-fill-color:#fff}
-.mcopy:active,.hask-b button:first-child:active,#fly-prj [data-pa="save"]:active,#cliSave:active{box-shadow:inset 3px 3px 8px rgba(0,0,0,.45),inset -2px -2px 6px rgba(255,255,255,.08)!important}
-/* итоговые строки — крупно и тёмно */
-.prc{background:var(--surface)!important;border:0!important;border-radius:18px!important;box-shadow:var(--sh-s)!important}
-.prt{border:0!important;box-shadow:var(--sel)!important}
-.pdl.t b,.pr-acc b,#partsCalc .pcr.big b{color:var(--ink)!important}
-.calc{background:var(--surface)!important;box-shadow:var(--sh-in)}.calc b{color:var(--accent)}
-.mblk,.ped,.tsum{background:var(--surface)!important;border:0!important;border-radius:16px!important;box-shadow:var(--sh-s)}
-.tsum.e{box-shadow:0 0 0 2px #E5675C,var(--sh-s)!important}.tsum.w{box-shadow:0 0 0 2px #E2A93F,var(--sh-s)!important}.tsum.o{box-shadow:0 0 0 2px #4FB07A,var(--sh-s)!important}
-td,.mt td,.prc,.sz,.tck{border-color:var(--line)}
-/* ---- шапка ---- */
-header .brand{border-bottom:0!important}
-.brand::before{width:46px!important;height:46px!important;border-radius:14px;background-color:var(--surface)!important;background-size:70%!important;box-shadow:var(--sh-s)}
-.brand>div{border-left:0!important;padding-left:2px!important}
-.brand h1{text-transform:none!important;letter-spacing:-.02em!important;color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important;font-size:28px!important}
-.brand .tag{color:var(--muted)!important;font-size:14px!important;letter-spacing:.14em!important;text-transform:uppercase!important;font-weight:600!important}
-header .pmb{background:var(--surface)!important;border:0!important;border-radius:18px!important;box-shadow:var(--sh)!important;color:var(--ink)!important}
-header .pmb[aria-pressed="true"]{box-shadow:var(--sel)!important;background:var(--surface)!important}
-header .pmb[aria-pressed="true"] span{color:var(--ink)!important;-webkit-text-fill-color:var(--ink)!important}
-header .pmb::before{border-radius:12px;background-size:72%!important;box-shadow:var(--sh-s)}
-header #pmBtn::before{background-color:#E4E7FD!important}
-header [data-fly="ord"]::before{background-color:#DDF3E8!important}
-header [data-fly="price"]::before{background-color:#FFF0C9!important}
-/* ---- боковые панели: пастельные объёмные иконки ---- */
-.rail{background:transparent!important;border-radius:0!important;padding:10px 6px!important;gap:8px!important}
-.app{gap:10px!important}
-.rail hr{border-top-color:var(--line)!important}
-.rail button{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--ink)!important;border-radius:18px!important}
-.rail button::before{border-radius:16px;background-color:#E6EAF2;background-size:74%!important;background-position:center!important;
-  box-shadow:-4px -4px 10px var(--hi),5px 5px 12px var(--lo),inset 1px 1px 0 rgba(255,255,255,.7);filter:none!important;
-  transition:box-shadow .25s var(--ease),transform .25s var(--ease)}
-.rail button:active::before{box-shadow:var(--sh-in);transform:scale(.94)}
-.rail button[aria-pressed="true"]{background:transparent!important;color:var(--accent)!important}
-.rail button[aria-pressed="true"]::before{box-shadow:0 0 0 2.5px var(--accent),-4px -4px 10px var(--hi),5px 6px 14px rgba(91,108,255,.3);transform:translateY(-1px) scale(1.04)}
-.rail button span{font-weight:600!important}
-.rail button#fuBtn::before{background-color:#E7E2FB}          /* фурнитура — лаванда */
-.rail button[data-fly="fac"]::before{background-color:#FDE5D6}   /* фасад — персик */
-.rail button[data-fly="korp"]::before{background-color:#DDF2E6}  /* корпус / шкаф — мята */
-.rail button[data-fly="view"]::before{background-color:#DCEAFB}  /* вид — небо */
-.rail button[data-fly="ct"]::before{background-color:#F5EAD2}    /* столешница — песок */
-.rail button[data-fly="led"]::before{background-color:#FFF2C2}   /* свет — жёлтый */
-.rail button[data-fly="mat"]::before{background-color:#F8DEE5}   /* материал — роза */
-.rail button[data-fly="parts"]::before{background-color:#EBE2F8} /* детали — сирень */
-.rail button[data-fly="mods"]::before{background-color:#D4F0EC}  /* модули кухни — бирюза */
-.rail button[data-fly="isl"]::before{background-color:#FDE2CC}   /* остров — абрикос */
-.rail button[data-fly="corner"]::before{background-color:#DDE8FA}/* угол — голубой */
-.rail button[data-fly="up"]::before{background-color:#F6DDEA}    /* верхние — розовый */
-.rail button[data-fly="cli"]::before{background-color:#D8F1F6}   /* клиент — аква */
-.rail button#doorBtn::before,.rail button#orbitBtn::before,.rail button#dimBtn::before{background-color:#E4E8F0}
-.rail button[data-fly="set"]::before{background-color:#E6E3F7}   /* цены */
-.rail button[data-fly="tech"]::before{background-color:#DCEBF7}  /* технолог */
-.rail button[data-fly="cut"]::before{background-color:#FFDCD2}   /* раскрой — коралл */
-/* ---- прочее ---- */
-.pmenu button{border-radius:12px!important}.pmenu button:hover{background:var(--soft)!important}
-.badge{background:#23283A!important;color:#fff!important;border-radius:14px!important;box-shadow:6px 8px 18px rgba(35,40,58,.3)!important}
-.dwtoast{background:#23283A!important;color:#fff!important;border-radius:14px!important;animation:suiFade .3s var(--ease) both}
-.note{color:var(--muted)}
-#fly-cut,#fly-parts,#fly-price{background:var(--bg)!important;box-shadow:none!important;border-radius:0!important}
-.cutmap{border:0!important;border-radius:16px!important;box-shadow:var(--sh-in)}
-/* узкий экран телефона: крупнее цели нажатия и читаемость */
-@media (max-width:759px){
-  .rail{padding:8px 3px!important;gap:6px!important}
-  .rail button::before{border-radius:14px}
-  .chip{min-height:36px}
-  .go button,.hask-b button{min-height:44px}
-  .step button{min-width:38px;min-height:38px}
-  .step input,.pname,.kp input,.prc input,.cq{font-size:16px!important}
-  .brand h1{font-size:23px!important}.brand .tag{font-size:12px!important}
-  header .pmb{border-radius:16px!important}
+body{background-image:none!important;font:400 14px/1.45 var(--body);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  padding-block:max(10px,env(safe-area-inset-top,0px)) 16px!important}
+input,button,select,textarea{font-family:var(--body);font-variant-numeric:tabular-nums}
+h1,h2,h3,h4,h5{font-family:var(--body)}
+::selection{background:#CFDDF0}
+:focus-visible{outline:2px solid var(--accent)!important;outline-offset:2px}
+.i{width:16px;height:16px;flex:none;display:inline-block;vertical-align:-3px}
+.t-err{color:var(--err)}
+
+/* ---------- плавность: только цвет и рамка, коротко ---------- */
+button,.chip,input,select,textarea,a{transition:background-color .12s var(--ease),border-color .12s var(--ease),color .12s var(--ease),box-shadow .12s var(--ease)}
+@keyframes dsIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.fly:not([hidden]),.pmenu:not([hidden]),.hask:not([hidden]),.dwtoast:not([hidden]){animation:dsIn .16s var(--ease) both}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ---------- каркас ---------- */
+.wrap{max-width:1680px!important;gap:10px}
+.app{grid-template-columns:auto minmax(0,1fr) auto;gap:8px!important}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh-1)}
+.stage.card{padding:0;overflow:hidden;border-radius:var(--r-l)}
+.v3d{border-radius:var(--r-l)!important;background:#EDEFF2;height:calc(100dvh - 82px)!important}
+.v2d{border-radius:var(--r-l)!important;background:#FAFAF8}
+.v2d .hint{font:500 11px var(--body)!important;color:var(--muted);background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:var(--r-s);padding:4px 8px}
+.empty2d{color:var(--muted)}.empty2d b{color:var(--ink);font-weight:600}
+.splash{background:var(--bg)}
+
+/* ---------- шапка: бренд слева, действия проекта справа ---------- */
+header{display:flex!important;align-items:center!important;justify-content:flex-start;gap:8px;flex-wrap:nowrap;border:0!important;border-image:none!important;padding:0 2px 0!important;min-height:48px}
+header .brand{order:-1;flex:1 1 auto!important;display:flex;align-items:center;gap:10px;min-width:0;padding:0;margin:0;border:0}
+.brand .logo{display:none}
+.brand::before{content:"";width:32px;height:32px;flex:none;border-radius:var(--r);background:var(--accent) center/62% no-repeat;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 50'%3E%3Cpath d='M4 18L30 4v16L4 34z' fill='%23fff'/%3E%3Cpath d='M16 30l26-14v16L16 46z' fill='%23fff' fill-opacity='.72'/%3E%3C/svg%3E")}
+.brand>div{display:flex;flex-direction:column;min-width:0;border:0;padding:0}
+.brand h1{font:600 17px/1.15 var(--body)!important;letter-spacing:-.01em;color:var(--ink)!important;-webkit-text-fill-color:var(--ink);background:none!important;text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand .tag{display:block;font:500 11px/1.2 var(--body)!important;letter-spacing:.04em!important;text-transform:uppercase;color:var(--muted)!important;margin-top:2px}
+header .pmb{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:0 14px;border-radius:var(--r);
+  border:1px solid var(--line-2);background:var(--surface);color:var(--ink);font:500 14px var(--body);box-shadow:var(--sh-1)}
+header .pmb>svg{display:block;width:18px;height:18px;color:var(--ink-2)}
+header .pmb::before{content:none!important}
+header .pmb span,header .pmb[aria-pressed="true"] span{color:inherit!important;-webkit-text-fill-color:currentColor!important;background:none!important}
+header .pmb:hover{background:var(--hover);border-color:#B9C0CA}
+header .pmb[aria-pressed="true"]{background:var(--accent-soft)!important;border-color:var(--accent)!important;color:var(--accent)!important}
+header .pmb[aria-pressed="true"]>svg{color:var(--accent)}
+
+/* ---------- боковые панели инструментов ---------- */
+.rail{display:flex;flex-direction:column;gap:2px;padding:6px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh-1);
+  max-height:calc(100dvh - 76px);overflow-y:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail hr{width:70%;border:0;border-top:1px solid var(--line);margin:4px auto}
+.rail button{width:var(--rail-b);min-height:54px;padding:7px 2px 6px;border:1px solid transparent;border-radius:var(--r);background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--ink-2);font:500 11px/1.1 var(--body);box-shadow:none}
+.rail button::before{content:none!important}
+.rail button>svg{display:block;width:22px;height:22px;color:var(--ink-2)}
+.rail button span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px!important;letter-spacing:-.01em!important;font-weight:500}
+.rail button:hover{background:var(--hover)}
+.rail button:active{background:#E8EBEF}
+.rail button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.rail button[aria-pressed="true"]>svg{color:var(--accent)}
+
+/* ---------- всплывающие панели ---------- */
+.fly{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sh-2);padding:0 14px 14px;gap:12px;
+  width:min(380px,calc(100% - 96px));right:calc(var(--rail-b) + 22px);max-height:calc(100dvh - 76px);scroll-padding-bottom:120px}
+.fly.fl{left:calc(var(--rail-b) + 22px);right:auto}
+.fly-h{position:sticky;top:0;z-index:3;margin:0 -14px;padding:12px 12px 10px 14px;background:var(--surface);border-bottom:1px solid var(--line);align-items:center!important}
+.fly-h b{font:600 15px/1.25 var(--body)!important;color:var(--ink)}
+.fly-h small{font:400 12px/1.35 var(--body)!important;color:var(--muted);margin-top:2px}
+.x{flex:none;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:var(--r);background:transparent;color:var(--ink-2);padding:0}
+.x .i{width:18px;height:18px}
+.x:hover{background:var(--hover);border-color:var(--line)}
+#fly-cut,#fly-parts,#fly-price{background:var(--bg)!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+#fly-cut .fly-h,#fly-parts .fly-h,#fly-price .fly-h{background:var(--bg);margin:0 0 4px;padding-inline:0}
+#fly-parts .fly-h b,#fly-price .fly-h b{font-size:20px!important}
+#fly-parts .fly-h .x,#fly-price .fly-h .x{background:var(--surface);border-color:var(--line-2);width:40px;height:40px}
+
+/* ---------- заголовки разделов внутри панелей ---------- */
+.fly h4,.mh,.mh2,.mat h4,.mf h4,.sbt,.prc h5,.pmenu small{font:600 11px/1.3 var(--body)!important;letter-spacing:.06em!important;text-transform:uppercase;color:var(--muted)!important;opacity:1!important;margin:6px 0 0}
+.note,.cutst{color:var(--muted);font-size:12.5px;line-height:1.45}
+.sz{border-color:var(--line)}
+.sz label,.fly .sz label{color:var(--muted);font-size:12.5px}
+.fly .sz label svg{color:var(--ink-2)}
+
+/* ---------- кнопки: одна система ---------- */
+.btn,.go button,.kp button,.ccard button,.hask-b button,.pgrid button,.cutbar button,.cutbuf button,.cutman button,.cpanel button,.ib,.rowl button,.pdel,.clink,.mcopy{
+  min-height:36px;border:1px solid var(--line-2)!important;border-radius:var(--r)!important;background:var(--surface)!important;color:var(--ink)!important;
+  font:500 13.5px/1.2 var(--body)!important;box-shadow:none!important;padding:8px 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.go{gap:8px;flex-wrap:wrap}.go button{flex:1 1 auto}
+.rowl button,.ib{padding:0}
+.btn:hover,.go button:hover,.kp button:hover,.ccard button:hover,.hask-b button:hover,.pgrid button:hover,.ib:hover,.rowl button:hover,.clink:hover,.cutbar button:hover,.cutbuf button:hover,.cpanel button:hover{background:var(--hover)!important;border-color:#B9C0CA!important}
+.btn:active,.go button:active,.kp button:active,.ib:active,.rowl button:active,.pgrid button:active{background:#E8EBEF!important}
+button:disabled,.rowl button:disabled{opacity:.4;cursor:default}
+/* выбранное / включённое состояние */
+.btn[aria-pressed="true"],.go button[aria-pressed="true"],.ib[aria-pressed="true"],.ib[aria-pressed=true],.cuttool .go button[aria-pressed=true],.cutbuf .on{
+  background:var(--accent-soft)!important;border-color:var(--accent)!important;color:var(--accent)!important;-webkit-text-fill-color:currentColor}
+/* основное действие экрана */
+.fly .mcopy,#fly-prj [data-pa="save"],#fly-cli #cliSave,.hask .hask-b button:first-child,.go button[data-ex="all"],.go button[data-ex="draw"],.go button[data-thole]{
+  background:var(--accent)!important;border-color:var(--accent)!important;color:var(--accent-ink)!important;-webkit-text-fill-color:#fff;font-weight:600!important}
+.fly .mcopy:hover,#fly-prj [data-pa="save"]:hover,#fly-cli #cliSave:hover,.hask .hask-b button:first-child:hover,.go button[data-ex="all"]:hover,.go button[data-ex="draw"]:hover,.go button[data-thole]:hover{background:var(--accent-h)!important;border-color:var(--accent-h)!important}
+/* опасные действия */
+.rm,.rowl .del,.pdel,[data-idel],[data-oed]{color:var(--err)!important}
+.rm{border:1px solid #E7C2BC!important;background:var(--surface);border-radius:var(--r);padding:8px 12px;font:500 13px var(--body)}
+.rm:hover,.rowl .del:hover,.pdel:hover{background:var(--err-soft)!important;border-color:#E2ADA5!important}
+.cback{display:inline-flex;align-items:center;gap:4px;border:0;background:none!important;color:var(--accent)!important;font:500 13px var(--body);padding:4px 0;box-shadow:none!important}
+
+/* ---------- чипы (выбор варианта) ---------- */
+.chips{gap:6px}
+.chip,.sbc button{min-height:34px;padding:6px 12px;border:1px solid var(--line-2)!important;border-radius:var(--r)!important;background:var(--surface)!important;color:var(--ink)!important;
+  font:500 13.5px/1.2 var(--body)!important;box-shadow:none!important;display:inline-flex;align-items:center;gap:6px;-webkit-text-fill-color:currentColor}
+.chip:hover,.sbc button:hover{background:var(--hover)!important;border-color:#B9C0CA!important}
+.chip[aria-pressed="true"],.sbc button[aria-current]{background:var(--accent-soft)!important;border-color:var(--accent)!important;color:var(--accent)!important;font-weight:600!important}
+.chip.warn{border-color:#E4C08A!important;color:var(--warn)!important;background:var(--warn-soft)!important}
+.views .chip{font-size:13px!important}
+.sbc{gap:6px;font-size:12.5px}.sbc .sbsep{color:var(--faint)}
+.ccats .chip small{opacity:1;color:var(--muted);font-size:11px}
+
+/* ---------- поля ввода ---------- */
+.step input,.pname,.kp input,.prc input,.cq,.cutbar input[inputmode],.mcust input,.fly input[type=text],.fly input[type=number],.fly input[type=search],.fly input[type=tel],.fly input:not([type]),.fly select,.fly textarea,#fly-price input{
+  background:var(--surface)!important;border:1px solid var(--line-2)!important;border-radius:var(--r)!important;color:var(--ink)!important;box-shadow:none!important;
+  min-height:38px;font:400 15px var(--body);font-variant-numeric:tabular-nums}
+.step input,.kp input[inputmode],.prc input,.cutbar input[inputmode],.mcust input{font-family:var(--mono)!important;font-weight:500!important}
+.step input:hover,.pname:hover,.kp input:hover,.cq:hover,.fly input:hover,.fly select:hover,.fly textarea:hover{border-color:#AEB6C1!important}
+.step input:focus,.pname:focus,.kp input:focus,.prc input:focus,.cq:focus,.cutbar input:focus,.mcust input:focus,.fly input:focus,.fly select:focus,.fly textarea:focus,#fly-price input:focus{
+  outline:none!important;border-color:var(--accent)!important;box-shadow:var(--ring)!important}
+.fly input[type=checkbox],.fly input[type=radio]{accent-color:var(--accent);width:18px;height:18px;min-height:0;box-shadow:none!important}
+.fly input[type=range]{accent-color:var(--accent);min-height:0;border:0!important;box-shadow:none!important}
+.fly input[type=file],.fly input[type=color]{min-height:0;box-shadow:none!important}
+::placeholder{color:#A3AAB5;opacity:1}
+.kp em{color:var(--muted);font-style:normal;font-size:12.5px;min-width:14px}
+/* шаговые поля размеров: − [ 600 ] + */
+.step{gap:0}
+.step button{width:38px!important;height:38px!important;border:1px solid var(--line-2)!important;background:var(--surface)!important;color:var(--ink-2)!important;font:400 18px/1 var(--body)!important;box-shadow:none!important;border-radius:0!important}
+.step button:first-child{border-radius:var(--r) 0 0 var(--r)!important;border-right:0!important}
+.step button:last-child{border-radius:0 var(--r) var(--r) 0!important;border-left:0!important}
+.step button:hover{background:var(--hover)!important}
+.step input{border-radius:0!important;text-align:center;height:38px}
+.fly .step button{width:38px!important;height:38px!important}.fly .step input{height:38px}
+
+/* ---------- карточки, блоки, итоги ---------- */
+.mblk,.ped,.cpanel,.cuttool,.ccard{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r-l)!important;box-shadow:none!important}
+.ped{border-color:#E4C08A!important;background:var(--warn-soft)!important}
+.cuttool{border-color:var(--accent-line)!important}
+.calc{background:var(--sunken)!important;border:1px solid var(--line);border-radius:var(--r);box-shadow:none!important;font:500 12.5px var(--mono)!important;color:var(--ink)}
+.calc b{color:var(--accent)!important}
+.mres{font:600 13px var(--body)}.mres span{font:400 11.5px var(--body);color:var(--muted)}
+/* цена — блоки «расчёт → скидка → работник → итог» */
+.prx{gap:12px}
+.prx .prc{display:block!important;background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r-l)!important;padding:14px 16px!important;box-shadow:none!important}
+.prx .prc h5{margin:0 0 10px!important}
+.prx .prc .chips{margin-bottom:8px}
+.prx .prc .kp{padding:4px 0}
+.prr{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+.prr:first-child{border-top:0}
+.prr span{color:var(--muted)}.prr b{font-weight:600;white-space:nowrap;color:var(--ink)}
+.prr.pr-strong span{color:var(--ink);font-weight:600}.prr.pr-strong b{font-size:16px}
+.pr-neg b{color:var(--err)!important}
+.pr-acc b{color:var(--accent)!important}
+.prt{background:var(--surface)!important;border:1px solid var(--accent)!important;border-left-width:4px!important;border-radius:var(--r-l)!important;box-shadow:none!important;padding:12px 16px!important}
+.prt .prr span,.prt .prr b{color:var(--ink)}
+.pdl{border-top:1px solid var(--line)!important;font-size:14px}.pdl span{color:var(--muted)}
+.pdl.t span{color:var(--ink);font-weight:600}.pdl.t b,#partsCalc .pcr.big b{color:var(--ink)!important;font-weight:700}
+/* настройки цен (строки каталога) */
+.prc:not(.prx .prc){border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:none!important;box-shadow:none!important;padding:10px 0!important}
+.prc.own input{border-color:var(--accent)!important;background:var(--accent-soft)!important}
+.prc .pk{color:var(--muted)}
+/* итог материалов */
+.mtot{border-top:2px solid var(--ink)!important;font:500 13px var(--body)}.mtot b{font:700 18px var(--body);font-variant-numeric:tabular-nums}
+/* сводка материалов (плитки) */
+.mcards{gap:8px}
+.mcard{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r-l)!important;box-shadow:none!important;padding:10px 12px;gap:2px}
+.mcard .mi{color:var(--accent);width:20px;height:20px}
+.mcard b{font:600 18px/1.2 var(--body)!important;color:var(--ink)}.mcard span{font:500 12.5px var(--body)}.mcard small{font:400 11.5px var(--body)!important;color:var(--muted)}
+/* вкладки «Итог / Листы / Кромка …» */
+.mtabs{position:static!important;background:var(--surface)!important;gap:2px!important;padding:6px 0 8px;border-bottom:1px solid var(--line)}
+.mtabs button{border:1px solid transparent!important;background:transparent!important;color:var(--muted)!important;border-radius:var(--r)!important;box-shadow:none!important;font:500 11px var(--body)!important;padding:6px 2px!important}
+.mtabs button:hover{background:var(--hover)!important}
+.mtabs button[aria-selected="true"]{background:var(--accent-soft)!important;color:var(--accent)!important;border-color:var(--accent-line)!important}
+/* технолог */
+.tsum{border:1px solid var(--line)!important;border-left-width:4px!important;border-radius:var(--r-l)!important;box-shadow:none!important;background:var(--surface)!important}
+.tsum.e{border-color:var(--err)!important;background:var(--err-soft)!important}
+.tsum.w{border-color:var(--warn)!important;background:var(--warn-soft)!important}
+.tsum.o{border-color:var(--ok)!important;background:var(--ok-soft)!important}
+.tck{border-color:var(--line)}
+.tck i{display:flex;justify-content:center;padding-top:1px}.tck i .i{width:18px;height:18px}
+.tck.err i{color:var(--err)}.tck.warn i{color:var(--warn)}.tck.ok i{color:var(--ok)}
+.tck small{color:var(--muted)}
+
+/* ---------- таблицы и числа ---------- */
+table{font-size:13.5px}
+th{font:600 11px var(--body)!important;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)!important;border-bottom:1px solid var(--line)}
+td{border-top:1px solid var(--line)!important}
+td.n,td.q,.mt td.q{font-family:var(--mono)!important;font-size:12.5px;font-variant-numeric:tabular-nums}
+td small,.mt td small{color:var(--muted)}
+.tbl{border:1px solid var(--line);border-radius:var(--r);padding:0 8px}
+.ptab td{font-variant-numeric:tabular-nums}
+
+/* ---------- плитки выбора: модули, ракурсы, фрезеровки, цвета ---------- */
+.addg{gap:6px!important}
+.addt{background:var(--surface)!important;border:1px solid var(--line-2)!important;border-radius:var(--r)!important;box-shadow:none!important;padding:10px 4px 8px!important;gap:4px!important;font:500 12px/1.15 var(--body)!important;color:var(--ink)!important}
+.addt:hover{background:var(--hover)!important;border-color:#B9C0CA!important}
+.addt:active{transform:none;background:#E8EBEF!important}
+.addt svg:not(.i){width:28px!important;height:28px!important;padding:0!important;background:none!important;box-shadow:none!important;border-radius:0!important;color:var(--ink-2)!important}
+.addt svg:not(.i) rect,.addt svg:not(.i) circle{fill:none}
+.addt span{font-weight:500}
+.addt small{font:400 11.5px var(--mono)!important;color:var(--muted)}
+.addt em{top:5px!important;right:5px!important;color:var(--accent)!important;line-height:0}
+.addt em .i{width:14px;height:14px}
+.addt i{top:5px!important;left:5px!important;min-width:18px;height:18px;border-radius:9px;background:var(--accent)!important;color:#fff!important;font:600 11px/18px var(--body)!important;box-shadow:none!important}
+.addt.one[aria-pressed="true"]{background:var(--accent-soft)!important;border-color:var(--accent)!important}
+.tiles{gap:6px}
+.tiles button,.frez button,.sbo button,.citem,.prow .pop,.pgrid button{background:var(--surface)!important;border:1px solid var(--line-2)!important;border-radius:var(--r)!important;box-shadow:none!important;color:var(--ink)!important}
+.tiles button{font:500 11.5px var(--body)!important;color:var(--muted)!important;padding:8px 2px 6px}
+.tiles button svg{width:28px!important;height:28px!important;padding:0!important;background:none!important;box-shadow:none!important;color:var(--ink-2)!important}
+.tiles button svg rect{fill:none}
+.tiles button:hover,.frez button:hover,.sbo button:hover,.citem:hover,.prow .pop:hover,.pgrid button:hover{background:var(--hover)!important}
+.tiles button[aria-pressed="true"],.frez button[aria-pressed="true"],.sbo button[aria-pressed="true"],.crow.on .citem,.prow.on .pop{
+  background:var(--accent-soft)!important;border-color:var(--accent)!important;box-shadow:inset 0 0 0 1px var(--accent)!important;color:var(--ink)!important}
+.tiles button[aria-pressed="true"] svg{color:var(--accent)!important}
+.sbo button b,.citem b,.pgrid b{font-weight:600}
+.sbo button small,.citem small,.pgrid small,.prow small{color:var(--muted)}
+.citem em{font:600 12.5px var(--body);font-variant-numeric:tabular-nums}
+.citem i,.ccard i{border-color:var(--line)}
+.clink{width:34px;padding:0;color:var(--ink-2)!important}
+.sw{color:var(--muted)}.sw i{border:1px solid rgba(16,24,40,.14)!important;box-shadow:none!important}
+.sw[aria-pressed="true"]{color:var(--ink)}
+.sw[aria-pressed="true"] i{outline:2px solid var(--accent)!important;outline-offset:2px;transform:none}
+/* список модулей в ряду */
+.rowl li{gap:4px}
+.rowl button{width:34px;min-height:38px;color:var(--ink-2)!important}
+.rowl .rn{flex:1 1 auto;width:auto!important;justify-content:flex-start!important;padding:6px 10px!important;font:500 13px var(--body)!important}
+.rowl .rn b,.rowl .rn small{font:500 11.5px var(--mono)!important;color:var(--muted)}
+.rowl li.on .rn{background:var(--accent-soft)!important;border-color:var(--accent)!important}
+.rowl li.empty{color:var(--muted)}
+/* проекты */
+.prow .ost{background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-line);font-weight:500}
+.pdel{width:38px;padding:0}
+
+/* ---------- меню, диалоги, уведомления ---------- */
+.pmenu{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r-l)!important;box-shadow:var(--sh-2)!important;padding:6px;min-width:220px}
+.pmenu button{padding:10px 12px!important;border-radius:var(--r)!important;font:500 14px var(--body)!important;color:var(--ink)!important;min-height:40px;box-sizing:border-box}
+.pmenu button:hover,.pmenu button:focus-visible{background:var(--hover)!important}
+.hask{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r-l)!important;box-shadow:var(--sh-2)!important;padding:14px;gap:12px}
+.hask b{font-weight:600}
+.hask-b button{min-height:42px}
+.dwtoast{background:var(--ink)!important;color:#fff!important;border-radius:var(--r)!important;box-shadow:var(--sh-2)!important;font:500 13px var(--body)!important;padding:10px 14px}
+/* выбранный модуль: плавающая панель над сценой */
+.badge{background:var(--ink)!important;color:#fff!important;border-radius:var(--r-l)!important;box-shadow:var(--sh-2)!important;padding:6px 6px 6px 12px;gap:6px}
+.badge small{opacity:.72}
+.badge button{background:rgba(255,255,255,.1)!important;color:#fff!important;border:0;border-radius:var(--r)}
+.badge button:hover{background:rgba(255,255,255,.18)!important}
+.badge .bb{min-height:40px;min-width:46px}
+.badge .bb[aria-pressed="true"]{background:#fff!important;color:var(--ink)!important}
+.badge #selClear{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center}
+/* раскрой */
+.cutmap{border:1px solid var(--line)!important;border-radius:var(--r-l)!important;background:var(--surface)!important;box-shadow:none!important}
+.cutok{border-radius:var(--r)}
+.ibar{gap:6px!important}
+.ibar .ib{width:62px!important;height:auto!important;min-height:52px;padding:6px 2px 5px!important;display:inline-flex!important;flex-direction:column;gap:3px}
+.ibar .ib svg{width:20px;height:20px;color:var(--ink-2)}
+.ibar .ib span{font:500 10.5px/1.1 var(--body);color:var(--ink-2);white-space:nowrap}
+.ibar .ib[aria-pressed="true"] svg,.ibar .ib[aria-pressed="true"] span{color:var(--accent)}
+.cutbar{font-size:13.5px}
+
+/* ---------- стартовый экран ---------- */
+.welcome{background:var(--bg)!important;color:var(--ink)!important;font-family:var(--body)!important}
+.welcome__brand{color:var(--ink)!important;font:600 13px/1 var(--body)!important;letter-spacing:.14em!important}
+.welcome__visual{border-radius:16px;margin-inline:0!important;margin-block:18px 8px;background:#141412;border:1px solid var(--line)}
+.welcome h1{color:var(--ink)!important;font:600 clamp(36px,10vw,52px)/1.02 var(--body)!important;letter-spacing:-.03em!important}
+.welcome p{color:var(--muted)!important;font-size:15px}
+.welcome__start{min-height:54px;border-radius:var(--r-l)!important;background:var(--accent)!important;color:#fff!important;font:600 16px var(--body)!important;box-shadow:none!important}
+.welcome__start:hover{background:var(--accent-h)!important}
+.welcome__start:focus-visible{outline:2px solid var(--accent)!important;outline-offset:3px}
+
+/* ---------- компьютер: просторнее ---------- */
+@media (min-width:1100px){
+  :root{--rail-b:74px}
+  .fly{width:400px}
+  #fly-cli{width:min(600px,calc(100% - 180px))!important}
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* стартовый экран в том же стиле */
-.welcome{background:var(--bg)!important;color:var(--ink)!important}
-.welcome__brand{color:var(--ink)!important}
-.welcome h1{color:var(--ink)!important;letter-spacing:-.045em!important}
-.welcome p{color:var(--muted)!important}
-.welcome__visual{border-radius:28px;margin-inline:0!important;margin-block:16px 12px;box-shadow:-10px -10px 24px var(--hi),12px 14px 30px var(--lo);background:#141412;animation:suiIn .6s var(--ease) both}
-.welcome__copy{animation:suiFade .6s .12s var(--ease) both}
-.welcome__start{min-height:60px}
-/* ===== Soft UI: пастельные объёмные иконки разделов ===== */
-.rail button#fuBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23B9A8F5%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23B9A8F5%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23B9A8F5%22/%3E%3Cstop offset=%221%22 stop-color=%22%236E58D6%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%228%22 y=%2244%22 width=%2248%22 height=%228%22 rx=%224%22 fill=%22url(%23a)%22 stroke=%22%236E58D6%22 stroke-width=%222%22/%3E%3Crect x=%2215%22 y=%2234%22 width=%227%22 height=%2212%22 rx=%222%22 fill=%22url(%23b)%22/%3E%3Crect x=%2242%22 y=%2234%22 width=%227%22 height=%2212%22 rx=%222%22 fill=%22url(%23b)%22/%3E%3Crect x=%229%22 y=%2224%22 width=%2246%22 height=%2211%22 rx=%225.5%22 fill=%22url(%23a)%22 stroke=%22%236E58D6%22 stroke-width=%222%22/%3E%3Crect x=%2214%22 y=%2226.5%22 width=%2220%22 height=%222.5%22 rx=%221.2%22 fill=%22%23fff%22 opacity=%22.7%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="fac"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23F7B48D%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23F7B48D%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23F7B48D%22/%3E%3Cstop offset=%221%22 stop-color=%22%23D9764A%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%2215%22 y=%227%22 width=%2234%22 height=%2250%22 rx=%226%22 fill=%22url(%23a)%22 stroke=%22%23D9764A%22 stroke-width=%222%22/%3E%3Crect x=%2220.5%22 y=%2212.5%22 width=%2223%22 height=%2239%22 rx=%223.5%22 fill=%22none%22 stroke=%22%23D9764A%22 stroke-width=%221.6%22 opacity=%22.55%22/%3E%3Crect x=%2238%22 y=%2225%22 width=%224.5%22 height=%2214%22 rx=%222.2%22 fill=%22url(%23b)%22/%3E%3Cellipse cx=%2222%22 cy=%2216%22 rx=%227%22 ry=%223%22 fill=%22%23fff%22 opacity=%22.55%22 transform=%22rotate(-25 22 16)%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="korp"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%238FD6AE%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%238FD6AE%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%238FD6AE%22/%3E%3Cstop offset=%221%22 stop-color=%22%233E9E6B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%2211%22 y=%227%22 width=%2242%22 height=%2247%22 rx=%226%22 fill=%22url(%23a)%22 stroke=%22%233E9E6B%22 stroke-width=%222%22/%3E%3Crect x=%2217%22 y=%2213%22 width=%2230%22 height=%2235%22 rx=%223%22 fill=%22%23fff%22 opacity=%22.6%22/%3E%3Cpath d=%22M17 25h30M17 37h30%22 stroke=%22%233E9E6B%22 stroke-width=%222.4%22/%3E%3Crect x=%2215%22 y=%2254%22 width=%226%22 height=%224%22 rx=%221.5%22 fill=%22url(%23b)%22/%3E%3Crect x=%2243%22 y=%2254%22 width=%226%22 height=%224%22 rx=%221.5%22 fill=%22url(%23b)%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="view"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%2390BDF2%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%2390BDF2%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%2390BDF2%22/%3E%3Cstop offset=%221%22 stop-color=%22%233F7FD0%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M6 32C16 15 48 15 58 32 48 49 16 49 6 32Z%22 fill=%22url(%23a)%22 stroke=%22%233F7FD0%22 stroke-width=%222%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2210.5%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%224.2%22 fill=%22%231D2230%22 opacity=%22.75%22/%3E%3Ccircle cx=%2228.5%22 cy=%2228.5%22 r=%222.6%22 fill=%22%23fff%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="ct"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23E6C487%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23E6C487%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23E6C487%22/%3E%3Cstop offset=%221%22 stop-color=%22%23B88B3C%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M7 29 32 18l25 11-25 11z%22 fill=%22url(%23a)%22 stroke=%22%23B88B3C%22 stroke-width=%222%22/%3E%3Cpath d=%22M7 29l25 11v8L7 37z%22 fill=%22%23E6C487%22 stroke=%22%23B88B3C%22 stroke-width=%222%22/%3E%3Cpath d=%22M32 40l25-11v8L32 48z%22 fill=%22url(%23b)%22 stroke=%22%23B88B3C%22 stroke-width=%222%22/%3E%3Cellipse cx=%2233%22 cy=%2229%22 rx=%227%22 ry=%223%22 fill=%22%23fff%22 opacity=%22.7%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="led"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23F7D45E%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23F7D45E%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23F7D45E%22/%3E%3Cstop offset=%221%22 stop-color=%22%23C99A12%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M32 4v5M14 11l3.5 3.5M50 11l-3.5 3.5M7 27h5M52 27h5%22 stroke=%22%23C99A12%22 stroke-width=%222.6%22/%3E%3Ccircle cx=%2232%22 cy=%2227%22 r=%2214.5%22 fill=%22url(%23a)%22 stroke=%22%23C99A12%22 stroke-width=%222%22/%3E%3Crect x=%2225%22 y=%2240%22 width=%2214%22 height=%227%22 rx=%222.5%22 fill=%22url(%23b)%22/%3E%3Crect x=%2227%22 y=%2248%22 width=%2210%22 height=%226%22 rx=%222.5%22 fill=%22%238C95A8%22/%3E%3Cellipse cx=%2226%22 cy=%2221%22 rx=%225%22 ry=%223%22 fill=%22%23fff%22 opacity=%22.8%22 transform=%22rotate(-35 26 21)%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="mat"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23F09AB0%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23F09AB0%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23F09AB0%22/%3E%3Cstop offset=%221%22 stop-color=%22%23C9587A%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M8 38l24-10 24 10-24 10z%22 fill=%22url(%23a)%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3Cpath d=%22M8 38l24 10v5L8 43z%22 fill=%22%23F09AB0%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3Cpath d=%22M32 48l24-10v5L32 53z%22 fill=%22url(%23b)%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3Cpath d=%22M8 28l24-10 24 10-24 10z%22 fill=%22url(%23a)%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3Cpath d=%22M8 28l24 10v5L8 33z%22 fill=%22%23F09AB0%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3Cpath d=%22M32 38l24-10v5L32 43z%22 fill=%22url(%23b)%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3Cpath d=%22M8 18l24-10 24 10-24 10z%22 fill=%22url(%23a)%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3Cpath d=%22M8 18l24 10v5L8 23z%22 fill=%22%23F09AB0%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3Cpath d=%22M32 28l24-10v5L32 33z%22 fill=%22url(%23b)%22 stroke=%22%23C9587A%22 stroke-width=%222%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="parts"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23C3A6EE%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23C3A6EE%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23C3A6EE%22/%3E%3Cstop offset=%221%22 stop-color=%22%238556C9%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%2213%22 y=%227%22 width=%2238%22 height=%2250%22 rx=%226%22 fill=%22url(%23a)%22 stroke=%22%238556C9%22 stroke-width=%222%22/%3E%3Crect x=%2219%22 y=%2215%22 width=%227%22 height=%227%22 rx=%222%22 fill=%22url(%23b)%22/%3E%3Cpath d=%22M31 18.5h14%22 stroke=%22%238556C9%22 stroke-width=%223%22/%3E%3Crect x=%2219%22 y=%2228%22 width=%227%22 height=%227%22 rx=%222%22 fill=%22url(%23b)%22/%3E%3Cpath d=%22M31 31.5h14%22 stroke=%22%238556C9%22 stroke-width=%223%22/%3E%3Crect x=%2219%22 y=%2241%22 width=%227%22 height=%227%22 rx=%222%22 fill=%22url(%23b)%22/%3E%3Cpath d=%22M31 44.5h14%22 stroke=%22%238556C9%22 stroke-width=%223%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="mods"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%237FD3C8%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%237FD3C8%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%237FD3C8%22/%3E%3Cstop offset=%221%22 stop-color=%22%232E9A8C%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cellipse cx=%2220%22 cy=%2218%22 rx=%226%22 ry=%222.4%22 fill=%22%235D6A85%22/%3E%3Cellipse cx=%2234%22 cy=%2218%22 rx=%226%22 ry=%222.4%22 fill=%22%235D6A85%22/%3E%3Crect x=%225%22 y=%2221%22 width=%2254%22 height=%227%22 rx=%223%22 fill=%22url(%23b)%22/%3E%3Crect x=%228%22 y=%2228%22 width=%2223%22 height=%2227%22 rx=%223.5%22 fill=%22url(%23a)%22 stroke=%22%232E9A8C%22 stroke-width=%222%22/%3E%3Crect x=%2233%22 y=%2228%22 width=%2223%22 height=%2227%22 rx=%223.5%22 fill=%22url(%23a)%22 stroke=%22%232E9A8C%22 stroke-width=%222%22/%3E%3Cpath d=%22M15 34h9M40 34h9%22 stroke=%22%232E9A8C%22 stroke-width=%222.6%22/%3E%3Cpath d=%22M33 42h23%22 stroke=%22%232E9A8C%22 stroke-width=%221.6%22 opacity=%22.6%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="isl"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23F7AE79%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23F7AE79%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23F7AE79%22/%3E%3Cstop offset=%221%22 stop-color=%22%23D07636%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%225%22 y=%2219%22 width=%2240%22 height=%227%22 rx=%223%22 fill=%22url(%23b)%22/%3E%3Crect x=%229%22 y=%2226%22 width=%2232%22 height=%2227%22 rx=%223.5%22 fill=%22url(%23a)%22 stroke=%22%23D07636%22 stroke-width=%222%22/%3E%3Cpath d=%22M17 33h16%22 stroke=%22%23D07636%22 stroke-width=%222.6%22/%3E%3Crect x=%2245%22 y=%2231%22 width=%2214%22 height=%225%22 rx=%222.5%22 fill=%22url(%23b)%22/%3E%3Cpath d=%22M52 36v17M47 53h10%22 stroke=%22%23D07636%22 stroke-width=%222.6%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="corner"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%2390BDF2%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%2390BDF2%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%2390BDF2%22/%3E%3Cstop offset=%221%22 stop-color=%22%233F7FD0%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M9 9h18v28h28v18H9z%22 fill=%22url(%23a)%22 stroke=%22%233F7FD0%22 stroke-width=%222%22/%3E%3Cpath d=%22M9 23h18M27 37v18M41 37v18%22 stroke=%22%233F7FD0%22 stroke-width=%221.8%22 opacity=%22.6%22/%3E%3Cpath d=%22M14 14h8%22 stroke=%22%23fff%22 stroke-width=%222.4%22 opacity=%22.8%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="up"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23EE9CC6%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23EE9CC6%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23EE9CC6%22/%3E%3Cstop offset=%221%22 stop-color=%22%23C2558F%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%225%22 y=%227%22 width=%2254%22 height=%226%22 rx=%223%22 fill=%22url(%23b)%22/%3E%3Crect x=%228%22 y=%2213%22 width=%2223%22 height=%2226%22 rx=%223.5%22 fill=%22url(%23a)%22 stroke=%22%23C2558F%22 stroke-width=%222%22/%3E%3Crect x=%2233%22 y=%2213%22 width=%2223%22 height=%2226%22 rx=%223.5%22 fill=%22url(%23a)%22 stroke=%22%23C2558F%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 31v5M40 31v5%22 stroke=%22%23C2558F%22 stroke-width=%222.6%22/%3E%3Cpath d=%22M8 52h48%22 stroke=%22%23C2558F%22 stroke-width=%222.4%22 stroke-dasharray=%222 5%22 opacity=%22.55%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="cli"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%2386D1E2%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%2386D1E2%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%2386D1E2%22/%3E%3Cstop offset=%221%22 stop-color=%22%232E97AF%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M13 12a5 5 0 0 1 5-5h18l10 10v31a5 5 0 0 1-5 5H18a5 5 0 0 1-5-5z%22 fill=%22url(%23a)%22 stroke=%22%232E97AF%22 stroke-width=%222%22/%3E%3Cpath d=%22M36 7v10h10%22 fill=%22%2386D1E2%22 stroke=%22%232E97AF%22 stroke-width=%222%22/%3E%3Cpath d=%22M19 25h18M19 32h12%22 stroke=%22%232E97AF%22 stroke-width=%222.4%22 opacity=%22.6%22/%3E%3Ccircle cx=%2245%22 cy=%2246%22 r=%2213%22 fill=%22%23fff%22 stroke=%22%232E97AF%22 stroke-width=%222%22/%3E%3Cpath d=%22M36 46c5-7 13-7 18 0-5 7-13 7-18 0z%22 fill=%22%2386D1E2%22/%3E%3Ccircle cx=%2245%22 cy=%2246%22 r=%223.2%22 fill=%22%232E97AF%22/%3E%3C/svg%3E")!important}
-.rail button#doorBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23AEB8CC%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23AEB8CC%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23AEB8CC%22/%3E%3Cstop offset=%221%22 stop-color=%22%235D6A85%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%2211%22 y=%227%22 width=%2228%22 height=%2250%22 rx=%224%22 fill=%22%23fff%22 opacity=%22.75%22 stroke=%22%235D6A85%22 stroke-width=%222%22/%3E%3Cpath d=%22M39 7l16 7v37l-16 6z%22 fill=%22url(%23a)%22 stroke=%22%235D6A85%22 stroke-width=%222%22/%3E%3Ccircle cx=%2249%22 cy=%2233%22 r=%222.4%22 fill=%22%235D6A85%22/%3E%3C/svg%3E")!important}
-.rail button#orbitBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23A9A2EC%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23A9A2EC%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23A9A2EC%22/%3E%3Cstop offset=%221%22 stop-color=%22%235E55C8%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M32 8l21 12-21 12-21-12z%22 fill=%22url(%23a)%22 stroke=%22%235E55C8%22 stroke-width=%222%22/%3E%3Cpath d=%22M11 20l21 12v24L11 44z%22 fill=%22%23A9A2EC%22 stroke=%22%235E55C8%22 stroke-width=%222%22/%3E%3Cpath d=%22M32 32l21-12v24L32 56z%22 fill=%22url(%23b)%22 stroke=%22%235E55C8%22 stroke-width=%222%22/%3E%3Cellipse cx=%2228%22 cy=%2217%22 rx=%226%22 ry=%222.4%22 fill=%22%23fff%22 opacity=%22.7%22/%3E%3C/svg%3E")!important}
-.rail button#dimBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23AEB8CC%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23AEB8CC%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23AEB8CC%22/%3E%3Cstop offset=%221%22 stop-color=%22%235D6A85%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg transform=%22rotate(-28 32 32)%22%3E%3Crect x=%226%22 y=%2223%22 width=%2252%22 height=%2218%22 rx=%225%22 fill=%22url(%23a)%22 stroke=%22%235D6A85%22 stroke-width=%222%22/%3E%3Cpath d=%22M14 23v7M20 23v4M26 23v7M32 23v4M38 23v7M44 23v4M50 23v7%22 stroke=%22%235D6A85%22 stroke-width=%222%22/%3E%3C/g%3E%3C/svg%3E")!important}
-.rail button[data-fly="set"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23A9A2EC%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23A9A2EC%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23A9A2EC%22/%3E%3Cstop offset=%221%22 stop-color=%22%235E55C8%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M8 31 29 10h20a5 5 0 0 1 5 5v20L33 56a4 4 0 0 1-5.6 0L8 36.6a4 4 0 0 1 0-5.6z%22 fill=%22url(%23a)%22 stroke=%22%235E55C8%22 stroke-width=%222%22/%3E%3Ccircle cx=%2244%22 cy=%2220%22 r=%224.5%22 fill=%22%23fff%22 stroke=%22%235E55C8%22 stroke-width=%222%22/%3E%3Ctext x=%2230%22 y=%2243%22 font-family=%22Arial,sans-serif%22 font-weight=%22700%22 font-size=%2218%22 text-anchor=%22middle%22 fill=%22%235E55C8%22%3E%E2%82%BD%3C/text%3E%3C/svg%3E")!important}
-.rail button[data-fly="tech"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%2390BDF2%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%2390BDF2%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%2390BDF2%22/%3E%3Cstop offset=%221%22 stop-color=%22%233F7FD0%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%2213%22 y=%2211%22 width=%2238%22 height=%2246%22 rx=%226%22 fill=%22url(%23a)%22 stroke=%22%233F7FD0%22 stroke-width=%222%22/%3E%3Crect x=%2223%22 y=%226%22 width=%2218%22 height=%2210%22 rx=%223.5%22 fill=%22url(%23b)%22/%3E%3Cpath d=%22M21 35l7 7 15-15%22 fill=%22none%22 stroke=%22%233F7FD0%22 stroke-width=%224.5%22/%3E%3C/svg%3E")!important}
-.rail button[data-fly="cut"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23FB9D86%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23FB9D86%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23FB9D86%22/%3E%3Cstop offset=%221%22 stop-color=%22%23D65A3E%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%226%22 y=%2211%22 width=%2242%22 height=%2236%22 rx=%225%22 fill=%22url(%23a)%22 stroke=%22%23D65A3E%22 stroke-width=%222%22/%3E%3Cpath d=%22M24 11v36M6 29h18%22 stroke=%22%23D65A3E%22 stroke-width=%222%22 stroke-dasharray=%223 3%22/%3E%3Ccircle cx=%2245%22 cy=%2245%22 r=%2213%22 fill=%22url(%23b)%22 stroke=%22%23D65A3E%22 stroke-width=%223.5%22 stroke-dasharray=%223 2.5%22/%3E%3Ccircle cx=%2245%22 cy=%2245%22 r=%224%22 fill=%22%23fff%22/%3E%3C/svg%3E")!important}
-header #pmBtn::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23B9A8F5%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23B9A8F5%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23B9A8F5%22/%3E%3Cstop offset=%221%22 stop-color=%22%236E58D6%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M7 18a5 5 0 0 1 5-5h12l5 5h23a5 5 0 0 1 5 5v26a5 5 0 0 1-5 5H12a5 5 0 0 1-5-5z%22 fill=%22url(%23b)%22/%3E%3Cpath d=%22M7 26h50v23a5 5 0 0 1-5 5H12a5 5 0 0 1-5-5z%22 fill=%22url(%23a)%22 stroke=%22%236E58D6%22 stroke-width=%222%22/%3E%3Cpath d=%22M13 32h20%22 stroke=%22%23fff%22 stroke-width=%222.4%22 opacity=%22.8%22/%3E%3C/svg%3E")!important}
-header [data-fly="ord"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%238FD6AE%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%238FD6AE%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%238FD6AE%22/%3E%3Cstop offset=%221%22 stop-color=%22%233E9E6B%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d=%22M6 13h7l4 9%22 fill=%22none%22 stroke=%22%233E9E6B%22 stroke-width=%223%22/%3E%3Cpath d=%22M14 21h43l-6 22H20z%22 fill=%22url(%23a)%22 stroke=%22%233E9E6B%22 stroke-width=%222%22/%3E%3Cpath d=%22M27 29v7M36 29v7M45 29v7%22 stroke=%22%233E9E6B%22 stroke-width=%222.2%22 opacity=%22.6%22/%3E%3Ccircle cx=%2224%22 cy=%2251%22 r=%224.5%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2246%22 cy=%2251%22 r=%224.5%22 fill=%22url(%23b)%22/%3E%3C/svg%3E")!important}
-header [data-fly="price"]::before{background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23F7D45E%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23F7D45E%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23F7D45E%22/%3E%3Cstop offset=%221%22 stop-color=%22%23C99A12%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%2215%22 y=%226%22 width=%2234%22 height=%2252%22 rx=%227%22 fill=%22url(%23a)%22 stroke=%22%23C99A12%22 stroke-width=%222%22/%3E%3Crect x=%2220%22 y=%2212%22 width=%2224%22 height=%2211%22 rx=%223%22 fill=%22%23fff%22 opacity=%22.85%22/%3E%3Ccircle cx=%2224%22 cy=%2231%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2232%22 cy=%2231%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2240%22 cy=%2231%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2224%22 cy=%2240%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2232%22 cy=%2240%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2240%22 cy=%2240%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2224%22 cy=%2249%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2232%22 cy=%2249%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3Ccircle cx=%2240%22 cy=%2249%22 r=%223.2%22 fill=%22url(%23b)%22/%3E%3C/svg%3E")!important}
-.rail button#fsBtn::before{background-color:#E4E8F0;background-image:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22%3E%3Cdefs%3E%3ClinearGradient id=%22a%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff%22 stop-opacity=%22.95%22/%3E%3Cstop offset=%22.25%22 stop-color=%22%23AEB8CC%22 stop-opacity=%22.55%22/%3E%3Cstop offset=%221%22 stop-color=%22%23AEB8CC%22/%3E%3C/linearGradient%3E%3ClinearGradient id=%22b%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%23AEB8CC%22/%3E%3Cstop offset=%221%22 stop-color=%22%235D6A85%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x=%2210%22 y=%2212%22 width=%2244%22 height=%2240%22 rx=%227%22 fill=%22url(%23a)%22 stroke=%22%235D6A85%22 stroke-width=%222%22/%3E%3Cpath d=%22M18 26v-6h6M46 26v-6h-6M18 38v6h6M46 38v6h-6%22 fill=%22none%22 stroke=%22%235D6A85%22 stroke-width=%223%22/%3E%3C/svg%3E")!important}
-/* ===== Soft UI: шрифт без «машинописи» + пастельные иконки модулей ===== */
-:root{--mono:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif}
-body,input,button,select,textarea{font-variant-numeric:tabular-nums}
-.chip,.step input,.addt small,.addt em,.addt i,.rowl .rn b,.rowl .rn small,.mres,.mcard b,td.n,td.q,.calc,.fly-h small{letter-spacing:0!important}
-.chip{font-weight:500}
-.addg{gap:10px!important}
-.addt{padding:10px 4px 8px!important;gap:5px!important;font-size:12.5px!important;line-height:1.15!important}
-.addt span{font-weight:600}
-.addt small{font-weight:500;font-size:12px!important}
-.addt svg{--t:#DDF2E6;--c:#3E9E6B;width:44px!important;height:44px!important;padding:8px;border-radius:14px;color:var(--c);stroke-width:1.9;
-  background:linear-gradient(145deg,#fff 0%,var(--t) 55%,var(--t) 100%);
-  box-shadow:-3px -3px 7px var(--hi),3px 4px 9px var(--lo),inset 1px 1px 0 rgba(255,255,255,.8);transition:transform .2s var(--ease)}
-.addt svg rect{fill:#fff;fill-opacity:.75}.addt svg circle{fill:currentColor;fill-opacity:.3}
-.addt:active svg{transform:scale(.92)}
-.addt:nth-child(1) svg{--t:#DDF2E6;--c:#3E9E6B}   /* шкаф с дверцей — мята */
-.addt:nth-child(2) svg{--t:#EBE2F8;--c:#8556C9}   /* ящики — сирень */
-.addt:nth-child(3) svg{--t:#FDE5D6;--c:#D9764A}   /* духовка — персик */
-.addt:nth-child(4) svg{--t:#FFDCD2;--c:#D65A3E}   /* варочная — коралл */
-.addt:nth-child(5) svg{--t:#DCEAFB;--c:#3F7FD0}   /* мойка — небо */
-.addt:nth-child(6) svg{--t:#D4F0EC;--c:#2E9A8C}   /* шкаф 2 дверцы — бирюза */
-.addt:nth-child(7) svg,.addt:nth-child(8) svg{--t:#D8F1F6;--c:#2E97AF} /* посудомойки — аква */
-.addt:nth-child(9) svg{--t:#F5EAD2;--c:#B88B3C}   /* пенал — песок */
-.addt:nth-child(10) svg{--t:#E4E8F0;--c:#5D6A85}  /* холодильник — серо-голубой */
-.addt.one svg{--t:#E7E2FB;--c:#6E58D6}            /* угловой — лаванда */
-.addt i{top:6px!important;left:6px!important;z-index:1;background:#23283A!important;box-shadow:0 2px 6px rgba(35,40,58,.3)}
-.addt em{color:var(--accent)!important}
-.tiles button svg{width:36px!important;height:36px!important;padding:6px;border-radius:12px;color:#6E58D6!important;background:linear-gradient(145deg,#fff,#E7E2FB 60%);box-shadow:-2px -2px 6px var(--hi),3px 3px 7px var(--lo)}
-.tiles button svg rect{fill:#fff;fill-opacity:.75}
-@media (max-width:759px){.addg{gap:7px!important}.addt{padding:9px 2px 7px!important;font-size:11.5px!important}.addt span{letter-spacing:-.015em;max-width:100%}.addt:nth-child(10) span{font-size:10.5px;letter-spacing:-.03em}}
+
+/* ---------- телефон и узкие экраны ---------- */
+@media (max-width:759px){
+  :root{--rail-b:52px}
+  body{padding-left:max(6px,env(safe-area-inset-left,0px))!important;padding-right:max(6px,env(safe-area-inset-right,0px))!important}
+  header{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;min-height:0;padding:2px 0 0!important}
+  header .brand{grid-column:1/-1;padding:0 2px 2px}
+  .brand::before{width:28px;height:28px}
+  .brand h1{font-size:16px!important}.brand .tag{font-size:10.5px!important}
+  header .pmb{min-height:40px;padding:0 6px;gap:6px;font-size:13.5px}
+  .app{gap:5px!important}
+  .rail{padding:3px;gap:1px;max-height:calc(100dvh - 120px)}
+  .rail button{min-height:50px;padding:6px 1px 5px;gap:3px}
+  .rail button>svg{width:21px;height:21px}
+  .rail button span{font-size:9.5px!important;letter-spacing:-.02em!important;line-height:1.05;white-space:normal;text-overflow:clip;-webkit-hyphens:auto;hyphens:auto;text-align:center}
+  .v3d{height:calc(100dvh - 128px)!important}
+  /* панели: рабочая ширина, своя боковая панель остаётся видна */
+  .fly:not(#fly-cut):not(#fly-parts):not(#fly-price){left:0!important;right:calc(var(--rail-b) + 13px)!important;width:auto!important;max-height:calc(100dvh - 126px)}
+  .fly.fl:not(#fly-cut){left:calc(var(--rail-b) + 13px)!important;right:0!important}
+  #fly-cli{width:auto!important}
+  /* удобные зоны нажатия */
+  .chip,.sbc button{min-height:40px}
+  .go button,.hask-b button,.btn{min-height:44px}
+  .step button,.fly .step button{width:42px!important;height:42px!important}
+  .step input,.fly .step input{height:42px}
+  .x{width:40px;height:40px}
+  .rowl button{min-height:42px;width:40px}
+  .step input,.pname,.kp input,.prc input,.cq,.fly input,.fly select,.fly textarea{font-size:16px!important}
+  .addt{font-size:11.5px!important}
+  table{font-size:12.5px}
+}
+/* альбомная ориентация телефона: максимум места модели */
+@media (orientation:landscape) and (max-height:560px){
+  :root{--rail-b:44px}
+  .rail{padding:3px;max-height:calc(100dvh - 8px)}
+  .rail-l{display:grid;grid-template-columns:repeat(2,var(--rail-b))}
+  .rail button{min-height:40px;padding:4px 0 3px;gap:2px}
+  .rail button>svg{width:18px;height:18px}
+  .rail button span{font-size:8px!important}
+  .v3d{height:calc(100dvh - 12px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important}
+  .fly:not(#fly-cut):not(#fly-parts):not(#fly-price){top:0;max-height:calc(100dvh - 14px);width:min(360px,calc(100% - 150px))!important;right:calc(var(--rail-b) + 12px)!important;left:auto!important}
+  .fly.fl:not(#fly-cut){left:calc(var(--rail-b)*2 + 14px)!important;right:auto!important}
+}
+.fs .v3d{height:calc(100dvh - 12px)!important}
 </style>
 
 <section class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
@@ -564,7 +670,7 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
   <div class="app">
     <div class="pmenu" id="fuMenu" hidden><button data-fu="hg">Петли</button><button data-fu="slide">Направляющие</button><button data-fu="hdl">Ручки</button><button data-fu="lift">Подъемные механизмы</button></div>
     <div class="pmenu" id="pmMenu" hidden><button data-pm="new">Новый проект</button><button data-pm="open">Открыть проект</button><button data-pm="save">Сохранить</button><button data-pm="saveas">Сохранить как</button><button data-pm="imp">Импорт</button><button data-pm="exp">Экспорт</button><small id="pmSt"></small></div>
-    <section class="card stage"><div class="v3d" id="v3d"></div><div class="v2d" id="v2d"></div><div class="dwtoast" id="dwToast" hidden></div><div class="hask" id="hAsk" hidden><b id="hAskTxt"></b><div class="hask-b" id="hAskBtns"></div><small id="hAskNote" hidden></small></div><div class="badge" id="selBadge" hidden><span>Выбран: <b id="selName"></b><small>меняется только он</small></span><button class="bb" id="selL" aria-label="Сдвинуть модуль влево"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><i>Влево</i></button><button class="bb" id="selR" aria-label="Сдвинуть модуль вправо"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg><i>Вправо</i></button><button class="bb" id="selSet" aria-label="Настройки модуля"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><i>Настройки</i></button><button class="bb" id="selParts" aria-label="Детали модуля"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg><i>Детали</i></button><button id="selClear" aria-label="Снять выбор">✕</button></div></section>
+    <section class="card stage"><div class="v3d" id="v3d"></div><div class="v2d" id="v2d"></div><div class="dwtoast" id="dwToast" hidden></div><div class="hask" id="hAsk" hidden><b id="hAskTxt"></b><div class="hask-b" id="hAskBtns"></div><small id="hAskNote" hidden></small></div><div class="badge" id="selBadge" hidden><span>Выбран: <b id="selName"></b><small>меняется только он</small></span><button class="bb" id="selL" aria-label="Сдвинуть модуль влево"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><i>Влево</i></button><button class="bb" id="selR" aria-label="Сдвинуть модуль вправо"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg><i>Вправо</i></button><button class="bb" id="selSet" aria-label="Настройки модуля"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><i>Настройки</i></button><button class="bb" id="selParts" aria-label="Детали модуля"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg><i>Детали</i></button><button id="selClear" aria-label="Снять выбор"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div></section>
     <nav class="rail rail-l" aria-label="Настройки">
       <button id="fuBtn" aria-pressed="false" aria-haspopup="true" title="Фурнитура: петли, направляющие, ручки, подъёмные механизмы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="12" r="4.5"/><circle cx="8" cy="12" r="1.5"/><path d="M12.5 12H21M17 9v6"/></svg><span style="font-size:.78em;letter-spacing:-.03em">Фурнитура</span></button>
       <button data-fly="size" aria-pressed="false" style="display:none" title="Размер"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 16.5 16.5 3 21 7.5 7.5 21z"/><path d="M7 12.5l2 2M10 9.5l2 2M13 6.5l2 2"/></svg><span>Размер</span></button>
@@ -593,7 +699,7 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
       <button id="fsBtn" aria-pressed="false" title="Во весь экран" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span>Экран</span></button>
     </nav>
       <div class="fly" id="fly-mods" hidden>
-        <div class="fly-h"><b>Модули<small id="sumMods"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Модули<small id="sumMods"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="sz" id="addSideRow"><label>Угол</label><div class="chips" id="addSide"></div></div>
         <div class="sz"><label>Куда добавлять</label><div class="chips" id="addWall"></div></div>
         <h4 class="mh">Добавить — нажимайте сколько нужно</h4>
@@ -612,7 +718,7 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
         </div>
       </div>
       <div class="fly" id="fly-corner" hidden>
-        <div class="fly-h"><b>Угол, боковая стена</b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Угол, боковая стена</b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="chips" id="cornerOn"></div>
         <div class="chips" id="leftOn"></div>
         <div class="chips" id="penOn"></div>
@@ -620,7 +726,7 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
         <div class="sz" id="fillRow"><label>Планки в углу, мм</label><div class="chips" id="fillCh"></div></div>
       </div>
       <div class="fly" id="fly-up" hidden>
-        <div class="fly-h"><b>Верхние, антресоли, карниз</b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Верхние, антресоли, карниз</b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="sz"><label>Верхние модули</label><div class="chips" id="upCh"></div></div>
         <div id="upBox"><div class="sz"><label>Глубина верхних, мм</label><div class="chips" id="udCh"></div></div><div class="sizes" id="upSizes"></div>
           <div class="sz"><label>Над варочной — от столешницы до верхнего, мм</label><div class="chips" id="hobUpCh"></div></div>
@@ -632,35 +738,35 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
           <div class="sz" id="antORow"><label>Открывание антресолей</label><div class="chips" id="antOCh"></div></div></div>
       </div>
       <div class="fly" id="fly-mod" hidden>
-        <div class="fly-h"><b id="modTitle">Модуль<small id="modSum"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b id="modTitle">Модуль<small id="modSum"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="modBody" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
       <div class="fly" id="fly-slide" hidden>
-        <div class="fly-h"><b>Направляющие<small id="sumSlide"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Направляющие<small id="sumSlide"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="chips" id="slides" hidden></div>
         <div id="slCur"></div>
         <div class="sb" id="sb-napr"></div>
         <p class="note" id="clrNote"></p>
       </div>
       <div class="fly fl" id="fly-lift" hidden>
-        <div class="fly-h"><b>Подъемные механизмы<small id="sumLift"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Подъемные механизмы<small id="sumLift"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="liftCur"></div>
         <div class="sb" id="sb-lift"></div>
       </div>
       <div class="fly" id="fly-hg" hidden>
-        <div class="fly-h"><b>Петли<small id="sumHg"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Петли<small id="sumHg"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="hgCur"></div>
         <div class="sb" id="sb-petli"></div>
       </div>
       <div class="fly" id="fly-size" hidden>
-        <div class="fly-h"><b>Размеры, мм<small id="sumSize"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Размеры, мм<small id="sumSize"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="sizes" id="sizes"></div>
         <div class="sz"><label>Высота общая</label><div class="chips" id="heights"></div></div>
         <div class="sz"><label>Столешница</label><div class="chips" id="tops"></div></div>
         <p class="calc" id="calc"></p>
       </div>
       <div class="fly" id="fly-fac" hidden>
-        <div class="fly-h"><b>Фасад<small id="sumFac"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Фасад<small id="sumFac"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="chips" id="fMats"></div>
         <div id="fCatBox"></div>
         <div id="mdfBox"><div class="frez" id="frez"></div><div class="swatches" id="fCols"></div></div>
@@ -669,7 +775,7 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
           <div class="sz"><label>Стекло 4 мм</label><div class="swatches" id="aluGls"></div></div><p class="note" id="aluNote"></p></div>
       </div>
       <div class="fly fl" id="fly-korp" hidden>
-        <div class="fly-h"><b>Корпус<small id="sumKorp"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Корпус<small id="sumKorp"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <p class="note">Корпуса, цоколи, торцы, короба ящиков — для всей кухни.</p>
         <div id="kCat"></div>
         <div class="sb" id="sb-korp"></div>
@@ -678,7 +784,7 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
         <p class="note" id="kNote"></p>
       </div>
       <div class="fly" id="fly-prj" hidden>
-        <div class="fly-h"><b>Проект<small id="prjCur"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Проект<small id="prjCur"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="mf"><div class="sz"><label>Название</label><input id="prjName" class="pname" maxlength="80" placeholder="Например: Иванова, кухня 3,2 м"></div>
           <div class="go"><button data-pa="save">Сохранить</button><button data-pa="saveas">Сохранить как</button></div>
           <div class="go"><button data-pa="new">Новый</button><button data-pa="open">Открыть файл</button></div>
@@ -686,28 +792,28 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
           <p class="note" id="prjSt"></p><p class="note" id="asSt">Автосохранение включено — каждое изменение сохраняется само</p><h4>Мои проекты и заказы</h4><p class="note" id="prjWhere"></p><div class="chips" id="prjFlt"></div><div id="prjList"></div></div>
       </div>
       <div class="fly" id="fly-ord" hidden>
-        <div class="fly-h"><b>Заказ<small>номер, цена, КП</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Заказ<small>номер, цена, КП</small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="ordBody"></div></div>
       <div class="fly" id="fly-price" hidden>
-        <div class="fly-h"><b>Цена<small>расчёт → скидка → работник → итог</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Цена<small>расчёт → скидка → работник → итог</small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="priceBody"></div></div>
       <div class="fly" id="fly-cli" hidden style="width:min(560px,calc(100% - 74px))">
-        <div class="fly-h"><b>Проект клиента<small>как выглядит PDF для клиента</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Проект клиента<small>как выглядит PDF для клиента</small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="go"><button id="cliRe">Обновить</button><button id="cliSave">Сохранить PDF</button></div><p class="note" id="cliSt"></p>
         <div id="cliBody" style="display:flex;flex-direction:column;gap:8px"></div></div>
       <div class="fly" id="fly-tech" hidden>
-        <div class="fly-h"><b>Технолог<small>проверка перед производством</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Технолог<small>проверка перед производством</small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="techBody"></div><div id="techAI"></div></div>
       <div class="fly fl" id="fly-cut" hidden>
-        <div class="fly-h"><b>Раскрой</b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Раскрой</b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="cutBody"></div>
       </div>
       <div class="fly" id="fly-set" hidden>
-        <div class="fly-h"><b>Настройки: цены<small>свои цены на материал и фурнитуру</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Настройки: цены<small>свои цены на материал и фурнитуру</small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="setBody"></div>
       </div>
       <div class="fly" id="fly-exp" hidden>
-        <div class="fly-h"><b>Экспорт<small>сохранить или отправить</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Экспорт<small>сохранить или отправить</small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="expBody"><div class="mf">
           <h4>Чертежи</h4><p class="note">Развёртка по стенам, по каждому модулю — вид спереди, разрез сбоку, вид сверху с реальными толщинами и крепежом; присадка деталей.</p><div class="go"><button data-ex="draw">Чертежи — PDF</button><button data-ex="holes">Технологические отверстия — PDF</button></div>
           <h4>Заказ поставщику: материалы и фурнитура</h4><p class="note">Только наименование с размером, артикул (если есть) и количество — без лишнего.</p><div class="go"><button data-ex="buy">PDF</button><button data-ex="copy">Скопировать список</button><button data-ex="csv">Таблица CSV</button><button data-ex="txt">Текст TXT</button></div>
@@ -716,18 +822,18 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
           <p class="note" id="expSt">В приложении на телефоне откроется «Поделиться» — можно сразу отправить в мессенджер или на почту.</p></div></div>
       </div>
       <div class="fly" id="fly-led" hidden>
-        <div class="fly-h"><b>Подсветка LED<small id="sumLed"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Подсветка LED<small id="sumLed"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="ledBody"></div>
       </div>
       <div class="fly" id="fly-isl" hidden>
-        <div class="fly-h"><b>Остров<small id="sumIsl">спереди ящики и шкафы, сзади глухой</small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Остров<small id="sumIsl">спереди ящики и шкафы, сзади глухой</small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="islBody" class="mf"></div></div>
       <div class="fly fl" id="fly-ct" hidden>
-        <div class="fly-h"><b>Столешница<small id="sumCt"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Столешница<small id="sumCt"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="ctBody" class="mat"></div>
       </div>
       <div class="fly" id="fly-hdl" hidden>
-        <div class="fly-h"><b>Ручка<small id="sumHdl"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Ручка<small id="sumHdl"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="tiles" id="hTypes"></div>
         <div class="chips" id="hLens"></div>
         <div id="hCatBox"></div>
@@ -738,24 +844,24 @@ body,input,button,select,textarea{font-variant-numeric:tabular-nums}
         <div class="sizes" id="hOffs"></div>
       </div>
       <div class="fly" id="fly-view" hidden>
-        <div class="fly-h"><b>Ракурс<small id="sumView"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Ракурс<small id="sumView"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div class="tiles" id="views"></div>
         <div class="sz"><label>Изображение</label><div class="chips" id="photoCh"></div></div>
       </div>
       <div class="fly fl" id="fly-cat" hidden>
-        <div class="fly-h"><b id="catTitle">Каталог<small id="catSum"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
-        <button class="cback" id="catBack" hidden>‹ Назад</button>
+        <div class="fly-h"><b id="catTitle">Каталог<small id="catSum"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <button class="cback" id="catBack" hidden><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Назад</button>
         <div class="chips ccats" id="catCats"></div>
         <input id="catQ" class="cq" type="search" placeholder="Поиск: декор, артикул, производитель" autocomplete="off">
         <div class="chips" id="catF"></div>
         <div id="catList" class="clist"></div>
       </div>
       <div class="fly fl" id="fly-mat" hidden>
-        <div class="fly-h"><b>Материал<small id="sumMat"></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Материал<small id="sumMat"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="matBody" class="mat"></div>
       </div>
       <div class="fly" id="fly-parts" hidden>
-        <div class="fly-h"><b>Детали<small id="sumParts" hidden></small></b><button class="x" data-close aria-label="Закрыть">✕</button></div>
+        <div class="fly-h"><b>Детали<small id="sumParts" hidden></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
         <div id="partsCalc"></div><div class="tbl" hidden><table><thead><tr><th>Деталь</th><th style="text-align:right">Шт</th></tr></thead><tbody id="parts"></tbody></table></div>
       </div>
   </div>
@@ -959,7 +1065,7 @@ function renderCat(){const el=$('catList');if(!el)return;const c=CATP,L=DS[c.cat
   $('catSum').textContent=`${F.length} из ${L.length} · цены на ${DSDATE}`;
   const sh=F.slice(0,160);
   el.innerHTML=(c.target==='ct'&&P.ctCat||c.target==='wp'&&P.wpCat||c.target==='korp'&&P.kCat||c.target==='fac'&&cur&&mergedFor(selMod).fMat!=='panel'||c.target&&c.target!=='korp'&&c.target!=='fac'&&!c.target.startsWith('facrep:')&&cur?`<button class="citem off" data-cu=""><i style="background:var(--soft)"></i><span><b>${c.target==='korp'||c.target==='fac'||c.target==='ct'||c.target==='wp'?'Без каталога — простой цвет':'Подобрать автоматически'}</b><small>сбросить выбор</small></span><em></em></button>`:'')+
-    sh.map(x=>`<div class="crow${x.u===cur?' on':''}${x.s?'':' oos'}"><button class="citem" data-cu="${x.u}"><i style="${catImg(x)}"></i><span><b>${x.d||x.n}</b><small>${[x.t!=null?String(x.t).replace('.',',')+' мм':'',x.w?x.w+' мм шир.':'',x.f?dsSheet(x).join('×'):'',x.m||'',x.a?'арт. '+x.a:''].filter(Boolean).join(' · ')}${x.s?'':' · нет в наличии'}</small><em>${rub(x.p)}${c.cat==='ct'||c.cat==='wp'?' / шт':x.f?' / лист':c.cat==='kromka'?' / м':''}</em></span></button><a class="clink" href="${DSURL+x.u}/" target="_blank" rel="noopener" aria-label="Открыть на сайте">↗</a></div>`).join('')
+    sh.map(x=>`<div class="crow${x.u===cur?' on':''}${x.s?'':' oos'}"><button class="citem" data-cu="${x.u}"><i style="${catImg(x)}"></i><span><b>${x.d||x.n}</b><small>${[x.t!=null?String(x.t).replace('.',',')+' мм':'',x.w?x.w+' мм шир.':'',x.f?dsSheet(x).join('×'):'',x.m||'',x.a?'арт. '+x.a:''].filter(Boolean).join(' · ')}${x.s?'':' · нет в наличии'}</small><em>${rub(x.p)}${c.cat==='ct'||c.cat==='wp'?' / шт':x.f?' / лист':c.cat==='kromka'?' / м':''}</em></span></button><a class="clink" href="${DSURL+x.u}/" target="_blank" rel="noopener" aria-label="Открыть на сайте" title="Открыть на сайте"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>`).join('')
     +(F.length>sh.length?`<p class="note">Ещё ${F.length-sh.length} — уточните поиск.</p>`:'')+(F.length?'':'<p class="note">Ничего не найдено.</p>');
   $('catBack').hidden=!c.back;}
 function pickCat(u){const m=matSet(),T=CATP.target;if(!T){return}
@@ -1024,14 +1130,14 @@ function renderSB(key,el){el=el||$('sb-'+key);if(!el)return;const T=SBT[key],all
   if(path.length&&!L.length){path=SBP[key]=[];L=all}
   while((path.length||!T.root)&&path.length<T.lv.length-1){const vs=[...new Set(L.map(o=>o.g[path.length]))];if(vs.length!==1)break;auto[path.length]=1;path.push(vs[0])}   // один вариант — шаг пропускается
   const lvl=path.length,leaf=lvl>=T.lv.length-1,cur=T.cur().filter(Boolean);
-  let h='<div class="sbc">'+[['','Все']].concat(path.map((v,i)=>auto[i]&&i<lvl?null:[i+1,T.lab(i,v)])).filter(Boolean).map(([i,n],j,A)=>`<button data-sbk="${key}" data-sbb="${i}"${j===A.length-1?' aria-current="true"':''}>${n}</button>`).join('<span>›</span>')+'</div>';
+  let h='<div class="sbc">'+[['','Все']].concat(path.map((v,i)=>auto[i]&&i<lvl?null:[i+1,T.lab(i,v)])).filter(Boolean).map(([i,n],j,A)=>`<button data-sbk="${key}" data-sbb="${i}"${j===A.length-1?' aria-current="true"':''}>${n}</button>`).join('<span class="sbsep" aria-hidden="true">/</span>')+'</div>';
   h+=`<p class="sbt">${T.lv[Math.min(lvl,T.lv.length-1)]}</p>`;
   if(!leaf){let vs=[...new Set(L.map(o=>o.g[lvl]))];if(lvl===0&&T.root)vs=[...T.root,...vs.filter(v=>!T.root.includes(v))];
     vs.sort((a,b)=>lvl===0&&T.root?0:lvl===T.num?(+a||1e9)-(+b||1e9):(a==='Другие')-(b==='Другие')||String(a).localeCompare(String(b),'ru'));
     h+='<div class="sbo">'+vs.map(v=>{const S=L.filter(o=>o.g[lvl]===v),on=S.some(o=>cur.includes(o.x.u));return `<button data-sbk="${key}" data-sbg="${String(v).replace(/"/g,'&quot;')}"${S.length?'':' class="off"'} aria-pressed="${on}"><b>${T.lab(lvl,v)}</b><small>${S.length?S.length+' поз.'+(S.some(o=>o.x.s)?'':' · нет в наличии'):'нет в каталоге'}</small></button>`}).join('')+'</div>'}
   else{if(!L.length)h+=`<p class="note">${T.empty(path[0])}</p>`;
     const nt=T.note&&T.note(path);if(nt)h+=`<p class="note">${nt}</p>`;
-    h+='<div class="clist">'+L.slice().sort((a,b)=>(b.x.s?1:0)-(a.x.s?1:0)||String(a.x.d||a.x.n).localeCompare(String(b.x.d||b.x.n),'ru')).map(({x})=>`<div class="crow${cur.includes(x.u)?' on':''}${x.s?'':' oos'}"><button class="citem" data-sbk="${key}" data-sbu="${x.u}">${DSI[x.iu||x.u]||x.c?`<i style="${catImg(x)}"></i>`:''}<span><b>${x.d||x.n}</b><small>${[x.t!=null?String(x.t).replace('.',',')+' мм':'',x.f?dsSheet(x).join('×'):'',x.a?'арт. '+x.a:''].filter(Boolean).join(' · ')}${x.s?'':' · нет в наличии'}</small><em>${rub(x.p)}${x.f?' / лист':''}</em></span></button><a class="clink" href="${DSURL+x.u}/" target="_blank" rel="noopener" aria-label="Открыть на сайте">↗</a></div>`).join('')+'</div>'}
+    h+='<div class="clist">'+L.slice().sort((a,b)=>(b.x.s?1:0)-(a.x.s?1:0)||String(a.x.d||a.x.n).localeCompare(String(b.x.d||b.x.n),'ru')).map(({x})=>`<div class="crow${cur.includes(x.u)?' on':''}${x.s?'':' oos'}"><button class="citem" data-sbk="${key}" data-sbu="${x.u}">${DSI[x.iu||x.u]||x.c?`<i style="${catImg(x)}"></i>`:''}<span><b>${x.d||x.n}</b><small>${[x.t!=null?String(x.t).replace('.',',')+' мм':'',x.f?dsSheet(x).join('×'):'',x.a?'арт. '+x.a:''].filter(Boolean).join(' · ')}${x.s?'':' · нет в наличии'}</small><em>${rub(x.p)}${x.f?' / лист':''}</em></span></button><a class="clink" href="${DSURL+x.u}/" target="_blank" rel="noopener" aria-label="Открыть на сайте" title="Открыть на сайте"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>`).join('')+'</div>'}
   el.innerHTML=h}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-sbk]');if(!b)return;const key=b.dataset.sbk,T=SBT[key],d=b.dataset,el=b.closest('.sb');if(!T)return;
   if(d.sbb!==undefined){SBP[key]=(SBP[key]||[]).slice(0,+d.sbb||0);SBAUTO[key]={}}
@@ -1795,8 +1901,8 @@ function renderAdd(){
   $('addWall').innerHTML=(P.corner?(MIR()?[['back',backName()],['side',sideName()+' — от угла']]:[['side',sideName()+' — от угла'],['back',backName()]]):[['back',backName()]]).map(([v,n])=>`<button class="chip" data-aw="${v}" aria-pressed="${ADDWALL===v}">${n}</button>`).join('');
   $('addMods').innerHTML=ADDT.map(([k,n,w,ic,o],i)=>{const c=k==='dwm'?[...P.row,...P.rowL].filter(x=>KT(x)==='dwm'&&iW(x)===o.dwW).length:k==='pen'?[...P.row,...P.rowL].filter(x=>KT(x)==='pen'&&isFr(x)===(o.penKind==='fr')).length:cnt(k);
       return `<button class="addt" data-add="${i}">${ico(ic)}<span>${n}</span><small>${w()}</small>${c?`<i>${c}</i>`:''}<em>+</em></button>`}).join('')
-    +ADDS.map(([k,n,w,ic])=>`<button class="addt one" data-add1="${k}" aria-pressed="${!!P[k]}">${ico(ic)}<span>${n}</span><small>${w()}</small><em>${P[k]?'✓':'+'}</em></button>`).join('');
-  const li=(lay,side)=>lay.length?lay.map((r,i)=>`<li${selMod===r.id?' class="on"':''}><button class="rn" data-sel="${r.id}"><b>${i+1}</b><span>${r.k==='pen'&&isFr(r.id)?'Холодильник'+modName(r.id).replace('Проём под холодильник',''):SHORTN[r.k]+modName(r.id).replace(MODN0[r.k],'')}<small>${r.w} мм</small></span></button><button data-mv="${r.id}" data-d="-1" aria-label="Ближе к углу"${i?'':' disabled'}>‹</button><button data-mv="${r.id}" data-d="1" aria-label="Дальше от угла"${i<lay.length-1?'':' disabled'}>›</button><button data-sw="${r.id}" aria-label="На другую стену" title="На другую стену">⇄</button><button class="del" data-del="${r.id}" aria-label="Убрать">✕</button></li>`).join('')
+    +ADDS.map(([k,n,w,ic])=>`<button class="addt one" data-add1="${k}" aria-pressed="${!!P[k]}">${ico(ic)}<span>${n}</span><small>${w()}</small><em>${P[k]?'<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>':'<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>'}</em></button>`).join('');
+  const li=(lay,side)=>lay.length?lay.map((r,i)=>`<li${selMod===r.id?' class="on"':''}><button class="rn" data-sel="${r.id}"><b>${i+1}</b><span>${r.k==='pen'&&isFr(r.id)?'Холодильник'+modName(r.id).replace('Проём под холодильник',''):SHORTN[r.k]+modName(r.id).replace(MODN0[r.k],'')}<small>${r.w} мм</small></span></button><button data-mv="${r.id}" data-d="-1" aria-label="Ближе к углу" title="Ближе к углу"${i?'':' disabled'}><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-mv="${r.id}" data-d="1" aria-label="Дальше от угла" title="Дальше от угла"${i<lay.length-1?'':' disabled'}><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button><button data-sw="${r.id}" aria-label="На другую стену" title="На другую стену"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h15l-3-3M20 16H5l3 3"/></svg></button><button class="del" data-del="${r.id}" aria-label="Убрать"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></li>`).join('')
     :`<li class="empty">${side?'Пусто — выберите «'+sideName()+' — от угла» и добавьте плитками':'Пока пусто — добавьте модули плитками выше'}</li>`;
   $('rowLHead').hidden=$('rowLList').hidden=!P.corner;$('rowLHead').textContent=sideName()+', от угла';$('rowHead').textContent=backName()+(P.corner?', от угла':'');
   $('rowLList').innerHTML=li(sideLay(),1);$('rowList').innerHTML=li(rowLay(),0);
@@ -2088,7 +2194,7 @@ async function thView(){const st=$('thSt');if(st)st.textContent='Готовлю 
     if(!$('thvCss')){const s=document.createElement('style');s.id='thvCss';s.textContent='#thView{position:fixed;inset:0;z-index:9999;background:#E9E7EF;display:flex;flex-direction:column}#thView .thv-h{display:flex;gap:6px;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 8px) 10px 8px;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.12)}#thView .thv-h b{flex:1;font-size:15px}#thView .thv-h small{color:#666;margin-right:4px}#thView .thv-h button{min-width:40px;height:38px;border:0;border-radius:10px;background:#EFEAFB;font-size:17px;font-weight:700;color:#4B2BB5}#thView .thv-b{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:10px;touch-action:pan-x pan-y pinch-zoom}#thView .thv-b img{display:block;margin:0 auto 10px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15)}';document.head.appendChild(s)}
     let ov=$('thView');if(ov){(ov._u||[]).forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)});ov.remove()}
     ov=document.createElement('div');ov.id='thView';ov._u=urls;ov._z=1;
-    ov.innerHTML=`<div class="thv-h"><b>Технологические отверстия</b><small>${urls.length} стр.</small><button data-z="-1" aria-label="Мельче">−</button><button data-z="1" aria-label="Крупнее">+</button><button data-thpdf="1" style="font-size:13px;padding:0 10px">PDF</button><button data-x="1" aria-label="Закрыть">✕</button></div><div class="thv-b">${urls.map(u=>`<img src="${u}" alt="">`).join('')}</div>`;
+    ov.innerHTML=`<div class="thv-h"><b>Технологические отверстия</b><small>${urls.length} стр.</small><button data-z="-1" aria-label="Мельче">−</button><button data-z="1" aria-label="Крупнее">+</button><button data-thpdf="1" style="font-size:13px;padding:0 10px">PDF</button><button data-x="1" aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="thv-b">${urls.map(u=>`<img src="${u}" alt="">`).join('')}</div>`;
     document.body.appendChild(ov);const Z=[1,1.5,2,3,4],apply=()=>ov.querySelectorAll('.thv-b img').forEach(im=>im.style.width=(Z[ov._z-1]*100)+'%');ov._z=1;apply();
     ov.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
       if(d.x){(ov._u||[]).forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u)});ov.remove();return}
@@ -2270,8 +2376,8 @@ function renderMat(){
     else h+=`<p class="note">Формат как у ЛДСП: ${r.SW}×${r.SH}</p>`;
     const nOwn=r.its.filter(i=>i.own).length,ekS=Object.keys(r.ek).map(Number).sort((x,y)=>x-y);
     h+=`<div class="mres">${sheetsW(r.n)}${r.big.length?` + не помещаются: ${r.big.length}`:''}<span>${r.cnt} дет. (${r.gl.length} поз.) · ${fmt(r.area)} м² · отход ${Math.round((1-r.fill)*100)}%<br>рез ${fmt(r.cutLen/1000)} м, ${r.cuts} резов${ekS.length?' · кромка '+ekS.map(v=>efmt(v)+' — '+fmt(r.ek[v]/1000)+' м').join(', '):''}${nOwn?` · изменено: ${nOwn}`:''}</span></div>`;
-    h+=chipRow('Вариант раскроя','data-alg',[0,1,2].map(i=>[i,`${ALGN[i]}: ${r.vars[i]} л.${i===r.best?' ★':''}`]),r.alg);
-    if(r.big.length)h+=`<p class="note" style="color:#B23A2E">Больше листа: ${r.big.map(i=>i.n+' '+i.a+'×'+i.b).join(', ')}</p>`;
+    h+=chipRow('Вариант раскроя','data-alg',[0,1,2].map(i=>[i,`${ALGN[i]}: ${r.vars[i]} л.${i===r.best?' · лучший':''}`]),r.alg);
+    if(r.big.length)h+=`<p class="note" style="color:var(--err)">Больше листа: ${r.big.map(i=>i.n+' '+i.a+'×'+i.b).join(', ')}</p>`;
     h+=`<div class="go"><button data-cut="${k}">${m.cut[k]?'Скрыть раскрой':'Карта раскроя'}</button>${nOwn?`<button data-reset="${k}">Сбросить правки</button>`:''}</div>`;
     if(m.cut[k]){const sg=MATSEL&&MATSEL.k===k?r.gl.find(g=>g.ids.includes(MATSEL.id)):null,sel=sg?sg.ids:null;
       h+=`<div class="msheets"><table class="mt ptab"><tr><th>№</th><th>Длина × ширина</th><th>Шт</th><th>Кр.</th><th title="Текстура">Тек.</th></tr>`+
@@ -2356,7 +2462,7 @@ function renderCt(){const el=$('ctBody');if(!el)return;const c=dsGet('ct',P.ctCa
     <tr><td>Купить столешниц${c?` по ${CTMAX} мм`:''}<small>части раскладываются по длине столешницы</small></td><td class="q">${cn.n} шт</td></tr>
     ${c&&c.p!=null?`<tr><td>Стоимость<small>${cn.n} × ${rub(c.p)}</small></td><td class="q">${rub(cn.n*c.p)}</td></tr>`:''}
     <tr><td>Глубина нужна<small>свес сзади ${P.B} + корпус ${P.D} + фасад ${FT()} + свес 24</small></td><td class="q">${dct} мм</td></tr></table>`;
-  if(c&&c.f&&Math.min(...c.f)<dct)h+=`<p class="note" style="color:#B23A2E">Столешница ${Math.min(...c.f)} мм уже корпуса с фасадом (${P.D+FT()+24} мм с передним свесом) — уменьшите глубину корпуса или возьмите столешницу шире.</p>`;
+  if(c&&c.f&&Math.min(...c.f)<dct)h+=`<p class="note" style="color:var(--err)">Столешница ${Math.min(...c.f)} мм уже корпуса с фасадом (${P.D+FT()+24} мм с передним свесом) — уменьшите глубину корпуса или возьмите столешницу шире.</p>`;
   else if(c&&c.f&&P.B===Math.min(...c.f)-P.D-FT()-24&&P.B<100)h+=`<p class="note">Свес сзади уменьшен до ${P.B} мм — под глубину столешницы ${Math.min(...c.f)} мм.</p>`;
   {const nj=totW()>0?ctPieces().filter(x=>x[2]).length:0,ne=ctEnds().length+ctEndsSide();
    h+='<h4 class="mh2">Соединения</h4>'+(P.left?chipRow('В углу','data-ctj',[['euro','Еврозапил'],['strip','Соединительная Т-планка']],P.ctJoin==='euro'?'euro':'strip'):'')
@@ -3779,7 +3885,7 @@ function renderPrj(){const el=$('prjList');if(!el)return;$('prjCur').textContent
   {const f=$('prjFlt');if(f)f.innerHTML=[['','Все'],...ORDST].map(([k,n])=>`<button class="chip" data-pf="${k}" aria-pressed="${PRJF===k}">${n}</button>`).join('')}
   const PL=PRJF?PRJL.filter(p=>p.cl&&p.cl.st===PRJF):PRJL;
   el.innerHTML=PL.length?PL.map(p=>`<div class="prow${p.id===PRJ.id?' on':''}"><button class="pop" data-po="${p.id}"><b>${p.name.replace(/</g,'&lt;')}</b><small>${new Date(p.at).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}${p.w?' · '+p.w+' мм':''}${p.n?' · модулей '+p.n:''}</small>${p.cl?`<small><span class="ost">${(ORDST.find(x=>x[0]===p.cl.st)||['',''])[1]}</span>${p.cl.no?'№'+String(p.cl.no).padStart(3,'0'):ordEsc(p.cl.n)}${p.cl.ph?' · '+ordEsc(p.cl.ph):''}${p.cl.sum?' · '+rub(p.cl.sum):''}</small>`:''}</button>`+
-    (PRJASK===p.id?`<button class="pdel y" data-pdy="${p.id}">Удалить</button><button class="pdel" data-pdn="1">Нет</button>`:`<button class="pdel" data-pd="${p.id}" aria-label="Удалить">✕</button>`)+'</div>').join(''):'<p class="note">'+(PRJF?'Нет заказов с этим статусом.':'Пока нет сохранённых проектов.')+'</p>'}
+    (PRJASK===p.id?`<button class="pdel y" data-pdy="${p.id}">Удалить</button><button class="pdel" data-pdn="1">Нет</button>`:`<button class="pdel" data-pd="${p.id}" aria-label="Удалить"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`)+'</div>').join(''):'<p class="note">'+(PRJF?'Нет заказов с этим статусом.':'Пока нет сохранённых проектов.')+'</p>'}
 $('fly-prj').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
   if(d.pa==='new'){if(PRJASK!=='new'){PRJASK='new';b.textContent='Точно? Ещё раз';return}PRJASK=null;PRJ={id:null,name:'Новый проект',at:0};prjApply(null);asQueue();$('prjSt').textContent='Новый проект';renderPrj()}
   else if(d.pa==='save')prjSave(false);else if(d.pa==='saveas')prjSave(true);
@@ -3842,7 +3948,7 @@ async function prcLoad(){try{const v=JSON.parse(localStorage.getItem('kprices')|
   const col=await prjCol();if(!col)return;try{const d=await col.doc('prices').get();if(d.exists){const v=JSON.parse(d.data().prices||'null');if(v&&v.cat){PRC=v;try{localStorage.setItem('kprices',JSON.stringify(PRC))}catch(e){}prcApply();if(!$('fly-mat').hidden)renderMat();if(!$('fly-set').hidden)renderSet()}}}catch(e){}}
 const prcNum=v=>{const n=parseFloat(String(v).replace(/\s/g,'').replace(',','.'));return isFinite(n)&&n>=0?Math.round(n*100)/100:null};
 function prcRow(key,name,sub,cur,base,unit,extra=''){const own=key.startsWith('c:')?PRC.cat[key.slice(2)]!=null:PRC.hw[key.slice(2)]!=null;
-  return `<div class="prc${own?' own':''}"><span><b>${String(name).replace(/</g,'&lt;')}</b><small>${String(sub||'').replace(/</g,'&lt;')}${base!=null&&own?' · было '+rub(base):''}</small></span><input inputmode="decimal" data-pk="${key}" value="${cur!=null?cur:''}" placeholder="цена"><em>₽${unit?'/'+unit:''}</em>${own?`<button data-pr="${key}" title="Вернуть цену каталога">↺</button>`:''}${extra}</div>`}
+  return `<div class="prc${own?' own':''}"><span><b>${String(name).replace(/</g,'&lt;')}</b><small>${String(sub||'').replace(/</g,'&lt;')}${base!=null&&own?' · было '+rub(base):''}</small></span><input inputmode="decimal" data-pk="${key}" value="${cur!=null?cur:''}" placeholder="цена"><em>₽${unit?'/'+unit:''}</em>${own?`<button data-pr="${key}" title="Вернуть цену каталога" aria-label="Вернуть цену каталога"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 2.6-6.4L3 8M3 3v5h5"/></svg></button>`:''}${extra}</div>`}
 function prcSet(key,v){if(key.startsWith('c:')){const u=key.slice(2);if(v==null)delete PRC.cat[u];else PRC.cat[u]=v;prcApply()}else{const k=key.slice(2);if(v==null)delete PRC.hw[k];else PRC.hw[k]=v}prcSave();if(!$('fly-mat').hidden)renderMat()}
 $('setBody').addEventListener('change',e=>{const i=e.target.closest('input[data-pk]');if(!i)return;const v=i.value.trim()===''?null:prcNum(i.value);prcSet(i.dataset.pk,v);renderMat();renderSet()});
 $('setBody').addEventListener('input',e=>{if(e.target.id==='prcQ'){SETF.q=e.target.value;SETN=80;renderPrcCat()}});
@@ -3879,7 +3985,7 @@ function renderSet(){const el=$('setBody');if(!el)return;{const ae=document.acti
   if(SETG){renderSetG(el);return}
   let h='<h4>Цены в этом проекте</h4>';const C=calcMat(),seen=new Set(),pick=(k)=>`<button class="pk" data-pick="${k.replace(/"/g,'&quot;')}">${hwLink(k)?'Другой':'Выбрать'}</button>`;
   (window.LASTCOST||[]).forEach(o=>{if(!o.x||!o.x.u||seen.has(o.x.u))return;seen.add(o.x.u);h+=prcRow('c:'+o.x.u,o.x.d||o.x.n,(o.n!==(o.x.d||o.x.n)?o.n+' · ':'')+(o.x.a?'арт. '+o.x.a:''),o.x.p,o.x.p0,o.u==='л.'?'лист':o.u==='м'?'м':'шт')});
-  const hwRow=(k,n,sub,u)=>{const x=hwLink(k);if(x){if(seen.has('L'+k))return;seen.add('L'+k);h+=prcRow('c:'+x.u,x.n,n+' · выбрано из каталога'+(x.a?' · арт. '+x.a:''),x.p,x.p0,u,pick(k)+`<button class="pk" data-unl="${k.replace(/"/g,'&quot;')}">✕</button>`);return}h+=prcRow('h:'+k,n,sub,PRC.hw[k],null,u,pick(k))};
+  const hwRow=(k,n,sub,u)=>{const x=hwLink(k);if(x){if(seen.has('L'+k))return;seen.add('L'+k);h+=prcRow('c:'+x.u,x.n,n+' · выбрано из каталога'+(x.a?' · арт. '+x.a:''),x.p,x.p0,u,pick(k)+`<button class="pk" data-unl="${k.replace(/"/g,'&quot;')}" aria-label="Отвязать"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>`);return}h+=prcRow('h:'+k,n,sub,PRC.hw[k],null,u,pick(k))};
   C.hw.forEach(o=>{if(o.x&&o.x.u){if(seen.has(o.x.u))return;seen.add(o.x.u);h+=prcRow('c:'+o.x.u,o.x.d,o.n,o.x.p,o.x.p0,'шт');return}hwRow(o.k,o.n,o.sub,o.u||'шт')});
   C.misc.forEach(o=>{if(!NOBUY.test(o.n))hwRow('m|'+o.n,o.n,o.sub,'шт')});
   h+='<h4>Каталог по разделам</h4><div class="pgrid">'+PRG.map(([g,n,ks])=>{const L=ks.flatMap(k=>DS[k]||[]),ch=L.filter(x=>PRC.cat[x.u]!=null).length;return `<button data-sg="${g}"><b>${n}</b><small>${L.length} поз.${ch?' · изменено '+ch:''}</small></button>`}).join('')+'</div>';
@@ -3887,7 +3993,7 @@ function renderSet(){const el=$('setBody');if(!el)return;{const ae=document.acti
   el.innerHTML='<div class="mf">'+h+'</div>'}
 function renderSetG(el){const g=PRG.find(x=>x[0]===SETG),ks=g[2],L=ks.flatMap(k=>(DS[k]||[]).map(x=>[k,x])),scs=[...new Set(L.map(([k,x])=>x.sc||(ks.length>1?(DSC[k]||k):'')).filter(Boolean))],ty=PRTY[SETG]||[];
   const q=SETF.q.trim().toLowerCase(),F=L.filter(([k,x])=>(!SETF.sc||(x.sc||(DSC[k]||k))===SETF.sc)&&(!SETF.ty||(()=>{const t=ty.find(y=>y[0]===SETF.ty);return !t||(typeof t[1]==='string'?x.k===t[1]:t[1].test(x.n))})())&&(!q||(x.n+' '+(x.a||'')).toLowerCase().includes(q)));
-  let h=`<div class="go"><button data-sback="1">‹ Все разделы</button></div><h4>${g[1]}${SETPICK?' — выберите товар':''}</h4>`;
+  let h=`<div class="go"><button data-sback="1"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Все разделы</button></div><h4>${g[1]}${SETPICK?' — выберите товар':''}</h4>`;
   if(SETPICK)h+=`<p class="note">Для позиции проекта: «${SETPICK.replace(/^m\|/,'').replace(/</g,'&lt;')}». Нажмите «Выбрать» у нужного товара.</p>`;
   if(scs.length>1)h+='<div class="chips">'+[['','Все'],...scs.map(s=>[s,s.replace(/^(Петли|Направляющие|Ящики|Подъемные механизмы)\s+/,'')])].map(([v,n])=>`<button class="chip" data-ssc="${v.replace(/"/g,'&quot;')}" aria-pressed="${SETF.sc===v}">${n}</button>`).join('')+'</div>';
   if(ty.length)h+='<div class="chips">'+[['','Все виды'],...ty.map(t=>[t[0],t[0]])].map(([v,n])=>`<button class="chip" data-sty="${v}" aria-pressed="${SETF.ty===v}">${n}</button>`).join('')+'</div>';
@@ -3969,7 +4075,8 @@ const CI={set:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3
   rot:'<path d="M3 12a9 9 0 1 0 2.6-6.4M3 4v5h5"/>',swap:'<path d="M7 4l-4 4 4 4M3 8h14M17 20l4-4-4-4M21 16H7"/>',
   move:'<rect x="2" y="6" width="9" height="12" rx="1"/><rect x="13" y="6" width="9" height="12" rx="1"/><path d="M6 12h10M13 9l3 3-3 3"/>',
   buf:'<path d="M3 13h5l2 3h4l2-3h5M5 5h14l2 8v6H3v-6z"/>',off:'<rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 14h9V3"/><path d="M15 17h3M16.5 15.5v3"/>',imp:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/>',dxf:'<path d="M3 21l6-6M14 4l6 6-9 9H5v-6z"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'};
-const cib=(ic,attr,title,on,dis)=>`<button class="ib" ${attr} title="${title}" aria-label="${title}"${on!==undefined?` aria-pressed="${!!on}"`:''}${dis?' disabled':''}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${CI[ic]}</svg></button>`;
+const CIL={fmt:'Формат',off:'Остатки',imp:'Импорт',set:'Пропил',grain:'Текстура',cuts:'Резы',zout:'Мельче',zin:'Крупнее',auto:'Вариант',pdf:'PDF',dxf:'DXF',lbl:'Этикетки',l:'Влево',u:'Вверх',d:'Вниз',r:'Вправо',rot:'Повернуть',swap:'Обмен',move:'На лист',buf:'В буфер',x:'Готово'};
+const cib=(ic,attr,title,on,dis)=>`<button class="ib" ${attr} title="${title}" aria-label="${title}"${on!==undefined?` aria-pressed="${!!on}"`:''}${dis?' disabled':''}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CI[ic]}</svg>${CIL[ic]?`<span>${CIL[ic]}</span>`:''}</button>`;
 function cutFmtKey(k){const b=KB(k);return b==='ldspF'?'ldsp':b}
 function renderCut(){const el=$('cutBody');if(!el)return;{const ae=document.activeElement;if(ae&&el.contains(ae))ae.blur()}const m=matSet(),{c,KS,r}=cutData();
   if(!r){el.innerHTML='<p class="note">Добавьте модули — здесь появится раскрой.</p>';return}
@@ -3982,11 +4089,11 @@ function renderCut(){const el=$('cutBody');if(!el)return;{const ae=document.acti
     h+=`<div class="cpanel"><b>Формат листа</b><div class="chips">${cat?`<button class="chip" data-cf="cat" aria-pressed="${!fo}">По каталогу ${cat[0]}×${cat[1]}</button>`:''}${F.map(([a,b])=>`<button class="chip" data-cf="${a}x${b}" aria-pressed="${(fo||(!cat&&cur))===a+'x'+b}">${a}×${b}</button>`).join('')}<button class="chip" data-cf="own" aria-pressed="${!!own||CUTP==='fmt'&&CUTOWN}">Свой</button></div>${own||CUTOWN?`<div class="cutbar"><input data-cown="0" inputmode="numeric" value="${r.SW}"> × <input data-cown="1" inputmode="numeric" value="${r.SH}"> мм</div>`:''}</div>`}
   if(CUTP==='set')h+=`<div class="cpanel cutbar"><label>Пропил <input data-cset="kerf" inputmode="decimal" value="${KERF}"> мм</label><label>Торцовка <input data-cset="trim" inputmode="decimal" value="${TRIM}"> мм</label></div>`;
   {const b0=String(CUTK).split('~')[0];
-  if(CUTP==='off'){const L=(m.off||{})[b0]||[];h+=`<div class="cpanel"><b>Остатки — ${SHN[b0][0]}</b><span class="note">Целые листы и пригодные обрезки со склада. Детали сначала раскладываются на остатки (от больших к меньшим), остальное — на новые листы.</span>${L.map((o,i)=>`<div class="cutbar"><input data-offi="${i}" data-f="w" inputmode="numeric" value="${o.w}"> × <input data-offi="${i}" data-f="h" inputmode="numeric" value="${o.h}"> мм, <input data-offi="${i}" data-f="q" inputmode="numeric" value="${o.q}"> шт <button class="chip" data-offx="${i}">✕</button></div>`).join('')}<div class="go"><button data-offadd="1">+ Добавить остаток</button></div></div>`}
+  if(CUTP==='off'){const L=(m.off||{})[b0]||[];h+=`<div class="cpanel"><b>Остатки — ${SHN[b0][0]}</b><span class="note">Целые листы и пригодные обрезки со склада. Детали сначала раскладываются на остатки (от больших к меньшим), остальное — на новые листы.</span>${L.map((o,i)=>`<div class="cutbar"><input data-offi="${i}" data-f="w" inputmode="numeric" value="${o.w}"> × <input data-offi="${i}" data-f="h" inputmode="numeric" value="${o.h}"> мм, <input data-offi="${i}" data-f="q" inputmode="numeric" value="${o.q}"> шт <button class="chip" data-offx="${i}" aria-label="Убрать"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>`).join('')}<div class="go"><button data-offadd="1">+ Добавить остаток</button></div></div>`}
   if(CUTP==='imp'){const L=(m.imp||{})[b0]||[],n=L.reduce((a,x)=>a+x.q,0);h+=`<div class="cpanel"><b>Детали из Excel / CSV — ${SHN[b0][0]}</b><span class="note">Столбцы: Название; Длина; Ширина; Кол-во; Кромка 1–4 (0,4 / 1 / 2); Текстура (по длине / по ширине). Детали другого заказа из того же материала добавятся в общий раскрой. Из PRO100 — выгрузите деталировку в CSV / Excel.</span><div class="cutbar"><input type="file" data-cimp="1" accept=".csv,.txt,.xlsx,.xls"></div>${n?`<span class="note">Добавлено: ${n} дет. (${L.length} поз.)</span>`:''}<div class="go"><button data-ct="csv">Скачать детали — CSV</button>${n?`<button data-ct="impx">Убрать добавленные</button>`:''}</div></div>`}}
-  if(CUTP==='var')h+=`<div class="cpanel">${man?`<span class="note">Раскладка изменена вручную</span><div class="go"><button data-ct="auto">Вернуть авто-раскрой</button></div>`:`<div class="chips">${[0,1,2].map(i=>`<button class="chip" data-calg="${i}" aria-pressed="${i===r.alg}">${ALGN[i]}: ${r.vars[i]} л.${i===r.best?' ★':''}</button>`).join('')}</div>`}</div>`;
-  h+='<div class="chips cutpg">'+r.sheets.map((s,i)=>`<button class="chip" data-cs="${i}" aria-pressed="${i===CUTS}">${i+1}${s.g.ok?'':' ⚠'}</button>`).join('')+(r.big.length?`<button class="chip warn" data-cbuf="1">Буфер: ${r.big.length}</button>`:'')+'</div>';
-  h+=`<div class="cutst"><b>${r.SW}×${r.SH}</b> · ${r.n} л. · отход ${Math.round((1-r.fill)*100)}%${allOk?'':' · <span style="color:#C0392B">⚠ сдвиньте детали — нет сквозного реза</span>'}</div>`;
+  if(CUTP==='var')h+=`<div class="cpanel">${man?`<span class="note">Раскладка изменена вручную</span><div class="go"><button data-ct="auto">Вернуть авто-раскрой</button></div>`:`<div class="chips">${[0,1,2].map(i=>`<button class="chip" data-calg="${i}" aria-pressed="${i===r.alg}">${ALGN[i]}: ${r.vars[i]} л.${i===r.best?' · лучший':''}</button>`).join('')}</div>`}</div>`;
+  h+='<div class="chips cutpg">'+r.sheets.map((s,i)=>`<button class="chip" data-cs="${i}" aria-pressed="${i===CUTS}">${i+1}${s.g.ok?'':' <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>'}</button>`).join('')+(r.big.length?`<button class="chip warn" data-cbuf="1">Буфер: ${r.big.length}</button>`:'')+'</div>';
+  h+=`<div class="cutst"><b>${r.SW}×${r.SH}</b> · ${r.n} л. · отход ${Math.round((1-r.fill)*100)}%${allOk?'':' · <span class="t-err"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg> сдвиньте детали — нет сквозного реза</span>'}</div>`;
   if(r.big.length&&!sp)h+=`<div class="chips">${r.big.map(i=>`<button class="chip${CUTSEL===i.id?' on':''}" data-cbi="${i.id}" aria-pressed="${CUTSEL===i.id}">№${i.no} ${i.a}×${i.b}</button>`).join('')}</div>`;
   const toSheets=(cur)=>`<div class="chips">${r.sheets.map((_,i)=>`<button class="chip" data-cto="${i}"${cur===i?' disabled':''}>Лист ${i+1}</button>`).join('')}<button class="chip" data-cto="new">Новый лист</button></div>`;
   if(sp){const rots=layRots(sp);
@@ -4013,7 +4120,7 @@ function renderIsl(){const el=$('islBody');if(!el)return;{const ae=document.acti
       +chipRow('Проход до кухни','data-isp',[900,1000,1100,1200,1400].map(v=>[v,String(v)]),islPass())
       +chipRow('Подсветка пола','data-iled',[[1,'Есть'],[0,'Нет']],ledS().z.isl?1:0);
     h+=`<h4>Спереди — добавить</h4><div class="chips">${ISLT.map(([k,n])=>`<button class="chip" data-iadd="${k}">+ ${n}</button>`).join('')}</div>`;
-    h+=`<ol class="rowl">${IL.map((r,i)=>`<li${selMod===r.id?' class="on"':''}><button class="rn" data-isel="${r.id}"><b>${i+1}</b><span>${SHORTN[r.k]}<small>${r.w} мм</small></span></button><button data-imv="${r.id}" data-d="-1" aria-label="Левее"${i?'':' disabled'}>‹</button><button data-imv="${r.id}" data-d="1" aria-label="Правее"${i<IL.length-1?'':' disabled'}>›</button><button data-idel="${r.id}" aria-label="Убрать">✕</button></li>`).join('')||'<li class="empty">Пусто — выберите длину или добавьте модули</li>'}</ol>`;
+    h+=`<ol class="rowl">${IL.map((r,i)=>`<li${selMod===r.id?' class="on"':''}><button class="rn" data-isel="${r.id}"><b>${i+1}</b><span>${SHORTN[r.k]}<small>${r.w} мм</small></span></button><button data-imv="${r.id}" data-d="-1" aria-label="Левее" title="Левее"${i?'':' disabled'}><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button data-imv="${r.id}" data-d="1" aria-label="Правее" title="Правее"${i<IL.length-1?'':' disabled'}><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button><button data-idel="${r.id}" aria-label="Убрать"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></li>`).join('')||'<li class="empty">Пусто — выберите длину или добавьте модули</li>'}</ol>`;
     h+=`<p class="note">Как делают: глубина 900–1200 (с барной зоной — от 1000), длина от 1800, на одного человека за стойкой — 600 мм, свес под колени 300. Проход 1100–1200, минимум 1000. Торцы и задняя сторона — панели в цвет фасадов до пола, внутри — рёбра жёсткости под столешницу. Варочная на острове — только с островной вытяжкой и глубиной от 900.</p>`}
   el.innerHTML=h;$('sumIsl').textContent=P.isl&&islOn()?`${islCtL()} × ${islCtD()} мм · модулей ${islLay().length}`:'спереди ящики и шкафы, сзади глухой'}
 $('islBody').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
@@ -4085,7 +4192,7 @@ function techChecks(){const out=[],add=(lv,grp,t,d,fix)=>out.push({lv,grp,t,d,fi
 let TECHF=[];
 function renderTech(){const el=$('techBody');if(!el)return;{const ae=document.activeElement;if(ae&&el.contains(ae))ae.blur()}
   const C=techChecks(),nE=C.filter(c=>c.lv==='err').length,nW=C.filter(c=>c.lv==='warn').length;TECHF=C.map(c=>c.fix);
-  const ico={err:'⛔',warn:'⚠️',ok:'✓'};
+  const ico={err:'<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',warn:'<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',ok:'<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>'};
   const mm=matSet(),own=Object.entries(P.mods||{}).filter(([k,o])=>o&&o.fix).length;
   let th=`<div class="mf"><h4>Технологические отверстия</h4><p class="note">Карта присадки: каждая деталь мм в мм, размеры от краёв до центра каждого отверстия — евровинты или эксцентрики, шканты, петли и планки, направляющие, полкодержатели, ручки. По каждой детали — кромка и размер в распил.</p>`
     +chipRow('Крепёж корпуса — вся кухня','data-tfx',[['conf','Евровинты'],['ecc','Эксцентрики']],P.fix==='ecc'?'ecc':'conf')+`<p class="note">${own?'Свой крепёж у модулей: '+own+' — в карте показано всё как выбрано. Выбор для всей кухни сбрасывает свой крепёж модулей.':'Свой крепёж для отдельного модуля — в его настройках («Крепёж корпуса»).'}</p>`
@@ -4279,7 +4386,7 @@ function renderOrd(){const el=$('ordBody');if(!el)return;const c=ordCl(),au=ordA
       `<div class="kp"><span><b>Со светом — прибавка</b></span><input inputmode="decimal" data-okk="l" value="${f(K.l)}"><em>+</em></div>`})():
     '<p class="note">Метры считаются по модулям сами — можно вписать свои. Цена за метр общая для всех заказов.</p>'+
     ORDM.map(([k,n])=>`<div class="kp w"><span><b>${n}</b><small>авто: ${f(au[k])} м</small></span><input inputmode="decimal" data-om="${k}" placeholder="${f(au[k])}" value="${c.m[k]!=null?ordEsc(c.m[k]):''}"><em>м ×</em><input inputmode="decimal" data-opm="${k}" placeholder="цена" value="${KPM.p[k]||''}"><em>₽</em></div>`).join(''))+
-    '<h4>Доплаты</h4>'+c.ex.map(([n,v],i)=>`<div class="kp"><input class="kpn" data-oen="${i}" placeholder="Название" value="${ordEsc(n)}"><input inputmode="decimal" data-oev="${i}" placeholder="0" value="${v||''}"><em>₽</em><button data-oed="${i}" aria-label="Убрать">✕</button></div>`).join('')+
+    '<h4>Доплаты</h4>'+c.ex.map(([n,v],i)=>`<div class="kp"><input class="kpn" data-oen="${i}" placeholder="Название" value="${ordEsc(n)}"><input inputmode="decimal" data-oev="${i}" placeholder="0" value="${v||''}"><em>₽</em><button data-oed="${i}" aria-label="Убрать"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>`).join('')+
     '<div class="go"><button data-oadd="1">+ Добавить доплату</button></div>'+
     `<div class="kp"><span><b>Скидка</b></span><input inputmode="decimal" data-oc="dis" placeholder="0" value="${ordEsc(c.dis||'')}"><em>%</em></div>`+
     `<div class="kp"><span><b>Предоплата</b></span><input inputmode="decimal" data-oc="pre" placeholder="0" value="${ordEsc(c.pre||'')}"><em>₽</em></div>`+
@@ -4299,7 +4406,7 @@ function ordSum(){const o=ordCalc(true),s=$('ordSum'),k=$('ordCost');if(!s)retur
       `<div class="go"><button data-odet="1">${ORDDET?'Скрыть детали':'Детали'}</button></div>`+
       (o.sum!==(A.s)?ln('Сумма с доплатами',rub(o.sum)):'')+(o.disc?ln('Скидка '+String(o.dis).replace('.',',')+'%','− '+rub(o.disc))+ln('Итого клиенту',rub(o.total)):'')+(o.pre?ln('Предоплата',rub(o.pre))+ln('Остаток к оплате',rub(o.rest)):'')}
   else s.innerHTML=(o.k?ln('Материалы и фурнитура × '+String(o.k).replace('.',','),rub(o.base)+' → '+rub(o.rows[0]?o.rows[0][4]:0),1):'')+ln(o.k?'Цена за кухню':'Сумма',rub(o.sum),!o.k)+(o.disc?ln('Скидка '+String(o.dis).replace('.',',')+'%','− '+rub(o.disc)):'')+ln('Итого клиенту',rub(o.total))+(o.pre?ln('Предоплата',rub(o.pre))+ln('Остаток к оплате',rub(o.rest)):'');
-  k.innerHTML=ln('Материалы (по ценам каталога)',rub(o.mat),1)+ln('Работа и расходы',rub(o.work))+ln('Себестоимость',rub(o.cost))+`<div class="mtot" style="border-top:0;padding-top:0"><span>Моя прибыль</span><b style="color:${o.profit<0?'#C0392B':'inherit'}">${rub(o.profit)}${o.total?' · '+o.pct+'%':''}</b></div>`}
+  k.innerHTML=ln('Материалы (по ценам каталога)',rub(o.mat),1)+ln('Работа и расходы',rub(o.work))+ln('Себестоимость',rub(o.cost))+`<div class="mtot" style="border-top:0;padding-top:0"><span>Моя прибыль</span><b style="color:${o.profit<0?'var(--err)':'inherit'}">${rub(o.profit)}${o.total?' · '+o.pct+'%':''}</b></div>`}
 function ordSize(){const r=[],L=totW();let H=P.H;if(V&&V.mod){try{V.scene.updateMatrixWorld(true);const b=new THREE.Box3();V.mod.traverse(o=>{if(!o.isMesh||o.userData.sel)return;for(let q=o;q;q=q.parent)if(!q.visible)return;b.expandByObject(o)});if(!b.isEmpty())H=Math.max(H,Math.round((b.max.y-Math.max(0,b.min.y))/MM))}catch(e){}}
   if(L>0)r.push('длина '+L+' мм');if(P.left&&sideW()>0)r.push('вторая сторона '+(sideW()+P.D)+' мм');if(islOn())r.push('остров '+islW()+' мм');r.push('высота '+H+' мм','глубина '+P.D+' мм');return 'Размер кухни: '+r.join(' · ')}
 function ordNames(){const out=[],seen=new Set();try{renderMat();expBuyRows().rows.forEach(r=>{const n=String(r[0]).replace(/\s*\([^)]*\d+\s*(шт|м)[^)]*\)/gi,'').replace(/\s*\d+\s*шт(?=[\s)]|$)/gi,'').replace(/\s*\/\d+\s*$/,'').replace(/\s*\d+\*\d+ мм/g,'').replace(/\s*(длина |h )?\d+( × \d+){0,2} мм$/,'').replace(/\s+\d+$/,'').trim(),k=n.toLowerCase();if(n&&!/^(саморез|гвоздь|евровинт|конфирмат|заглушка|клипса|полкодержатель|шкант|стяжка|дюбель)|заглушка под евровинт/i.test(n)&&!seen.has(k)){seen.add(k);out.push(n)}})}catch(e){}return out}
