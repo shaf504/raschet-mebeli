@@ -616,6 +616,11 @@ td small,.mt td small{color:var(--muted)}
 .ibar .ib span{font:500 10.5px/1.1 var(--body);color:var(--ink-2);white-space:nowrap}
 .ibar .ib[aria-pressed="true"] svg,.ibar .ib[aria-pressed="true"] span{color:var(--accent)}
 .cutbar{font-size:13.5px}
+.mdfo{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:4px}
+.mdfo .note a{color:var(--accent);font-weight:600;text-decoration:none;white-space:nowrap}
+.go #mdfWa{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important;font-weight:600!important}
+.go #mdfWa:hover{background:var(--accent-h)!important}
+.go #mdfCall{flex:1 1 auto}
 
 /* стартовый экран — assets/welcome/screen.css */
 /* ---------- компьютер: просторнее ---------- */
@@ -813,6 +818,12 @@ td small,.mt td small{color:var(--muted)}
         <div id="aluBox" hidden><div class="sz"><label>Профиль</label><div class="chips" id="aluProf"></div></div>
           <div class="sz"><label>Цвет профиля</label><div class="swatches" id="aluCols"></div></div>
           <div class="sz"><label>Стекло 4 мм</label><div class="swatches" id="aluGls"></div></div><p class="note" id="aluNote"></p></div>
+        <div class="mdfo" id="mdfOrd">
+          <h4 class="mh">Заказ МДФ-фасадов</h4>
+          <p class="note" id="mdfOrdSum"></p>
+          <div class="go"><button id="mdfWa" type="button"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20.5l1.6-5.2A8.5 8.5 0 1 1 21 11.5z"/></svg><span id="mdfWaT">Заказать в WhatsApp</span></button><a class="btn" id="mdfCall" href="tel:+79095871759"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>Позвонить</a></div>
+          <p class="note">Компания по фасадам МДФ: <a href="tel:+79095871759">+7 909 587-17-59</a> — звонок или WhatsApp</p>
+        </div>
       </div>
       <div class="fly fl" id="fly-korp" hidden>
         <div class="fly-h"><b>Корпус<small id="sumKorp"></small></b><button class="x" data-close aria-label="Закрыть"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
@@ -1465,6 +1476,7 @@ function openFly(k){
   {const a=$('selSet'),c=$('selParts');if(a){a.setAttribute('aria-pressed',String(k==='mod'));c.setAttribute('aria-pressed',String(k==='parts'))}}
   if(k==='mod')renderModFly();
   if(k==='mat')renderMat();
+  if(k==='fac')mdfOrdUpd();
   if(k==='parts')try{partsCalc()}catch(e){}
   if(k==='cut'){CUTSEL=null;CUTSW=false;CUTZ=1;renderCut()}
   if(k==='set'){SETG=null;SETPICK=null;renderMat();renderSet()}
@@ -1800,6 +1812,25 @@ function frezSVG(k,col){
   return s+'</svg>';
 }
 function renderFacadeUI(){asMod(selMod,_renderFacadeUI);renderKorp()}
+// ---- заказ МДФ-фасадов у компании по фасадам (звонок / WhatsApp) ----
+const MDFPH='79095871759';
+function mdfList(){const L=(LASTPARTS||[]).filter(r=>r&&r[2]&&r[3]&&(/^МДФ/.test(r[1]||'')||/^в цвет фасада/.test(r[1]||'')));const G=new Map();
+  L.forEach(r=>{const pl=/^в цвет фасада/.test(r[1]),m=pl?'Планки в цвет фасада':String(r[1]).split(',').slice(0,2).join(',').trim(),k=m+'|'+r[2];const g=G.get(k)||{m,sz:r[2],q:0};g.q+=+r[3]||0;G.set(k,g)});
+  const rows=[...G.values()].sort((a,b)=>(a.m>b.m?1:a.m<b.m?-1:0));let n=0,sq=0;
+  rows.forEach(g=>{n+=g.q;const d=String(g.sz).split('×').map(v=>parseFloat(String(v).replace(',','.')));if(d.length===2&&isFinite(d[0])&&isFinite(d[1]))sq+=d[0]*d[1]*g.q/1e6});
+  return{rows,n,sq:Math.round(sq*100)/100}}
+function mdfText(){const o=mdfList();if(!o.n)return 'Здравствуйте! Хочу узнать про заказ фасадов МДФ.';
+  let t='Здравствуйте! Хочу заказать фасады МДФ.\n';try{if(PRJ&&PRJ.name&&PRJ.name!=='Новый проект')t+='Проект: «'+PRJ.name+'»\n'}catch(e){}
+  if(P.fMat==='mdf'){const c=(FCOL[P.fColor]||[])[0];if(c)t+='Цвет: '+c+'\n'}
+  t+='Размеры, мм (ширина × высота):\n';let m='';
+  o.rows.forEach(g=>{if(g.m!==m){m=g.m;t+='\n'+m+':\n'}t+='• '+String(g.sz).replace(/\./g,',')+' — '+g.q+' шт\n'});
+  return t+'\nИтого: '+o.n+' шт, площадь ≈ '+String(o.sq).replace('.',',')+' м²'}
+function mdfOrdUpd(){const el=$('mdfOrdSum');if(!el)return;let o={n:0};try{o=mdfList()}catch(e){}
+  el.textContent=o.n?'В проекте '+o.n+' шт · площадь ≈ '+String(o.sq).replace('.',',')+' м². В сообщение попадёт список размеров.':'В проекте нет МДФ-фасадов — можно просто написать или позвонить в компанию.';
+  $('mdfWaT').textContent=o.n?'Заказать в WhatsApp':'Написать в WhatsApp'}
+$('mdfWa').addEventListener('click',()=>{let t='';try{t=mdfText()}catch(e){t='Здравствуйте! Хочу узнать про заказ фасадов МДФ.'}
+  const a=document.createElement('a');a.href='https://wa.me/'+MDFPH+'?text='+encodeURIComponent(t);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()});
+
 const kSw=([n,c,tp,tones])=>tp==='wood'?`linear-gradient(100deg,${tones[0]},${tones[1]} 30%,${tones[2]} 55%,${tones[3]} 80%,${tones[0]})`:tp==='stone'?`radial-gradient(circle at 30% 35%,#B3B1AB,${c} 45%,#8A8882)`:c;
 const catCard=(x,tgt,lab)=>x?`<div class="ccard"><i style="${catImg(x)}"></i><span><b>${x.d}</b><small>${[x.t?String(x.t).replace('.',',')+' мм':'',x.f?dsSheet(x).join('×'):'',x.m,x.a?'арт. '+x.a:'',rub(x.p)+(x.f?'/лист':'')].filter(Boolean).join(' · ')}</small></span><button data-cpick="${tgt}">Сменить</button></div>`:`<div class="go"><button data-cpick="${tgt}">${lab}</button></div>`;
 function renderKorp(){const el=$('kCols');if(!el)return;$('sumKorp').textContent=kName()+(P.kCat?' · из каталога':'');{const cc=(x,l)=>x?`<div class="ccard"><i style="${catImg(x)}"></i><span><b>${l}: ${x.d}</b><small>${[x.t?String(x.t).replace('.',',')+' мм':'',x.f?dsSheet(x).join('×'):'',x.m,x.a?'арт. '+x.a:'',rub(x.p)+(x.f?'/лист':'')].filter(Boolean).join(' · ')}</small></span></div>`:'';$('kCat').innerHTML=cc(P.kCat&&dsGet('ldsp',P.kCat),'ЛДСП');renderSB('korp')}
