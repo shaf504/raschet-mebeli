@@ -1056,7 +1056,7 @@ function renderSlCat(){const el=$('sb-napr');if(!el)return;const x=P.slCat?dsGet
 
 
 const kPl=()=>{const c=kHex(),n=parseInt(c.slice(1),16),f=v=>Math.round(v*.9);return '#'+[n>>16&255,n>>8&255,n&255].map(v=>f(v).toString(16).padStart(2,'0')).join('')};
-const MDFM2=5700;   // крашеный МДФ, ₽ за м²
+const MDFM2=6000;   // крашеный МДФ, ₽ за м²
 const FCOL0={white:['Белый','#ECEBE3'],beige:['Капучино','#BBB49C'],grey:['Графит','#676D71'],taupe:['Серый тёплый','#8B8880'],ash:['Ясень тёмный','#3A2C22']};
 const CUSTC=(o,k)=>k in o?o[k]:typeof k==='string'&&/^#[0-9a-f]{6}$/i.test(k)?['Свой цвет '+k.toUpperCase(),k]:undefined;   // свой цвет (#rrggbb)
 const FCOL=new Proxy(FCOL0,{get:CUSTC});
@@ -4265,7 +4265,7 @@ function renderOrd(){const el=$('ordBody');if(!el)return;const c=ordCl(),au=ordA
     `<textarea class="pname" data-oc="note" rows="2" placeholder="Заметка (видна только вам)">${ordEsc(c.note)}</textarea>`+
     '<h4>Как считать цену</h4><div class="chips">'+[['a','По затратам'],['k','По коэффициенту'],['m','За погонный метр']].map(([k,n])=>`<button class="chip" data-omode="${k}" aria-pressed="${ordMode(c)===k}">${n}</button>`).join('')+'</div>'+
     (ordMode(c)==='a'?(()=>{const lt=c.lt==null?'a':c.lt?'1':'0',auL=ledSegs().length>0,af=ordAF(c);
-      return '<p class="note">Затраты на кухню — корпус и всё остальное, без фасадов. Коэффициент: без света 2,3, со светом 2,4. Фасады МДФ: площадь × 5 700 × 1,25.</p>'+
+      return '<p class="note">Затраты на кухню — корпус и всё остальное, без фасадов. Коэффициент: без света 2,3, со светом 2,4. Фасады МДФ: площадь × 6 000 × 1,25.</p>'+
       `<div class="kp"><span><b>Затраты на кухню</b></span><input inputmode="decimal" data-oc="az" placeholder="0" value="${ordEsc(c.az||'')}"><em>₽</em></div>`+
       '<div class="chips">'+[['ldsp','Фасады ЛДСП'],['mdf','Фасады МДФ']].map(([k,n])=>`<button class="chip" data-oaf="${k}" aria-pressed="${af===k}">${n}</button>`).join('')+'</div>'+
       (af==='mdf'?`<div class="kp"><span><b>Площадь фасадов МДФ</b></span><input inputmode="decimal" data-oc="am" placeholder="0" value="${ordEsc(c.am||'')}"><em>м²</em></div>`:'')+
@@ -4295,7 +4295,7 @@ function renderOrd(){const el=$('ordBody');if(!el)return;const c=ordCl(),au=ordA
 function ordSum(){const o=ordCalc(true),s=$('ordSum'),k=$('ordCost');if(!s)return;const ln=(a,b,big)=>`<div class="mtot"${big?'':' style="border-top:0;padding-top:0"'}><span>${a}</span><b>${b}</b></div>`;
   if(o.A&&!o.A.k){const A=o.A,f=v=>String(Math.round(v*100)/100).replace('.',','),r2=v=>rub(Math.round(v));
     s.innerHTML=ln('Итог',rub(A.s),1)+(ORDDET?'<div class="note" style="line-height:1.6">'+
-      `Коэффициент ${f(o.k)} (свет ${A.lt?'есть':'нет'})<br>Кухня = ${rub(A.z)} × ${f(o.k)} = ${r2(A.kit)}`+(A.mdf?`<br>Фасады = ${f(A.sq)} × 5 700 × 1,25 = ${r2(A.fac)}<br>Итог = ${r2(A.kit)} + ${r2(A.fac)} = ${rub(A.s)}`:`<br>Итог = ${rub(A.s)}`)+'</div>':'')+
+      `Коэффициент ${f(o.k)} (свет ${A.lt?'есть':'нет'})<br>Кухня = ${rub(A.z)} × ${f(o.k)} = ${r2(A.kit)}`+(A.mdf?`<br>Фасады = ${f(A.sq)} × 6 000 × 1,25 = ${r2(A.fac)}<br>Итог = ${r2(A.kit)} + ${r2(A.fac)} = ${rub(A.s)}`:`<br>Итог = ${rub(A.s)}`)+'</div>':'')+
       `<div class="go"><button data-odet="1">${ORDDET?'Скрыть детали':'Детали'}</button></div>`+
       (o.sum!==(A.s)?ln('Сумма с доплатами',rub(o.sum)):'')+(o.disc?ln('Скидка '+String(o.dis).replace('.',',')+'%','− '+rub(o.disc))+ln('Итого клиенту',rub(o.total)):'')+(o.pre?ln('Предоплата',rub(o.pre))+ln('Остаток к оплате',rub(o.rest)):'')}
   else s.innerHTML=(o.k?ln('Материалы и фурнитура × '+String(o.k).replace('.',','),rub(o.base)+' → '+rub(o.rows[0]?o.rows[0][4]:0),1):'')+ln(o.k?'Цена за кухню':'Сумма',rub(o.sum),!o.k)+(o.disc?ln('Скидка '+String(o.dis).replace('.',',')+'%','− '+rub(o.disc)):'')+ln('Итого клиенту',rub(o.total))+(o.pre?ln('Предоплата',rub(o.pre))+ln('Остаток к оплате',rub(o.rest)):'');
@@ -4382,7 +4382,7 @@ function partsCalc(){const el=$('partsCalc');if(!el)return;const c=ordCl(),o=ord
     q('Остаток цеху',rub(o.total)+' − '+rub(o.cost)+(wp?' − '+rub(w):''),rub(rest),1)+'</section>';
   h+='<section class="prc"><h5>Как посчитана кухня</h5>';
   if(o.A){const A=o.A;h+=q('Коэффициент','',f(o.k)+' — свет '+(A.lt?'есть':'нет'))+q('Вся кухня',rub(A.z)+' × '+f(o.k),rub(Math.round(A.kit)));
-    if(A.mdf)h+=q('МДФ фасады',f(A.sq)+' м² × 5 700 ₽ × 1,25',rub(Math.round(A.fac)));
+    if(A.mdf)h+=q('МДФ фасады',f(A.sq)+' м² × 6 000 ₽ × 1,25',rub(Math.round(A.fac)));
     h+=q('Итог',A.mdf?rub(Math.round(A.kit))+' + '+rub(Math.round(A.fac)):'',rub(A.s),1)}
   const ex=o.rows.filter(x=>x[2]!=='k'&&x[2]!=='м');ex.forEach(x=>h+=q(x[0],'',rub(x[4])));if(o.disc)h+=q('Скидка '+f(o.dis)+'%','','− '+rub(o.disc));
   el.innerHTML='<div class="prx">'+h+'</section></div>'}
