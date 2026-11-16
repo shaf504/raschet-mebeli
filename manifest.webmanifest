@@ -1,14 +1,21 @@
 {
-  "name": "MEBELSHAF — Расчёт мебели",
-  "short_name": "Расчёт мебели",
+  "name": "Мой расчёт про",
+  "short_name": "Мой расчёт про",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#121311",
-  "theme_color": "#121311",
+  "background_color": "#ECEFF4",
+  "theme_color": "#ECEFF4",
   "icons": [
-    { "src": "assets/welcome/apple-icon.png", "sizes": "180x180", "type": "image/png" },
-    { "src": "assets/welcome/mark.png", "type": "image/png" }
+    {
+      "src": "assets/welcome/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/welcome/mark.png",
+      "type": "image/png"
+    }
   ]
 }
