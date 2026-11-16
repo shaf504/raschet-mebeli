@@ -108,7 +108,7 @@ body.welcome-open {
   letter-spacing: -.03em;
 }
 .welcome p.welcome__lead {
-  margin: 12px 0 0;
+  margin: 10px 0 24px;
   color: var(--w-muted);
   font-size: 15px;
   line-height: 1.45;
