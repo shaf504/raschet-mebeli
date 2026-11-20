@@ -3012,6 +3012,7 @@ function ashTex(){
 }
 // фасад: гладкий или фрезерованный МДФ, собирается из колец-ступеней
 let HPROF={};   // длины профилей-ручек по фасадам (для закупки)
+let FZREF=0;   // опорный размер фрезеровки для ящиков одного модуля
 function buildFacade(par,fw,fh,y0,ft){const r=buildFacade0(par,fw,fh,y0,ft);profHandle(par,fw,fh,y0,ft);return r}
 // профиль-ручка: накладная — на лицевой стороне у кромки с козырьком; торцевая (полунакладная) — на торце и чуть на лице; врезная — паз по кромке.
 // У нижних — по верхней кромке, у верхних и верхней части пенала — по нижней; «вертикально» — по кромке со стороны ручки
@@ -3041,7 +3042,7 @@ function buildFacade0(par,fw,fh,y0,ft){
   if(P.photo){const e=sh(.5),w=1.1,zf=(P.fMat==='mdf'?ft+FREZ[P.frez][1][0][2]:ft)+.05,zb=zf+.25;pb(par,0,y0,zf,fw,y0+w,zb,e,false);pb(par,0,y0+fh-w,zf,fw,y0+fh,zb,e,false);pb(par,0,y0,zf,w,y0+fh,zb,e,false);pb(par,fw-w,y0,zf,fw,y0+fh,zb,e,false)}
   if(P.fMat!=='mdf'){pb(par,0,y0,0,fw,y0+fh,ft,M.fac);return}
   const FZ=frezT(P.frez,fw,fh),[,segs0,cz]=FZ,ftp=FZ[3],fo=FZ[4]||{},maxIn=segs0[segs0.length-1][1];
-  const k=Math.min(1,(Math.min(fw,fh)/2-40)/maxIn);
+  const k=Math.min(1,(Math.min(fw,fh,FZREF||1e9)/2-40)/maxIn);   // у ящиков в одном модуле — общий масштаб по самому узкому, рамка одинаковая
   const segs=segs0.map(([a,b,dz])=>[a*k,b*k,dz]);
   const back=ft-8;
   const tone=dz=>dz<0?Math.max(.74,1+dz*.04):Math.min(1.06,1+dz*.02);
@@ -3093,7 +3094,7 @@ function buildDrawers(par,x0,W,o,id){
   const lg=[new THREE.CylinderGeometry(.016,.016,(L-14)*MM,20),new THREE.CylinderGeometry(.026,.028,.008,24)];
   [[-hw+50,50],[hw-50,50],[-hw+50,D-80],[hw-50,D-80]].forEach(([x,z])=>{const a=new THREE.Mesh(lg[0],M.leg);a.position.set(x*MM,(L-14)/2*MM+.008,z*MM);const b=new THREE.Mesh(lg[1],M.leg);b.position.set(x*MM,.004,z*MM);a.castShadow=b.castShadow=true;g.add(a,b)});
   const fw=W-2*SGAP,boxes=drawerBoxes();
-  fr.forEach(([yb,h],i)=>addDrawer(g,hw,fw,yb,h,boxes[i],i,{D,ft},!gola));
+  FZREF=Math.min(fw,...fr.map(x=>x[1]));fr.forEach(([yb,h],i)=>addDrawer(g,hw,fw,yb,h,boxes[i],i,{D,ft},!gola));FZREF=0;
   // тень в щели между фасадами: щель читается как тёмная полоса, как в жизни
   {const sh=V.gapM||(V.gapM=new THREE.MeshBasicMaterial({color:0x2A2C2E}));
     fr.forEach(([yb,h],i)=>{if(i===0||(gola&&golaC(fr.length,i)))return;const m=pb(g,-hw+1,yb+h,D-2,hw-1,yb+h+P.gapD,D+1,sh,false);m.castShadow=false;m.visible=V.ang<.05;V.gapS.push(m)})}
