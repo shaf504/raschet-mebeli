@@ -2839,10 +2839,10 @@ function hdfTex(){
   for(let i=0;i<900;i++){g.strokeStyle=`rgba(120,95,60,${Math.random()*.12})`;g.lineWidth=.5+Math.random();const x=Math.random()*256,y=Math.random()*256,l=4+Math.random()*14;g.beginPath();g.moveTo(x,y);g.lineTo(x+l,y+(Math.random()-.5)*3);g.stroke()}
   const tx=new THREE.CanvasTexture(c);tx.wrapS=tx.wrapT=THREE.RepeatWrapping;tx.repeat.set(3,3);if('encoding' in tx)tx.encoding=THREE.sRGBEncoding;return tx;
 }
-function laminateTex(size,bump){   // ламинат: доски вразбежку, текстура дуба, фаска-стык тёмная; bump — карта рельефа стыков
+function laminateTex(size,bump,pal){   // ламинат: доски вразбежку, текстура дуба, фаска-стык тёмная; bump — карта рельефа стыков
   const N=LOWMEM?1024:2048,c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d');
-  const rows=10,ph=N/rows,pl=N/2,tones=['#B58A5E','#BC9165','#B0865A','#B98E61','#AE8459','#BF9467','#B3895D','#BA8F63'];
-  g.fillStyle=bump?'#ffffff':'#B98E62';g.fillRect(0,0,N,N);
+  const rows=10,ph=N/rows,pl=N/2,tones=pal&&pal.t||['#B58A5E','#BC9165','#B0865A','#B98E61','#AE8459','#BF9467','#B3895D','#BA8F63'],SEAM=pal&&pal.s||'rgba(45,28,14,.6)';
+  g.fillStyle=bump?'#ffffff':tones[3];g.fillRect(0,0,N,N);
   for(let r=0;r<rows;r++){const off=((r*0.37)%1)*pl;
     for(let k=-1;k<3;k++){const x=k*pl+off,yy=r*ph;
       if(!bump){g.fillStyle=tones[(r*5+k*3+11)%tones.length];g.fillRect(x,yy,pl,ph);
@@ -2851,9 +2851,9 @@ function laminateTex(size,bump){   // ламинат: доски вразбеж�
           g.beginPath();const f=60+Math.random()*120,am=.6+Math.random()*2.2,p0=Math.random()*6;for(let xx=0;xx<=pl;xx+=20){const v=y0+Math.sin(xx/f+p0)*am;xx?g.lineTo(x+xx,v):g.moveTo(x,v)}g.stroke()}
         if(Math.random()<.35){const kx=x+pl*(.2+Math.random()*.6),ky=yy+ph*(.3+Math.random()*.4);g.fillStyle='rgba(80,48,22,.25)';g.beginPath();g.ellipse(kx,ky,9+Math.random()*8,3+Math.random()*2,0,0,6.3);g.fill()}   // сучок
       }
-      g.fillStyle=bump?'#000':'rgba(45,28,14,.6)';g.fillRect(x-1,yy,3,ph);   // торцевой стык
+      g.fillStyle=bump?'#000':SEAM;g.fillRect(x-1,yy,3,ph);   // торцевой стык
     }
-    g.fillStyle=bump?'#000':'rgba(45,28,14,.6)';g.fillRect(0,r*ph-1,N,3);   // продольный стык (фаска)
+    g.fillStyle=bump?'#000':SEAM;g.fillRect(0,r*ph-1,N,3);   // продольный стык (фаска)
   }
   const tx=new THREE.CanvasTexture(c);tx.wrapS=tx.wrapT=THREE.RepeatWrapping;tx.repeat.set(size/2.76,size/1.93);
   if(!bump&&'encoding' in tx)tx.encoding=THREE.sRGBEncoding;tx.anisotropy=16;return tx;
@@ -2872,6 +2872,32 @@ function label(txt){
   g.fillStyle='#111315';g.font='800 54px "JetBrains Mono", monospace';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,128,51);
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),depthTest:false,transparent:true}));
   s.scale.set(0.135,0.05,1);s.renderOrder=12;return s;
+}
+// ---------- комнаты (интерьер вокруг кухни): стена, пол, плинтус, фон ----------
+const ROOMS=[
+  {k:'dark',n:'Серая',bg:0xDCD6CC,wall:0x40454A,sk:0x2A2E32,fl:null},
+  {k:'light',n:'Светлая',bg:0xF1EEE9,wall:0xE9E5DE,sk:0xF3F1EC,fl:{t:['#D8C3A2','#DDC8A7','#D3BE9C','#DAC5A4','#D1BB99','#DFCAAA','#D6C19F','#DCC7A6'],s:'rgba(110,85,55,.35)'}},
+  {k:'night',n:'Тёмная',bg:0x2A2C2F,wall:0x16181B,sk:0x0B0C0D,fl:{t:['#3F2A1C','#442E1F','#3A2719','#412C1D','#38251A','#473021','#3D291B','#432D1E'],s:'rgba(10,6,3,.7)'}},
+  {k:'modern',n:'Современная',bg:0xC9C9C7,wall:0x5E5E5B,sk:0x141517,fl:{t:['#4F4C48','#54514D','#4A4743','#524F4B','#484541','#575450','#4D4A46','#53504C'],s:'rgba(15,15,15,.6)'}},
+  {k:'scandi',n:'Сканди',bg:0xE3E8E4,wall:0x6F8676,sk:0xF2F2EE,fl:{t:['#E2D6C2','#E6DAC7','#DED1BC','#E4D8C4','#DCCFBA','#E8DCC9','#E0D3BF','#E5D9C5'],s:'rgba(120,100,75,.3)'}},
+  {k:'warm',n:'Тёплая',bg:0xE3D6C6,wall:0x8A4E32,sk:0x3E2A1E,fl:{t:['#5E3B24','#643F27','#583721','#613D26','#55351F','#68422A','#5B3922','#623E27'],s:'rgba(25,14,7,.65)'}}
+];
+const roomCur=()=>{let k='dark';try{k=localStorage.getItem('roomTheme')||'dark'}catch(e){}return ROOMS.find(x=>x.k===k)||ROOMS[0]};
+function applyRoom(R){
+  if(!V||!V.scene)return;
+  V.scene.background=new THREE.Color(R.bg);V.wall.material.color.setHex(R.wall);V.skirt.material.color.setHex(R.sk);
+  V.flTex=V.flTex||{};const ft=V.flTex[R.k]||(V.flTex[R.k]=[laminateTex(30,false,R.fl),laminateTex(30,true,R.fl)]);
+  const fm=V.floor.material;if(fm.map!==ft[0]){fm.map=ft[0];fm.bumpMap=ft[1];fm.needsUpdate=true}
+  try{localStorage.setItem('roomTheme',R.k)}catch(e){}
+  if(V.roomBtn)V.roomBtn.querySelector('b').textContent=R.n;V.dirty=true;
+}
+function roomUI(){
+  if(!document.getElementById('roomCss')){const st=document.createElement('style');st.id='roomCss';st.textContent=`.roomb{position:absolute;left:10px;bottom:10px;z-index:2;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:7px 12px 7px 9px;background:rgba(17,19,21,.72);color:#fff;font:600 12px var(--body,system-ui);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}.roomb svg{width:16px;height:16px}.roomb i{font-style:normal;opacity:.7;font-weight:500}`;document.head.appendChild(st)}
+  const b=document.createElement('button');b.type='button';b.className='roomb';b.setAttribute('aria-label','Сменить комнату');
+  b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg><i>Комната:</i><b></b>';
+  b.addEventListener('pointerdown',e=>e.stopPropagation());
+  b.addEventListener('click',e=>{e.stopPropagation();const c=roomCur(),i=ROOMS.indexOf(c);applyRoom(ROOMS[(i+1)%ROOMS.length])});
+  V.el.appendChild(b);V.roomBtn=b;
 }
 function init(){
   const el=$('v3d');
@@ -2925,6 +2951,7 @@ function init(){
   blob.rotation.x=-Math.PI/2;blob.position.y=.0008;scene.add(blob);
   const lwall=new THREE.Mesh(new THREE.PlaneGeometry(30,8),wall.material);lwall.rotation.y=Math.PI/2;lwall.receiveShadow=true;scene.add(lwall);
   V={el,r,scene,cam,mod,dims,M,wall,lwall,skirt,key,blob,door:null,ang:0,target:0,dirty:true};
+  V.floor=floor;roomUI();applyRoom(roomCur());
   {const f=document.createElement('div');f.className='film';el.appendChild(f);V.film=f;
    const c=document.createElement('canvas');c.width=c.height=180;const g=c.getContext('2d'),d=g.createImageData(180,180);for(let i=0;i<d.data.length;i+=4){const v=128+(Math.random()-.5)*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=255}g.putImageData(d,0,0);
    try{f.style.setProperty('--grain',`url(${c.toDataURL()})`)}catch(e){}}
