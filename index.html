@@ -1234,22 +1234,23 @@ const LEDP={over:'Накладной',inset:'Врезной',corner:'Углов�
 const LEDK={2700:['2700K тёплый','#FFC58A'],3000:['3000K тёплый','#FFD6A0'],4000:['4000K нейтральный','#FFF0D8'],6000:['6000K холодный','#E6F0FF'],rgb:['RGB цветная','#D2A6FF']};
 const LEDC={btn:'Кнопка-выключатель в профиль',touch:'Сенсорный бесконтактный (взмах руки)',door:'Датчик открывания двери',remote:'Диммер с пультом',wifi:'Wi-Fi контроллер (телефон, голос)'};
 // где именно идёт лента внутри модуля: спереди — за петлями (планки петель не задевает), сзади — у задней стенки, по кругу — рамкой по проёму, под полками
-const LEDPOS={pen:[['front','Спереди, за петлями'],['back','Сзади'],['ring','По кругу'],['shelf','Под полками']],post:[['front','Спереди, за петлями'],['back','Сзади'],['ring','По кругу']],shelf:[['front','У переднего края'],['back','У задней стенки']]};
+const LEDPOS={pen:[['front','Ближе к лицу, за петлями'],['mid','В середине'],['back','Дальше, у задней стенки'],['ring','По кругу — П-образно'],['shelf','Под полками']],post:[['front','Ближе к лицу, за петлями'],['mid','В середине'],['back','Дальше, у задней стенки'],['ring','По кругу — П-образно']],shelf:[['front','Ближе к лицу'],['mid','В середине'],['back','Дальше, у задней стенки']]};
+const LEDDP=['front','mid','back'];   // глубина ленты: ближе к лицу / в середине / дальше; «по кругу» — П-образно (две стойки + верх, снизу нет) на выбранной глубине
 const LEDFZ=[84,72];   // спереди: 72–84 мм от лица корпуса, планки петель — 12–62 мм
-function ledAt(z){const o=ledS(),a=o.at[z]=o.at[z]||{};if(!Object.values(a).some(Boolean))a.front=true;return a}
+function ledAt(z){const o=ledS(),a=o.at[z]=o.at[z]||{};if(!LEDDP.some(k=>a[k])&&(a.ring||!a.shelf))a.front=true;return a}
 function ledS(){const o=P.led=(P.led&&typeof P.led==='object')?P.led:{};o.z=o.z||{};o.pf=o.pf||{};o.at=o.at||{};if(!LEDK[o.K])o.K=4000;if(![4.8,9.6,14.4].includes(+o.W))o.W=9.6;if(![12,24].includes(+o.V))o.V=24;if(!LEDC[o.ctl])o.ctl='touch';return o}
 const LEDON=z=>{const o=P.led;return !!(o&&o.z&&o.z[z])&&(z!=='isl'||islOn())&&(z!=='gola'||P.hType==='gola')&&(!['under','shelf','post','top'].includes(z)||P.up)};
 function ledSegs(){const o=ledS(),S=[],add=(z,len,n=1)=>{if(LEDON(z)&&len>60)for(let i=0;i<n;i++)S.push([z,Math.round(len)])};
   const up=[...rowLay(),...(P.left?sideLay():[])].filter(r=>r.k!=='pen').map(r=>r.w);if(P.corner)up.push(P.left?cornerSpan()-(P.UD+FT()+P.fill):CRW);
   const ns=P.UH>=900?2:1;{const aS=LEDON('shelf')?ledAt('shelf'):{},aP=LEDON('post')?ledAt('post'):{};up.forEach(w=>{const hz=w-2*t-40,vt=P.UH-2*t-40;
-    ['front','back'].forEach(k=>{if(aS[k])add('shelf',hz,ns)});
-    if(aP.ring){add('post',vt,2);add('post',hz,2)}else if(aP.front)add('post',vt,2);if(aP.back)add('post',vt,2)})}
+    LEDDP.forEach(k=>{if(aS[k])add('shelf',hz,ns)});
+    LEDDP.forEach(k=>{if(aP[k]){add('post',vt,2);if(aP.ring)add('post',hz,1)}})})}
   // под верхними и сверху: где корпуса стоят вплотную — одна лента и один профиль (фрезеровка) от начала до конца; разрыв — только у пенала
   const runs=[];{let c=P.corner?(P.left?cornerSpan()-(P.UD+FT()+P.fill):CRW):0;rowLay().forEach(r=>{if(r.k==='pen'){if(c)runs.push(c);c=0}else c+=r.w});if(c)runs.push(c)}
   if(P.left){let c=0;sideLay().forEach(r=>{if(r.k==='pen'){if(c)runs.push(c);c=0}else c+=r.w});if(c)runs.push(c)}
   runs.forEach(w=>{add('under',w);add('top',w)});   // во всю длину ряда
   if(LEDON('pen')){const a=ledAt('pen');penIds().filter(id=>!isFr(id)).forEach(id=>{const vt=asMod(id,penTop)-P.L-2*t,hz=iW(id)-2*t,nS=asMod(id,()=>penShelves().length);
-    if(a.ring){add('pen',vt,2);add('pen',hz,2)}else if(a.front)add('pen',vt,2);if(a.back)add('pen',vt,2);if(a.shelf)add('pen',hz,nS)})}
+    LEDDP.forEach(k=>{if(a[k]){add('pen',vt,2);if(a.ring)add('pen',hz,1)}});if(a.shelf)add('pen',hz,nS)})}
   [...rowLay(),...(P.left?sideLay():[])].filter(r=>['door','sink','cab8'].includes(r.k)).forEach(r=>add('inbase',r.w-2*t-40));if(P.corner)add('inbase',CRW-2*t-40);
   add('plinth',totW());if(P.left)add('plinth',P.WL);
   if(islOn()){add('isl',islW());add('isl',islW())}   // остров: спереди и сзади под цоколем
@@ -1291,7 +1292,7 @@ function renderLED(){const el=$('ledBody');if(!el)return;const o=ledS(),S=ledSeg
       (on&&LEDPOS[z]?'</div><div class="chips">'+LEDPOS[z].map(([k,v])=>`<button class="chip" data-lpos="${z}|${k}" aria-pressed="${!!ledAt(z)[k]}">${v}</button>`).join('')+'</div><div class="chips">':'')+(on&&z!=='gola'?Object.entries(LEDP).filter(([k])=>k!=='gola'&&!(k==='corner'&&!['under','top','plinth'].includes(z))).map(([k,v])=>`<button class="chip" data-lp="${z}|${k}" aria-pressed="${(o.pf[z]||d)===k}">${v}</button>`).join(''):'')+'</div></div>'}).join('');
   h+='<h4>Лента</h4>'+chipRow('Свет','data-lk',Object.entries(LEDK).map(([k,v])=>[k,v[0]]),String(o.K))+chipRow('Мощность','data-lw',[[4.8,'4,8 Вт/м'],[9.6,'9,6 Вт/м'],[14.4,'14,4 Вт/м']],+o.W)+chipRow('Напряжение','data-lv',[[12,'12 В'],[24,'24 В']],+o.V);
   h+='<h4>Включение</h4>'+chipRow('Кнопка / блок','data-lc',Object.entries(LEDC),o.ctl);
-  h+=`<p class="note">Профиль: накладной — на поверхность, врезной — в паз (фрезеровка), угловой 45° — под дном верхних у фасада. Блок питания считается по мощности с запасом 25%. Список — в «Деталях» и в «Материале» → «Прочее».</p>`;
+  h+=`<p class="note">Профиль: накладной — на поверхность, врезной — в паз (фрезеровка), угловой 45° — под дном верхних у фасада. Глубина ленты: ближе к лицу, в середине или дальше. «По кругу» — П-образно: две стойки и верх, снизу ленты нет. Блок питания считается по мощности с запасом 25%. Список — в «Деталях» и в «Материале» → «Прочее».</p>`;
   el.innerHTML='<div class="mf">'+h+'</div>'}
    // профиль L 57,5 / C 73,5, паз в боковине 27 мм
 const GC_UP=16;    // верхний фасад перекрывает C-профиль на 16 мм, нижний — на 27,5
@@ -1928,7 +1929,7 @@ function _renderHandleUI(){
   $('rowhSide').hidden=P.hPos==='hor';
 }
 $('ledBody').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const o=ledS(),d=b.dataset;
-  if(d.lz)o.z[d.lz]=!o.z[d.lz];else if(d.lpos){const[z,k]=d.lpos.split('|'),a=ledAt(z);a[k]=!a[k];if(k==='ring'&&a.ring)a.front=false;if(k==='front'&&a.front)a.ring=false;if(!Object.values(a).some(Boolean))a[k]=true}else if(d.lp){const[z,k]=d.lp.split('|');o.pf[z]=k}else if(d.lk)o.K=d.lk==='rgb'?'rgb':+d.lk;else if(d.lw)o.W=+d.lw;else if(d.lv)o.V=+d.lv;else if(d.lc)o.ctl=d.lc;else return;update()});
+  if(d.lz)o.z[d.lz]=!o.z[d.lz];else if(d.lpos){const[z,k]=d.lpos.split('|'),a=ledAt(z);a[k]=!a[k];if(LEDDP.includes(k)&&!LEDDP.some(x=>a[x])&&(a.ring||!a.shelf))a[k]=true}else if(d.lp){const[z,k]=d.lp.split('|');o.pf[z]=k}else if(d.lk)o.K=d.lk==='rgb'?'rgb':+d.lk;else if(d.lw)o.W=+d.lw;else if(d.lv)o.V=+d.lv;else if(d.lc)o.ctl=d.lc;else return;update()});
 $('hCols').addEventListener('click',e=>{const b=e.target.closest('[data-hc]');if(b){setK('hColor',b.dataset.hc);setK('hCat',null);renderHandleUI();update()}});
 $('hLens').addEventListener('click',e=>{const b=e.target.closest('[data-hl],[data-hpl]');if(!b)return;const Q=mergedFor(selMod);if(b.dataset.hl)setK('hType',(hFam(Q.hType)==='rail'?'r':'b')+b.dataset.hl);else setK('hLen',+b.dataset.hpl);setK('hCat',null);renderHandleUI();update()});
 $('hCatBox').addEventListener('click',e=>{const b=e.target.closest('[data-cpick]');if(!b)return;const f=hFam(mergedFor(selMod).hType);openCat('hdl',NOPULL.includes(f)?'tolk':'ruchki',{back:'hdl',kind:f,cats:['ruchki','tolk']})});
@@ -3264,9 +3265,8 @@ function buildPen(par,x0,W,o,id='pen'){
   if(!FR)pb(g,eL?-hw+24:-hw,0,D-40,eR?hw-24:hw,L-3,D-24,M.ldsp);   // цоколь спереди
   if(eL)pb(g,-hw+24,0,Z-3,-hw+40,L-3,D-40,M.ldsp);   // пенал с края: цоколь сбоку закрывает торец до стены, отступ 24 как спереди
   if(eR)pb(g,hw-40,0,Z-3,hw-24,L-3,D-40,M.ldsp);
-  if(LEDON('pen')&&!FR){const a=ledAt('pen'),Lm=V.M.led,fz=[D-LEDFZ[0],D-LEDFZ[1]],bz=[Z+20,Z+32],vert=z=>[-1,1].forEach(sg=>pb(g,sg>0?hw-t-5:-hw+t,L+t,z[0],sg>0?hw-t:-hw+t+5,PT-t,z[1],Lm,false));   // от дна до крыши — от края до края
-    if(a.front||a.ring)vert(fz);if(a.back)vert(bz);
-    if(a.ring){pb(g,-hw+t,PT-t-5,fz[0],hw-t,PT-t,fz[1],Lm,false);pb(g,-hw+t,L+t,fz[0],hw-t,L+t+5,fz[1],Lm,false)}   // рамкой по проёму, углы сходятся
+  if(LEDON('pen')&&!FR){const a=ledAt('pen'),Lm=V.M.led,fz=[D-LEDFZ[0],D-LEDFZ[1]],bz=[Z+20,Z+32],mc=Math.round((fz[0]+fz[1]+bz[0]+bz[1])/4),Zs={front:fz,mid:[mc-6,mc+6],back:bz},vert=z=>[-1,1].forEach(sg=>pb(g,sg>0?hw-t-5:-hw+t,L+t,z[0],sg>0?hw-t:-hw+t+5,PT-t,z[1],Lm,false));   // от дна до крыши — от края до края
+    LEDDP.forEach(k=>{if(!a[k])return;const z=Zs[k];vert(z);if(a.ring)pb(g,-hw+t,PT-t-5,z[0],hw-t,PT-t,z[1],Lm,false)});   // по кругу — П-образно: стойки + верх, снизу нет
     if(a.shelf)penShelves().forEach(q=>{const th=q.rm&&P.gls?GST:t;pb(g,-hw+t,q.y-th/2-5,D-36,hw-t,q.y-th/2,D-26,Lm,false)})}   // под каждой полкой у края
   const lg=[new THREE.CylinderGeometry(.016,.016,(L-14)*MM,20),new THREE.CylinderGeometry(.026,.028,.008,24)];
   if(!FR)[[-hw+60,Z+50],[hw-50,Z+50],[-hw+60,D-80],[hw-50,D-80]].forEach(([x,z])=>{const a=new THREE.Mesh(lg[0],M.leg);a.position.set(x*MM,(L-14)/2*MM+.008,z*MM);const b=new THREE.Mesh(lg[1],M.leg);b.position.set(x*MM,.004,z*MM);a.castShadow=b.castShadow=true;g.add(a,b)});
@@ -3323,10 +3323,9 @@ function buildUpper(par,x0,W,o){
   {const Lm=V.M.led,xa=kind==='corner'?hw-o.vis+20:-hw+20,zF=zw+ud;   // подсветка LED
     if(!o.ant&&LEDON('under')){pb(g,kind==='corner'?xa:-hw,ub-7,zF-34,hw,ub,zF-22,Lm,false);   // встык с соседом — лента сплошная
      const pl=new THREE.PointLight(Lm.color.getHex(),.55,1.1,2);pl.position.set(((xa+hw)/2)*MM,(ub-40)*MM,(zF-30)*MM);g.add(pl)}
-    if(!o.ant&&LEDON('shelf')){const a=ledAt('shelf'),th=P.gls?GST:t;uS.forEach(y=>{if(a.front)pb(g,-hw+t+20,y-th/2-5,zF-34,hw-t-20,y-th/2,zF-24,Lm,false);if(a.back)pb(g,-hw+t+20,y-th/2-5,zw+10,hw-t-20,y-th/2,zw+20,Lm,false)})}
-    if(!o.ant&&LEDON('post')){const a=ledAt('post'),fz=[zF-LEDFZ[0],zF-LEDFZ[1]],vert=z=>[-1,1].forEach(sg=>pb(g,sg>0?hw-t-5:-hw+t,ub+t+20,z[0],sg>0?hw-t:-hw+t+5,ub+uh-t-20,z[1],Lm,false));
-      if(a.front||a.ring)vert(fz);if(a.back)vert([zw+10,zw+22]);
-      if(a.ring){pb(g,-hw+t+20,ub+uh-t-5,fz[0],hw-t-20,ub+uh-t,fz[1],Lm,false);pb(g,-hw+t+20,ub+t,fz[0],hw-t-20,ub+t+5,fz[1],Lm,false)}}
+    if(!o.ant&&LEDON('shelf')){const a=ledAt('shelf'),th=P.gls?GST:t;const mc=Math.round((zF-29+zw+15)/2),Zs={front:[zF-34,zF-24],mid:[mc-5,mc+5],back:[zw+10,zw+20]};uS.forEach(y=>LEDDP.forEach(k=>{if(a[k])pb(g,-hw+t+20,y-th/2-5,Zs[k][0],hw-t-20,y-th/2,Zs[k][1],Lm,false)}))}
+    if(!o.ant&&LEDON('post')){const a=ledAt('post'),fz=[zF-LEDFZ[0],zF-LEDFZ[1]],bz=[zw+10,zw+22],mc=Math.round((fz[0]+fz[1]+bz[0]+bz[1])/4),Zs={front:fz,mid:[mc-6,mc+6],back:bz},vert=z=>[-1,1].forEach(sg=>pb(g,sg>0?hw-t-5:-hw+t,ub+t+20,z[0],sg>0?hw-t:-hw+t+5,ub+uh-t-20,z[1],Lm,false));
+      LEDDP.forEach(k=>{if(!a[k])return;const z=Zs[k];vert(z);if(a.ring)pb(g,-hw+t+20,ub+uh-t-5,z[0],hw-t-20,ub+uh-t,z[1],Lm,false)})}   // по кругу — П-образно, снизу нет
     if((o.ant||!P.ant)&&LEDON('top'))pb(g,-hw,ub+uh,zw+20,hw,ub+uh+5,zw+32,Lm,false)}
   const fh=uh-2*SGAP+(gola?20:0),y0=ub+SGAP-(gola?20:0),zf=zw+ud;
   let doors=[];   // [x петли, знак, ширина]
