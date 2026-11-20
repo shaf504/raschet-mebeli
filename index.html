@@ -2508,6 +2508,7 @@ function renderMat(){
   const qf=o=>o.u==='м'?fmt(o.q)+' м':Math.round(o.q)+' '+o.u;
   h+='<table class="mt mhw">'+hwS.map(o=>`<tr><td class="ic">${micon(o.k.split('|')[0])}</td><td>${o.n}<small>${o.sub}</small></td><td class="q">${qf(o)}</td></tr>`).join('')+'</table>';const hH=h;h='';
   txt.push('','Фурнитура:',...hwS.map(o=>`${o.n} (${o.sub}) — ${qf(o)}`));
+  const CTB=ctMatBlock(c);h+=CTB.h;txt.push(...CTB.txt);
   if(c.misc.length){h+='<table class="mt">'+c.misc.map(o=>`<tr><td>${o.n}<small>${o.sub}</small></td><td class="q">${o.q}</td></tr>`).join('')+'</table>';txt.push('','Прочее:',...c.misc.map(o=>`${o.n} (${o.sub}) — ${o.q}`))}
   const hM=h||'<p class="note">Ничего.</p>';h='';
   h+='<button class="mcopy" id="matCopy">Скопировать список материалов</button><button class="mcopy" id="detCopy" style="background:var(--bg);color:var(--ink)">Скопировать детали для распила</button><p class="note">Раскрой примерный: точную карту даст программа раскроя на производстве. Евровинты — по 2–4 на соединение, по глубине детали.</p>';
@@ -2520,6 +2521,7 @@ function renderMat(){
   hI+='<h4 class="mh2">Кромка</h4><div class="mcards">'+(ek.length?ek.map(v=>card('edge',micon('edge',EDC[v]),Math.ceil(c.edge[v]*1.1/1000)+' м','ПВХ '+efmt(v)+' мм','с запасом 10%')).join(''):'<p class="note">нет</p>')+'</div>';
   hI+=ledBlock(card);
   hI+='<h4 class="mh2">Фурнитура</h4><div class="mcards">'+[['sl','пар направляющих'],['hg','петель'],['lift','подъёмников'],['h|','ручек'],['conf','евровинтов'],['leg','ножек']].filter(([p])=>hwq(p)).map(([p,l])=>card('hw',micon(p.replace('|','')),Math.round(hwq(p)),l,'')).join('')+'</div>';
+  hI+=CTB.h;
   hI+=`<h4 class="mh2">Стоимость — цены Дизайн Сервис на ${DSDATE}</h4><div class="clist">${COST.map(costCard).join('')}</div><div class="mtot"><span>Итого материалы</span><b>${rub(total)}</b>${miss?`<small>без ${miss} поз. без цены</small>`:''}</div><div class="go"><button data-cbrowse="1">Каталог Дизайн Сервис — все товары</button></div>`;
   txt.push('',`Стоимость (цены designservis.ru на ${DSDATE}):`,...COST.map(o=>`${o.n}: ${o.x?(o.x.n)+(o.x.a?', арт. '+o.x.a:''):'нет в каталоге'} — ${o.q} ${o.u} × ${o.x?rub(o.x.p):'—'} = ${o.x&&o.x.p!=null?rub(o.x.p*o.q):'—'}`),`Итого: ${rub(total)}`);
   const TABS=[['sum','Итог'],['sheets','Листы'],['edge','Кромка'],['hw','Фурнитура'],['misc','Прочее']],tab=TABS.some(x=>x[0]===m.tab)?m.tab:'sum';
@@ -2540,6 +2542,7 @@ $('matBody').addEventListener('click',e=>{const m=matSet();
   const R0=MATSEL?calcMat().res[MATSEL.k]:null,grp=R0?R0.gl.find(q=>q.ids.includes(MATSEL.id)):null,ov=MATSEL?(m.ov[MATSEL.id]=m.ov[MATSEL.id]||{}):null,cur=grp,forG=f=>grp.ids.forEach(id=>{const o=m.ov[id]=m.ov[id]||{};f(o)});
   if(d.alg!==undefined){const k=b.closest('[data-blk]').dataset.blk;m.alg=m.alg||{};m.alg[k]=+d.alg;save();renderMat();return}
   if(d.shf){m[d.shf]=d.v;if(m.fo)delete m.fo[d.shf];if(m.lay)delete m.lay[d.shf];if(d.v==='own'&&!m['own_'+d.shf])m['own_'+d.shf]=SHF[d.shf][0].join('x')}
+  else if(d.mctl||d.mwpl){if(d.mctl)m.ctL=+d.mctl;else m.wpL=+d.mwpl;save();update();renderMat();return}
   else if(d.mgr!==undefined)m.grain=d.mgr==='true';
   else if(d.mec)m.ec=+d.mec;else if(d.mef!==undefined)m.ef=+d.mef;
   else if(d.cpick2==='set'||d.cpick2==='hdl'){openFly(d.cpick2);return}
@@ -2563,15 +2566,29 @@ $('catF').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)
 $('catQ').addEventListener('input',e=>{CATP.q=e.target.value;renderCat()});
 $('catList').addEventListener('click',e=>{const b=e.target.closest('[data-cu]');if(b&&CATP.target)pickCat(b.dataset.cu)});
 $('catBack').addEventListener('click',()=>{const b=CATP.back;openFly(b);if(b==='mat')renderMat()});
+// закупка столешницы и стеновой панели: продаются только по 3 или 4 м; часть длиннее листа — ещё лист
+const CTBUY=()=>P.mat&&+P.mat.ctL===4000?4000:3000,WPBUY=()=>P.mat&&+P.mat.wpL===4000?4000:3000;
+function buyN(pcs,L,kerf){let n=0;const rest=[];pcs.forEach(l=>{l=Math.round(l);while(l>L){n++;l-=L}if(l>0)rest.push(l)});const bins=[];rest.sort((a,b)=>b-a).forEach(l=>{const f=bins.findIndex(x=>x+kerf+l<=L);if(f>=0)bins[f]+=l+kerf;else bins.push(l)});return n+bins.length}
+function ctMatBlock(c){if(totW()<=0)return{h:'',txt:[]};const cn=ctNeed(),wn=wpNeed(),cx=dsGet('ct',P.ctCat),wx=dsGet('wp',P.wpCat),mm=v=>String(Math.round(v/100)/10).replace('.',',')+' м';
+  const rel=c.misc.filter(o=>/столешниц|стенов/i.test(o.n)&&!/^Столешница(, часть \d+)?$/i.test(o.n)&&!/^Лист стеновой панели/i.test(o.n)),rows=[];
+  if(cn.n)rows.push(['Столешница'+(cx?' «'+cx.d+'»':''),`по ${cn.L/1000} м · части: ${cn.pcs.map(v=>Math.round(v)).join(' + ')} мм`,cn.n+' шт']);
+  if(wn.n)rows.push(['Стеновая панель'+(wx?' «'+wx.d+'»':''),`по ${wn.L/1000} м · части: ${wn.pcs.map(v=>Math.round(v)).join(' + ')} мм`,wn.n+' шт']);
+  rel.forEach(o=>{const L=+String(o.sub).split(' · ').pop();rows.push([o.n,o.sub,/^плинтус/i.test(o.n)&&L?mm(L*o.q):o.q+' шт'])});
+  if(!rows.length)return{h:'',txt:[]};
+  const cd=(num,lab,sub)=>`<button class="mcard" data-tab="misc"><b>${num}</b><span>${lab}</span><small>${sub}</small></button>`;
+  let h='<h4 class="mh2">Столешница и стеновая панель</h4>'+chipRow('Столешница продаётся по','data-mctl',[['3000','3 м'],['4000','4 м']],String(CTBUY()))+(P.wp?chipRow('Стеновая панель продаётся по','data-mwpl',[['3000','3 м'],['4000','4 м']],String(WPBUY())):'');
+  h+='<div class="mcards">'+(cn.n?cd(cn.n+' шт','столешница',`по ${cn.L/1000} м`):'')+(wn.n?cd(wn.n+' шт','стеновая панель',`по ${wn.L/1000} м`):'')+'</div>';
+  h+='<table class="mt">'+rows.map(r=>`<tr><td>${r[0]}<small>${r[1]}</small></td><td class="q">${r[2]}</td></tr>`).join('')+'</table>';
+  return{h,txt:['','Столешница и стеновая панель:',...rows.map(r=>`${r[0]} (${r[1]}) — ${r[2]}`)]}}
 // «Столешница»: выбор из каталога, сколько штук купить, стеновая панель
-function ctNeed(){const pcs=totW()>0?ctPieces().map(([a,b])=>b-a):[];if(islOn()){const c=dsGet('ct',P.ctCat),cd=c&&c.f?Math.min(...c.f):600,ns=Math.ceil(islCtD()/cd),Lc=islCtL();for(let i=0;i<ns;i++)(Lc>CTMAX?[Math.ceil(Lc/2),Math.floor(Lc/2)]:[Lc]).forEach(v=>pcs.push(v))}if(P.left)sideCuts().ct.forEach(([a,b])=>pcs.push(Math.round(b-a)));const L=CTMAX;const bins=[];[...pcs].sort((a,b)=>b-a).forEach(l=>{const f=bins.findIndex(x=>x+l+4<=L);if(f>=0)bins[f]+=l+4;else bins.push(l)});return{pcs,n:bins.length}}
-function wpNeed(){if(!P.wp||totW()<=0)return{pcs:[],n:0};const pcs=ctPieces().map(([a,b])=>b-a);if(P.left)sideCuts().wp.forEach(([a,b])=>pcs.push(Math.round(b-a)));const bins=[];[...pcs].sort((a,b)=>b-a).forEach(l=>{const f=bins.findIndex(x=>x+l<=WPL);if(f>=0)bins[f]+=l;else bins.push(l)});return{pcs,n:bins.length}}
+function ctNeed(){const pcs=totW()>0?ctPieces().map(([a,b])=>b-a):[];if(islOn()){const c=dsGet('ct',P.ctCat),cd=c&&c.f?Math.min(...c.f):600,ns=Math.ceil(islCtD()/cd),Lc=islCtL();for(let i=0;i<ns;i++)(Lc>CTMAX?[Math.ceil(Lc/2),Math.floor(Lc/2)]:[Lc]).forEach(v=>pcs.push(v))}if(P.left)sideCuts().ct.forEach(([a,b])=>pcs.push(Math.round(b-a)));return{pcs,n:buyN(pcs,CTBUY(),4),L:CTBUY()}}
+function wpNeed(){if(!P.wp||totW()<=0)return{pcs:[],n:0};const pcs=ctPieces().map(([a,b])=>b-a);if(P.left)sideCuts().wp.forEach(([a,b])=>pcs.push(Math.round(b-a)));return{pcs,n:buyN(pcs,WPBUY(),0),L:WPBUY()}}
 function renderCt(){const el=$('ctBody');if(!el)return;const c=dsGet('ct',P.ctCat),w=dsGet('wp',P.wpCat),cn=ctNeed(),wn=wpNeed(),dct=Dct();
   const card=(x,tgt,lab)=>x?`<div class="ccard"><i style="${catImg(x)}"></i><span><b>${x.d}</b><small>${[x.t+' мм',x.f?Math.min(...x.f)+'×'+Math.max(...x.f):'',x.m,x.a?'арт. '+x.a:'',rub(x.p)+'/шт'].filter(Boolean).join(' · ')}${x.s?'':' · нет в наличии'}</small></span><button data-ctp="${tgt}">Сменить</button></div>`:`<div class="go"><button data-ctp="${tgt}">${lab}</button></div>`;
   let h='<h4 class="mh2">Столешница</h4>'+card(c,'ct','Выбрать столешницу из каталога Дизайн Сервис');
   if(!c)h+=`<p class="note">Сейчас: дуб, ${P.T} мм, части до ${CTMAX} мм. Толщина — в «Размер».</p>`;
   h+=`<table class="mt"><tr><td>Части по кухне<small>${cn.pcs.map(v=>Math.round(v)).join(' + ')||'—'} мм, стык — на модулях, не над мойкой и варочной</small></td><td class="q">${cn.pcs.length}</td></tr>
-    <tr><td>Купить столешниц${c?` по ${CTMAX} мм`:''}<small>части раскладываются по длине столешницы</small></td><td class="q">${cn.n} шт</td></tr>
+    <tr><td>Купить столешниц по ${cn.L/1000} м<small>части раскладываются по длине столешницы</small></td><td class="q">${cn.n} шт</td></tr>
     ${c&&c.p!=null?`<tr><td>Стоимость<small>${cn.n} × ${rub(c.p)}</small></td><td class="q">${rub(cn.n*c.p)}</td></tr>`:''}
     <tr><td>Глубина нужна<small>свес сзади ${P.B} + корпус ${P.D} + фасад ${FT()} + свес 24</small></td><td class="q">${dct} мм</td></tr></table>`;
   if(c&&c.f&&Math.min(...c.f)<dct)h+=`<p class="note" style="color:var(--err)">Столешница ${Math.min(...c.f)} мм уже корпуса с фасадом (${P.D+FT()+24} мм с передним свесом) — уменьшите глубину корпуса или возьмите столешницу шире.</p>`;
@@ -2583,7 +2600,7 @@ function renderCt(){const el=$('ctBody');if(!el)return;const c=dsGet('ct',P.ctCa
     +`<p class="note">${P.left?(P.ctJoin==='euro'?'Еврозапил — фрезеровка стыка по профилю кромки, шов почти не виден, 3 стяжки. ':'Т-планка в углу — алюминий, 2 стяжки. '):''}Стыков по длине: ${nj}${nj?(P.ctLine==='butt'?' — встык: торцы фрезеруются, шов на герметике':' — алюминиевая планка + 2 стяжки'):''}. Открытых торцов: ${ne}.</p>`}
   h+='<h4 class="mh2">Стеновая панель</h4>'+chipRow('Над столешницей','data-ctwp',[[true,'Есть'],[false,'Нет']],!!P.wp);
   if(P.wp){h+=card(w,'wp','Выбрать стеновую панель из каталога');
-    h+=`<table class="mt"><tr><td>Части<small>${wn.pcs.map(v=>Math.round(v)).join(' + ')||'—'} мм, высота ${WPH}</small></td><td class="q">${wn.pcs.length}</td></tr><tr><td>Купить панелей${w?` по ${WPL} мм`:''}</td><td class="q">${wn.n} шт</td></tr>${w&&w.p!=null?`<tr><td>Стоимость<small>${wn.n} × ${rub(w.p)}</small></td><td class="q">${rub(wn.n*w.p)}</td></tr>`:''}</table>`;
+    h+=`<table class="mt"><tr><td>Части<small>${wn.pcs.map(v=>Math.round(v)).join(' + ')||'—'} мм, высота ${WPH}</small></td><td class="q">${wn.pcs.length}</td></tr><tr><td>Купить панелей по ${wn.L/1000} м</td><td class="q">${wn.n} шт</td></tr>${w&&w.p!=null?`<tr><td>Стоимость<small>${wn.n} × ${rub(w.p)}</small></td><td class="q">${rub(wn.n*w.p)}</td></tr>`:''}</table>`;
     if(c&&!w){const same=(DS.wp||[]).find(x=>x.d===c.d&&x.m===c.m)||(DS.wp||[]).find(x=>normD(x.d)===normD(c.d));if(same)h+=`<div class="go"><button data-ctsame="${same.u}">Панель в тон столешнице: ${same.d} (${same.m})</button></div>`}}
   el.innerHTML=h;$('sumCt').textContent=(c?c.d+' · '+c.t+' мм':'дуб · '+P.T+' мм')+' · '+cn.n+' шт'}
 $('ctBody').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
@@ -2773,7 +2790,7 @@ function renderInfo(){renderLED();
     const bins=[];[...all].sort((a,b)=>b-a).forEach(l=>{const f=bins.find(x=>x+l<=WPL);if(f!==undefined)bins[bins.indexOf(f)]+=l;else bins.push(l)});
     pc.forEach((l,k)=>parts.push([pc.length>1?`Стеновая панель, часть ${k+1}`:'Стеновая панель',`${WPT} мм, над столешницей`,`${l} × ${WPH}`,1]));
     SW.forEach((l,k)=>parts.push(['Стеновая панель: '+sideName().toLowerCase()+(SW.length>1?', часть '+(k+1):''),`${WPT} мм`,`${l} × ${WPH}`,1]));
-    parts.push(['Лист стеновой панели',(dsGet('wp',P.wpCat)?`«${dsGet('wp',P.wpCat).d}», арт. ${dsGet('wp',P.wpCat).a}, `:'')+`${WPL} × ${WPH} × ${WPT}, хватит на все части`,'',bins.length]);
+    parts.push(['Лист стеновой панели',(dsGet('wp',P.wpCat)?`«${dsGet('wp',P.wpCat).d}», арт. ${dsGet('wp',P.wpCat).a}, `:'')+`${WPBUY()} × ${WPH} × ${WPT}, хватит на все части`,'',wpNeed().n]);
     if(nj)parts.push(['Планка соединительная для стеновой панели','алюминий, 4 мм',`${WPH}`,nj]);
     const SCW=sideCuts().wp,cornerWp=P.left&&SCW.some(x=>x[1]>=sideCuts().xe-1);
     if(cornerWp)parts.push(['Планка угловая для стеновой панели','алюминий, внутренний угол, 4 мм',`${WPH}`,1]);
