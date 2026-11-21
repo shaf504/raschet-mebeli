@@ -36,14 +36,24 @@
       min-height: 0;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-rows: minmax(0, 1fr);
       gap: 8px;
       padding: 8px;
     }
+    main.calculator-open { grid-template-columns: minmax(0, 1fr) auto min(248px, 32vw); }
     .sheet {
-      position: relative;
+      display: grid;
+      place-items: center;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 12px;
+      background: #eef1f4;
+    }
+    .paper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
       background: #fff;
     }
     canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -87,18 +97,40 @@
     .rail button:disabled { opacity: .45; cursor: default; }
     .rail svg { width: 23px; height: 23px; }
     .rail hr { width: 70%; margin: 4px auto; border: 0; border-top: 1px solid var(--line); }
-    dialog {
-      width: min(320px, calc(100% - 24px));
-      padding: 16px;
+    .length {
+      display: grid;
+      gap: 3px;
+      width: 78px;
+      padding: 4px 3px;
+      color: #525d6a;
+      font-size: 11px;
+      text-align: center;
+    }
+    .length input {
+      width: 100%;
+      min-width: 0;
+      padding: 5px 2px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      color: inherit;
+      font: inherit;
+      text-align: center;
+    }
+    .length input[aria-invalid="true"] { border-color: #b12d38; }
+    .calculator {
+      align-self: start;
+      min-width: 0;
+      max-height: 100%;
+      overflow-y: auto;
+      padding: 10px;
       border: 1px solid var(--line);
       border-radius: 14px;
       color: inherit;
       background: #fff;
-      box-shadow: 0 12px 28px #242c3626;
+      box-shadow: 0 1px 3px #242c3610;
     }
-    dialog::backdrop { background: #242c3660; }
     .calculator-head { display: flex; justify-content: space-between; align-items: center; }
-    .calculator-head h2 { margin: 0; font-size: 17px; }
+    .calculator-head h2 { margin: 0; font-size: 14px; }
     #calculation {
       width: 100%;
       margin-top: 8px;
@@ -112,9 +144,9 @@
     }
     #calc-status { min-height: 18px; margin: 4px 0; color: #a32b34; font-size: 12px; }
     .keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-    dialog button {
-      min-width: 36px;
-      min-height: 38px;
+    .calculator button {
+      min-width: 0;
+      min-height: 34px;
       border: 1px solid var(--line);
       border-radius: 7px;
       background: #f2f3f5;
@@ -122,13 +154,34 @@
       font: 16px system-ui, sans-serif;
       cursor: pointer;
     }
-    dialog button:hover { background: #e6ebf3; }
+    .calculator-head button { width: 30px; }
+    .calculator button:hover { background: #e6ebf3; }
     .keys [data-key="="] { background: var(--accent); color: #fff; }
     @media (max-width: 520px) {
       header { padding: 8px; }
       main { gap: 4px; padding: 4px; }
       .rail { padding: 3px; }
-      .rail button { width: 66px; }
+      .rail button, .length { width: 66px; }
+    }
+    @media (max-width: 580px) and (orientation: portrait) {
+      main.calculator-open {
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-rows: minmax(0, 1fr) minmax(0, auto);
+      }
+      .calculator {
+        grid-column: 1 / -1;
+        justify-self: end;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(144px, 1.2fr);
+        grid-template-rows: auto auto minmax(0, 1fr);
+        align-items: start;
+        gap: 4px 8px;
+        width: min(360px, 100%);
+        max-height: 42dvh;
+      }
+      .calculator-head, #calculation, #calc-status { grid-column: 1; }
+      .keys { grid-column: 2; grid-row: 1 / span 3; }
+      .calculator button { min-height: 30px; }
     }
   </style>
 </head>
@@ -138,9 +191,11 @@
     <p id="hint">Рисуйте стилусом или мышью.</p>
   </header>
   <main>
-    <div class="sheet">
-      <canvas id="art" aria-hidden="true"></canvas>
-      <canvas id="input" aria-label="Поле для рисования" aria-describedby="hint">Поле для рисования</canvas>
+    <div class="sheet" id="sheet">
+      <div class="paper" id="paper">
+        <canvas id="art" aria-hidden="true"></canvas>
+        <canvas id="input" aria-label="Поле для рисования" aria-describedby="hint">Поле для рисования</canvas>
+      </div>
     </div>
     <nav class="rail" aria-label="Инструменты рисования">
       <button id="free" type="button" aria-pressed="true">
@@ -151,10 +206,21 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7zM3 7l9 5 9-5M12 12v10"/></svg>
         <span>Чертёж</span>
       </button>
+      <button id="dash" type="button" aria-pressed="false" title="Штриховая линия для внутренних упоров">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="m3 18 4-3m3-2 4-3m3-2 4-3"/></svg>
+        <span>Штриховая</span>
+      </button>
+      <button id="dimension" type="button" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5v14M21 5v14M3 12h18M7 9l-4 3 4 3m10-6 4 3-4 3"/></svg>
+        <span>Размер</span>
+      </button>
       <button id="axes" type="button" aria-pressed="true" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21V3m-3 3 3-3 3 3M3 8l18 10m-5 1 5-1-1-5M3 18 21 8M4 13l-1 5 5 1"/></svg>
         <span>По осям</span>
       </button>
+      <label class="length" id="length-control" hidden>Длина, мм
+        <input id="line-length" type="text" inputmode="decimal" placeholder="Авто" maxlength="10" autocomplete="off">
+      </label>
       <hr>
       <button id="erase" type="button" aria-pressed="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 15 13 5a2 2 0 0 1 3 0l4 4a2 2 0 0 1 0 3l-7 7H7zM8 10l8 8m-3 1h8"/></svg>
@@ -164,59 +230,68 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5-5 5 5 5M3 10h12a5 5 0 0 1 0 10h-2"/></svg>
         <span>Отменить</span>
       </button>
-      <button id="open-calculator" type="button" aria-haspopup="dialog">
+      <button id="open-calculator" type="button" aria-expanded="false" aria-controls="calculator">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 7h8m-8 5h1m3 0h1m3 0h.1M8 16h1m3 0h1m3 0h.1M8 19h1m3 0h1m3 0h.1"/></svg>
         <span>Калькулятор</span>
       </button>
     </nav>
+    <aside class="calculator" id="calculator" aria-labelledby="calculator-title" hidden>
+      <div class="calculator-head">
+        <h2 id="calculator-title">Калькулятор</h2>
+        <button id="close-calculator" type="button" aria-label="Закрыть калькулятор">×</button>
+      </div>
+      <input id="calculation" aria-label="Выражение или результат" inputmode="none" autocomplete="off" spellcheck="false" maxlength="160" placeholder="0">
+      <p id="calc-status" role="status"></p>
+      <div class="keys" aria-label="Клавиши калькулятора">
+        <button type="button" data-key="clear" aria-label="Очистить">C</button>
+        <button type="button" data-key="(">(</button>
+        <button type="button" data-key=")">)</button>
+        <button type="button" data-key="delete" aria-label="Стереть символ">⌫</button>
+        <button type="button" data-key="7">7</button>
+        <button type="button" data-key="8">8</button>
+        <button type="button" data-key="9">9</button>
+        <button type="button" data-key="÷">÷</button>
+        <button type="button" data-key="4">4</button>
+        <button type="button" data-key="5">5</button>
+        <button type="button" data-key="6">6</button>
+        <button type="button" data-key="×">×</button>
+        <button type="button" data-key="1">1</button>
+        <button type="button" data-key="2">2</button>
+        <button type="button" data-key="3">3</button>
+        <button type="button" data-key="−">−</button>
+        <button type="button" data-key="0">0</button>
+        <button type="button" data-key=",">,</button>
+        <button type="button" data-key="=">=</button>
+        <button type="button" data-key="+">+</button>
+      </div>
+    </aside>
   </main>
-  <dialog id="calculator" aria-labelledby="calculator-title">
-    <div class="calculator-head">
-      <h2 id="calculator-title">Калькулятор</h2>
-      <form method="dialog"><button type="submit" aria-label="Закрыть калькулятор">×</button></form>
-    </div>
-    <input id="calculation" aria-label="Выражение или результат" inputmode="none" autocomplete="off" spellcheck="false" maxlength="160" placeholder="0">
-    <p id="calc-status" role="status"></p>
-    <div class="keys" aria-label="Клавиши калькулятора">
-      <button type="button" data-key="clear" aria-label="Очистить">C</button>
-      <button type="button" data-key="(">(</button>
-      <button type="button" data-key=")">)</button>
-      <button type="button" data-key="delete" aria-label="Стереть символ">⌫</button>
-      <button type="button" data-key="7">7</button>
-      <button type="button" data-key="8">8</button>
-      <button type="button" data-key="9">9</button>
-      <button type="button" data-key="÷">÷</button>
-      <button type="button" data-key="4">4</button>
-      <button type="button" data-key="5">5</button>
-      <button type="button" data-key="6">6</button>
-      <button type="button" data-key="×">×</button>
-      <button type="button" data-key="1">1</button>
-      <button type="button" data-key="2">2</button>
-      <button type="button" data-key="3">3</button>
-      <button type="button" data-key="−">−</button>
-      <button type="button" data-key="0">0</button>
-      <button type="button" data-key=",">,</button>
-      <button type="button" data-key="=">=</button>
-      <button type="button" data-key="+">+</button>
-    </div>
-  </dialog>
   <script>
     const art = document.getElementById('art');
     const input = document.getElementById('input');
+    const sheet = document.getElementById('sheet');
+    const paper = document.getElementById('paper');
     const ink = art.getContext('2d');
     const preview = input.getContext('2d');
     const freeButton = document.getElementById('free');
     const draftButton = document.getElementById('draft');
+    const dashButton = document.getElementById('dash');
+    const dimensionButton = document.getElementById('dimension');
     const axesButton = document.getElementById('axes');
+    const lengthControl = document.getElementById('length-control');
+    const lengthInput = document.getElementById('line-length');
     const eraseButton = document.getElementById('erase');
     const undoButton = document.getElementById('undo');
     const hint = document.getElementById('hint');
     const calculator = document.getElementById('calculator');
+    const calculatorButton = document.getElementById('open-calculator');
     const calculation = document.getElementById('calculation');
     const calcStatus = document.getElementById('calc-status');
     const blue = '#1d4f91';
     const inkColor = '#242c36';
     const step = 24;
+    const pixelsPerMillimeter = step / 100;
+    const millimeters = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 2, useGrouping: false });
     const cos30 = Math.sqrt(3) / 2;
     const column = step * cos30;
     const snapRadius = 12;
@@ -229,6 +304,7 @@
     let lockAxes = true;
     let erasing = false;
     let width, height;
+    let zoom = 1;
     let gesture = null;
     let anchor = null;
     let hover = null;
@@ -249,12 +325,15 @@
 
     function markAt(point) {
       let bestIndex = -1;
-      let bestGap = snapRadius;
+      let bestGap = snapRadius / zoom;
       for (let i = marks.length - 1; i >= 0; i--) {
         const mark = marks[i];
         let gap;
         if (mark.kind === 'line') {
           gap = distance(point, footOnSegment(point, mark));
+        } else if (mark.kind === 'dimension') {
+          const { start, end } = dimensionLayout(mark);
+          gap = distance(point, footOnSegment(point, { start, end }));
         } else {
           gap = distance(point, mark.start);
           for (let j = 1; j < mark.points.length; j++) {
@@ -270,6 +349,32 @@
       return bestIndex;
     }
 
+    function joinedLine(line) {
+      const origin = line.start;
+      let low = 0;
+      let high = distance(line.start, line.end);
+      const direction = along({ x: 0, y: 0 }, offset(line.end, origin), 1 / high);
+      const joined = new Set();
+      let expanded;
+      do {
+        expanded = false;
+        for (const [index, other] of marks.entries()) {
+          if (joined.has(index) || other.kind !== 'line' || Boolean(other.dashed) !== line.dashed) continue;
+          const start = offset(other.start, origin);
+          const end = offset(other.end, origin);
+          if (Math.abs(cross(start, direction)) > epsilon || Math.abs(cross(end, direction)) > epsilon) continue;
+          const from = Math.min(dot(start, direction), dot(end, direction));
+          const to = Math.max(dot(start, direction), dot(end, direction));
+          if (from > high + epsilon || to < low - epsilon) continue;
+          expanded ||= from < low - epsilon || to > high + epsilon;
+          low = Math.min(low, from);
+          high = Math.max(high, to);
+          joined.add(index);
+        }
+      } while (expanded);
+      return { mark: { ...line, start: along(origin, direction, low), end: along(origin, direction, high) }, joined };
+    }
+
     function crossing(start, vector, segment, bounded = false) {
       const other = offset(segment.end, segment.start);
       const denominator = cross(vector, other);
@@ -281,7 +386,7 @@
       return along(start, vector, t);
     }
 
-    function nearest(point, candidates, radius = snapRadius) {
+    function nearest(point, candidates, radius = snapRadius / zoom) {
       let best = null;
       for (const candidate of candidates) {
         const gap = distance(point, candidate);
@@ -315,7 +420,7 @@
     function lockGestureAxis(point) {
       if (!lockAxes || gesture.axis) return;
       const origin = gesture.second ? anchor : gesture.down;
-      if (distance(point, origin) >= axisDragThreshold) gesture.axis = draftAxis(point);
+      if (distance(point, origin) >= axisDragThreshold / zoom) gesture.axis = draftAxis(point);
     }
 
     function snap(point, start, direction = start && lockAxes ? bestAxis(offset(point, start)) : null) {
@@ -329,7 +434,7 @@
       for (const mark of marks) {
         if (mark.kind !== 'line') continue;
         const foot = footOnSegment(point, mark);
-        if (distance(point, foot) > snapRadius) continue;
+        if (distance(point, foot) > snapRadius / zoom) continue;
         nearby.push(mark);
         nodes.push(...[mark.start, mark.end].filter(onAxis));
         const target = direction ? crossing(start, direction, mark) : foot;
@@ -353,6 +458,26 @@
       return { point: lockAxes || distance(point, grid) <= 7 ? grid : point };
     }
 
+    function specifiedLength() {
+      const text = lengthInput.value.trim();
+      if (!text || mode === 'dimension') return undefined;
+      const length = Number(text.replace(',', '.'));
+      return /^(?:\d+(?:[.,]\d*)?|[.,]\d+)$/.test(text) && length > 0 ? length : null;
+    }
+
+    function draftEnd(point) {
+      const direction = draftAxis(point);
+      const length = specifiedLength();
+      if (anchor && length === null) return { point: anchor };
+      if (!anchor || length === undefined) return snap(point, anchor, direction);
+      const delta = offset(point, anchor);
+      const gap = distance(point, anchor);
+      if (gap < epsilon) return { point: anchor };
+      const normal = direction || along({ x: 0, y: 0 }, delta, 1 / gap);
+      const sign = dot(delta, normal) < 0 ? -1 : 1;
+      return { point: along(anchor, normal, length * pixelsPerMillimeter * sign) };
+    }
+
     function drawLine(context, start, end) {
       context.beginPath();
       context.moveTo(start.x, start.y);
@@ -364,6 +489,52 @@
       context.beginPath();
       context.arc(point.x, point.y, radius, 0, Math.PI * 2);
       context.fill();
+    }
+
+    function dimensionLayout(mark) {
+      const length = distance(mark.start, mark.end);
+      const unit = along({ x: 0, y: 0 }, offset(mark.end, mark.start), 1 / length);
+      const reverse = unit.x < -epsilon || (Math.abs(unit.x) <= epsilon && unit.y < 0);
+      const direction = reverse ? { x: -unit.x, y: -unit.y } : unit;
+      const normal = { x: direction.y, y: -direction.x };
+      const from = reverse ? mark.end : mark.start;
+      const to = reverse ? mark.start : mark.end;
+      return { from, to, start: along(from, normal, 24), end: along(to, normal, 24), direction, normal, length };
+    }
+
+    function drawDimension(context, mark, color) {
+      const { from, to, start, end, direction, normal, length } = dimensionLayout(mark);
+      const label = `${millimeters.format(length / pixelsPerMillimeter)} мм`;
+      const arrow = Math.min(8, length / 3);
+      context.save();
+      context.lineWidth = 1;
+      context.strokeStyle = color;
+      drawLine(context, along(from, normal, 3), along(start, normal, 5));
+      drawLine(context, along(to, normal, 3), along(end, normal, 5));
+      drawLine(context, start, end);
+      for (const [tip, side] of [[start, 1], [end, -1]]) {
+        const base = along(tip, direction, arrow * side);
+        const a = along(base, normal, arrow / 3);
+        const b = along(base, normal, -arrow / 3);
+        context.beginPath();
+        context.moveTo(a.x, a.y);
+        context.lineTo(tip.x, tip.y);
+        context.lineTo(b.x, b.y);
+        context.stroke();
+      }
+      context.font = '600 12px system-ui, sans-serif';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      const labelWidth = context.measureText(label).width + 6;
+      const center = along(start, direction, length / 2);
+      const labelCenter = labelWidth + arrow * 2 < length ? center : along(center, normal, 12);
+      context.translate(labelCenter.x, labelCenter.y);
+      context.rotate(Math.atan2(direction.y, direction.x));
+      context.fillStyle = '#fff';
+      context.fillRect(-labelWidth / 2, -8, labelWidth, 16);
+      context.fillStyle = color;
+      context.fillText(label, 0, 0);
+      context.restore();
     }
 
     function drawGrid() {
@@ -388,7 +559,11 @@
       context.lineWidth = lineWidth;
       context.strokeStyle = context.fillStyle = color;
       if (mark.kind === 'line') {
+        if (mark.dashed) context.setLineDash([8, 5]);
         drawLine(context, mark.start, mark.end);
+        if (mark.dashed) context.setLineDash([]);
+      } else if (mark.kind === 'dimension') {
+        drawDimension(context, mark, color === inkColor ? blue : color);
       } else {
         drawDot(context, mark.start, lineWidth / 2);
         context.stroke(mark.path);
@@ -397,7 +572,7 @@
 
     function paintSheet() {
       ink.clearRect(0, 0, width, height);
-      if (mode === 'draft') drawGrid();
+      if (mode !== 'free') drawGrid();
       for (const mark of marks) drawMark(ink, mark);
     }
 
@@ -411,7 +586,7 @@
         return;
       }
       if (gesture?.mark) drawMark(preview, gesture.mark);
-      if (mode !== 'draft') return;
+      if (mode === 'free') return;
       if (gesture?.axis) {
         const extent = Math.hypot(width, height);
         preview.strokeStyle = '#86a8d2';
@@ -425,8 +600,11 @@
       if (anchor) drawDot(preview, anchor, 3.5);
       if (!hover) return;
       if (lockAxes && gesture && !gesture.second && !gesture.axis) return;
-      const target = snap(hover, anchor, draftAxis(hover));
-      if (anchor) drawLine(preview, anchor, target.point);
+      const target = draftEnd(hover);
+      if (anchor && distance(anchor, target.point) >= epsilon) {
+        if (mode === 'dimension') drawDimension(preview, { start: anchor, end: target.point }, blue);
+        else drawMark(preview, { kind: 'line', start: anchor, end: target.point, dashed: mode === 'dash' }, blue);
+      }
       if (target.feature) {
         drawDot(preview, target.point, 4);
       } else {
@@ -437,8 +615,17 @@
     }
 
     function resize() {
-      ({ width, height } = input.getBoundingClientRect());
-      const scale = window.devicePixelRatio || 1;
+      const viewWidth = sheet.clientWidth;
+      const viewHeight = sheet.clientHeight;
+      if (!viewWidth || !viewHeight) return;
+      if (!width || (calculator.hidden && viewWidth >= width && viewHeight >= height)) {
+        width = viewWidth;
+        height = viewHeight;
+      }
+      zoom = Math.min(viewWidth / width, viewHeight / height);
+      paper.style.width = `${width * zoom}px`;
+      paper.style.height = `${height * zoom}px`;
+      const scale = (window.devicePixelRatio || 1) * zoom;
       for (const context of [ink, preview]) {
         context.canvas.width = Math.round(width * scale);
         context.canvas.height = Math.round(height * scale);
@@ -450,7 +637,7 @@
     }
 
     function fromPointer(event, bounds = input.getBoundingClientRect()) {
-      return { x: event.clientX - bounds.left, y: event.clientY - bounds.top };
+      return { x: (event.clientX - bounds.left) / zoom, y: (event.clientY - bounds.top) / zoom };
     }
 
     function extendFreehand(event) {
@@ -478,14 +665,19 @@
     }
 
     function updateTools() {
-      const draft = mode === 'draft';
-      freeButton.setAttribute('aria-pressed', !draft);
-      draftButton.setAttribute('aria-pressed', draft);
-      axesButton.hidden = !draft;
+      freeButton.setAttribute('aria-pressed', mode === 'free');
+      draftButton.setAttribute('aria-pressed', mode === 'draft');
+      dashButton.setAttribute('aria-pressed', mode === 'dash');
+      dimensionButton.setAttribute('aria-pressed', mode === 'dimension');
+      axesButton.hidden = mode === 'free';
+      lengthControl.hidden = mode !== 'draft' && mode !== 'dash';
+      lengthInput.setAttribute('aria-invalid', specifiedLength() === null);
       eraseButton.setAttribute('aria-pressed', erasing);
       input.classList.toggle('erasing', erasing);
       hint.textContent = 'Рисуйте стилусом или мышью.';
-      if (draft) hint.textContent = 'Проведите отрезок или коснитесь двух точек. «По осям» фиксирует начальное направление.';
+      if (mode === 'draft' || mode === 'dash') hint.textContent = 'Проведите линию или коснитесь двух точек. Шаг сетки — 100 мм.';
+      if (mode === 'dimension') hint.textContent = 'Выберите две точки, чтобы проставить размер в миллиметрах.';
+      if (!lengthControl.hidden && specifiedLength() === null) hint.textContent = 'Введите длину больше нуля или оставьте поле пустым.';
       if (erasing) hint.textContent = 'Коснитесь линии, которую хотите удалить.';
     }
 
@@ -501,15 +693,37 @@
     function undo() {
       if (!anchor && !gesture) {
         const change = editHistory.pop();
-        if (change?.removed) marks.splice(change.index, 0, change.removed);
-        else if (change) marks.pop();
+        if (change?.added) marks.pop();
+        for (const { index, mark } of change?.removed || []) marks.splice(index, 0, mark);
       }
       cancel();
       paintSheet();
     }
 
+    function addMark(mark) {
+      const removed = [];
+      if (mark.kind === 'line') {
+        const combined = joinedLine(mark);
+        for (const index of [...combined.joined].sort((a, b) => b - a)) {
+          const [previous] = marks.splice(index, 1);
+          removed.unshift({ index, mark: previous });
+        }
+        mark = combined.mark;
+      }
+      editHistory.push({ added: true, removed });
+      marks.push(mark);
+      if (removed.length) paintSheet();
+      else drawMark(ink, mark);
+    }
+
     freeButton.addEventListener('click', () => setMode('free'));
     draftButton.addEventListener('click', () => setMode('draft'));
+    dashButton.addEventListener('click', () => setMode('dash'));
+    dimensionButton.addEventListener('click', () => setMode('dimension'));
+    lengthInput.addEventListener('input', () => {
+      updateTools();
+      paintPreview();
+    });
     axesButton.addEventListener('click', () => {
       lockAxes = !lockAxes;
       if (gesture) gesture.axis = null;
@@ -530,7 +744,7 @@
       gesture = { id: event.pointerId, down: point };
       if (erasing) {
         hover = point;
-      } else if (mode === 'draft') {
+      } else if (mode !== 'free') {
         gesture.second = Boolean(anchor);
         anchor ??= snap(point).point;
         if (gesture.second) lockGestureAxis(point);
@@ -545,7 +759,7 @@
 
     input.addEventListener('pointermove', event => {
       if (gesture && event.pointerId !== gesture.id) return;
-      if (erasing || mode === 'draft') {
+      if (erasing || mode !== 'free') {
         hover = fromPointer(event);
         if (!erasing && gesture) lockGestureAxis(hover);
         paintPreview();
@@ -562,25 +776,25 @@
         const index = markAt(point);
         if (index >= 0) {
           const [removed] = marks.splice(index, 1);
-          editHistory.push({ index, removed });
+          editHistory.push({ removed: [{ index, mark: removed }] });
           paintSheet();
         }
         hover = event.pointerType === 'touch' ? null : point;
       } else if (mark) {
         extendFreehand(event);
       } else {
-        if (gesture.second || distance(point, gesture.down) >= (lockAxes ? axisDragThreshold : 4)) {
-          const end = snap(point, anchor, draftAxis(point)).point;
-          if (distance(anchor, end) >= 1) mark = { kind: 'line', start: anchor, end };
+        const threshold = (lockAxes ? axisDragThreshold : 4) / zoom;
+        if (gesture.second || distance(point, gesture.down) >= threshold) {
+          const end = draftEnd(point).point;
+          if (distance(anchor, end) >= epsilon) {
+            const kind = mode === 'dimension' ? 'dimension' : 'line';
+            mark = { kind, start: anchor, end, dashed: mode === 'dash' };
+          }
           anchor = null;
         }
         hover = event.pointerType === 'touch' ? null : point;
       }
-      if (mark) {
-        editHistory.push({ index: marks.length });
-        marks.push(mark);
-        drawMark(ink, mark);
-      }
+      if (mark) addMark(mark);
       gesture = null;
       paintPreview();
     });
@@ -595,19 +809,24 @@
       paintPreview();
     });
     window.addEventListener('keydown', event => {
-      if (calculator.open) return;
       if (event.key === 'Escape') {
+        if (calculator.contains(event.target)) {
+          setCalculator(false);
+          calculatorButton.focus();
+          return;
+        }
         erasing = false;
         cancel();
         updateTools();
       }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z' && !event.shiftKey) {
+        if (event.target === calculation || event.target === lengthInput) return;
         event.preventDefault();
         undo();
       }
     });
     resize();
-    new ResizeObserver(resize).observe(input);
+    new ResizeObserver(resize).observe(sheet);
 
     let calculated = false;
 
@@ -674,11 +893,18 @@
       }
     }
 
-    document.getElementById('open-calculator').addEventListener('click', () => {
+    function setCalculator(open) {
+      calculator.hidden = !open;
+      sheet.parentElement.classList.toggle('calculator-open', open);
+      calculatorButton.setAttribute('aria-expanded', open);
       hover = null;
-      paintPreview();
-      calculator.showModal();
-      calculation.focus();
+      resize();
+    }
+
+    calculatorButton.addEventListener('click', () => setCalculator(calculator.hidden));
+    document.getElementById('close-calculator').addEventListener('click', () => {
+      setCalculator(false);
+      calculatorButton.focus();
     });
 
     calculator.addEventListener('click', event => {
